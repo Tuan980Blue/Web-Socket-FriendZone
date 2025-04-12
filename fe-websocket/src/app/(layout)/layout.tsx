@@ -1,5 +1,6 @@
+'use client';
+
 import React from "react";
-import { Metadata } from "next";
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@/app/globals.css";
@@ -8,15 +9,14 @@ import {ReelProvider} from "@/hooks/useReelsData";
 import Navbar from "@/components/Navbar";
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSidebar from "@/components/RightSidebar";
-
-export const metadata: Metadata = {
-    title: "Web Social",
-    description: "Kết nối dễ dàng hơn với bạn",
-};
+import { usePathname } from 'next/navigation';
 
 export default function Layout({
                                    children,
                                }: Readonly<{ children: React.ReactNode }>) {
+    const pathname = usePathname();
+    const isProfilePage = pathname === '/profile';
+
     return (
         <MantineProvider
             theme={{
@@ -57,12 +57,12 @@ export default function Layout({
                         <Navbar/>
                         <div className="flex-1 flex relative">
                             <LeftSidebar/>
-                            <main className="flex-1 ml-64 mr-80 mt-16">
+                            <main className={`flex-1 ml-64 ${isProfilePage ? '' : 'mr-80'} mt-16`}>
                                 <div className="px-4 md:px-6 lg:px-8 p-8">
                                     {children}
                                 </div>
                             </main>
-                            <RightSidebar/>
+                            {!isProfilePage && <RightSidebar/>}
                         </div>
                     </div>
                 </ReelProvider>
