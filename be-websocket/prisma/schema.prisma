@@ -1,0 +1,277 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  email          String     @unique
+  username       String     @unique
+  password       String
+  fullName       String?
+  avatar         String?
+  bio            String?
+  status         UserStatus @default(OFFLINE)
+  lastSeen       DateTime   @default(now())
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  isPrivate      Boolean    @default(false)
+  website        String?
+  location       String?
+  phoneNumber    String?
+  gender         Gender     @default(OTHER)
+  birthDate      DateTime?
+  followersCount Int        @default(0)
+  followingCount Int        @default(0)
+  postsCount     Int        @default(0)
+
+  // Relations
+  sentMessages     Message[]        @relation("SentMessages")
+  receivedMessages Message[]        @relation("ReceivedMessages")
+  chatRoomMembers  ChatRoomMember[]
+  ownedChatRooms   ChatRoom[]       @relation("ChatRoomOwner")
+  posts            Post[]
+  comments         Comment[]
+  likes            Like[]
+  stories          Story[]
+  highlights       Highlight[]
+  followers        Follow[]         @relation("Following")
+  following        Follow[]         @relation("Followers")
+  savedPosts       SavedPost[]
+  notifications    Notification[]
+  mentions         Mention[]
+  hashtags         Hashtag[]
+}
+
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  senderId   String    @db.ObjectId
+  sender     User      @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId String    @db.ObjectId
+  receiver   User      @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  chatRoomId String?   @db.ObjectId
+  chatRoom   ChatRoom? @relation(fields: [chatRoomId], references: [id])
+}
+
+model ChatRoom {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  isPrivate   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ownerId  String           @db.ObjectId
+  owner    User             @relation("ChatRoomOwner", fields: [ownerId], references: [id])
+  members  ChatRoomMember[]
+  messages Message[]
+}
+
+model ChatRoomMember {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  chatRoomId String   @db.ObjectId
+  joinedAt   DateTime @default(now())
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id])
+  chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id])
+
+  @@unique([userId, chatRoomId])
+}
+
+model Post {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  content       String
+  images        String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  location      String?
+  isArchived    Boolean  @default(false)
+  isHighlighted Boolean  @default(false)
+  viewCount     Int      @default(0)
+  likeCount     Int      @default(0)
+  commentCount  Int      @default(0)
+  shareCount    Int      @default(0)
+  tags          String[]
+  filter        String?
+
+  // Relations
+  authorId String      @db.ObjectId
+  author   User        @relation(fields: [authorId], references: [id])
+  comments Comment[]
+  likes    Like[]
+  savedBy  SavedPost[]
+  mentions Mention[]
+  hashtags Hashtag[]
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  authorId String @db.ObjectId
+  author   User   @relation(fields: [authorId], references: [id])
+  postId   String @db.ObjectId
+  post     Post   @relation(fields: [postId], references: [id])
+}
+
+model Like {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+  postId String @db.ObjectId
+  post   Post   @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+}
+
+model Story {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  mediaUrl      String
+  mediaType     MediaType
+  createdAt     DateTime  @default(now())
+  expiresAt     DateTime
+  viewCount     Int       @default(0)
+  isHighlighted Boolean   @default(false)
+  location      String?
+  filter        String?
+  mentions      Mention[]
+  hashtags      Hashtag[]
+
+  // Relations
+  authorId    String     @db.ObjectId
+  author      User       @relation(fields: [authorId], references: [id])
+  highlightId String?    @db.ObjectId
+  highlight   Highlight? @relation(fields: [highlightId], references: [id])
+}
+
+model Highlight {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  coverImage String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  authorId String  @db.ObjectId
+  author   User    @relation(fields: [authorId], references: [id])
+  stories  Story[]
+}
+
+model Follow {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+
+  // Relations
+  followerId  String @db.ObjectId
+  follower    User   @relation("Following", fields: [followerId], references: [id])
+  followingId String @db.ObjectId
+  following   User   @relation("Followers", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+}
+
+model SavedPost {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+  postId String @db.ObjectId
+  post   Post   @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+}
+
+model Notification {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  type      NotificationType
+  content   String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  // Relations
+  userId    String  @db.ObjectId
+  user      User    @relation(fields: [userId], references: [id])
+  actorId   String? @db.ObjectId
+  postId    String? @db.ObjectId
+  commentId String? @db.ObjectId
+}
+
+model Mention {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId  String  @db.ObjectId
+  user    User    @relation(fields: [userId], references: [id])
+  postId  String? @db.ObjectId
+  post    Post?   @relation(fields: [postId], references: [id])
+  storyId String? @db.ObjectId
+  story   Story?  @relation(fields: [storyId], references: [id])
+}
+
+model Hashtag {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  postCount Int      @default(0)
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId  String  @db.ObjectId
+  user    User    @relation(fields: [userId], references: [id])
+  postId  String? @db.ObjectId
+  post    Post?   @relation(fields: [postId], references: [id])
+  storyId String? @db.ObjectId
+  story   Story?  @relation(fields: [storyId], references: [id])
+}
+
+enum UserStatus {
+  ONLINE
+  OFFLINE
+  AWAY
+  BUSY
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  AUDIO
+}
+
+enum NotificationType {
+  LIKE
+  COMMENT
+  FOLLOW
+  MENTION
+  TAG
+  STORY_VIEW
+  STORY_REACTION
+}
