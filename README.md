@@ -19,5 +19,19 @@
 - **Auth**: JWT 
 - **Realtime Layer**: Socket.IO / ws / WebSocket API
 
-
+setup cho dự án của bạn:
+Frontend: Deploy trên Vercel
+Tích hợp tốt với Next.js
+Dễ dàng setup và maintain
+Có CI/CD tự động
+Backend: Deploy trên Render hoặc Railway
+Hỗ trợ WebSocket tốt
+Dễ dàng kết nối với MongoDB
+Có SSL miễn phí
+Database: Sử dụng MongoDB Atlas
+Ổn định và đáng tin cậy
+Dễ dàng backup và restore
+Có monitoring tools
+WebSocket: Có 2 lựa chọn:
+Sử dụng WebSocket trực tiếp từ backend (nếu deploy trên Render/Railway)
 
