@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file://D%3A/Projects/WebSocket-Social/fe-websocket/src/app/page.tsx"],"sourcesContent":["'use client';\n\nimport {useEffect} from 'react';\nimport {useRouter} from 'next/navigation';\n\nexport default function Home() {\n    const router = useRouter();\n\n    useEffect(() => {\n        // Check if user is logged in\n        const token = localStorage.getItem('token');\n        const userData = localStorage.getItem('user');\n\n        if (!token || !userData) {\n            // Redirect to login if not logged in\n            router.push('/auth');\n        } else {\n            // Redirect to home page if logged in\n            router.push('/home');\n        }\n    }, [router]);\n\n    // Return empty div while checking authentication\n    return <div></div>;\n}\n"],"names":[],"mappings":";;;;AAEA;AACA;;;AAHA;;;AAKe,SAAS;;IACpB,MAAM,SAAS,CAAA,GAAA,qIAAA,CAAA,YAAS,AAAD;IAEvB,CAAA,GAAA,6JAAA,CAAA,YAAS,AAAD;0BAAE;YACN,6BAA6B;YAC7B,MAAM,QAAQ,aAAa,OAAO,CAAC;YACnC,MAAM,WAAW,aAAa,OAAO,CAAC;YAEtC,IAAI,CAAC,SAAS,CAAC,UAAU;gBACrB,qCAAqC;gBACrC,OAAO,IAAI,CAAC;YAChB,OAAO;gBACH,qCAAqC;gBACrC,OAAO,IAAI,CAAC;YAChB;QACJ;yBAAG;QAAC;KAAO;IAEX,iDAAiD;IACjD,qBAAO,6LAAC;;;;;AACZ;GAnBwB;;QACL,qIAAA,CAAA,YAAS;;;KADJ","debugId":null}}]
-}
