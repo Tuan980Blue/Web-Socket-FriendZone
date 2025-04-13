@@ -1,5 +1,4 @@
 {
-  "/(layout)/explore/page": "app/(layout)/explore/page.js",
   "/(layout)/page": "app/(layout)/page.js",
   "/(layout)/reels/page": "app/(layout)/reels/page.js",
   "/_not-found/page": "app/_not-found/page.js",
