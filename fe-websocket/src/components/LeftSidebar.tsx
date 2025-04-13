@@ -36,7 +36,7 @@ const LeftSidebar = () => {
           <Avatar
             src={user?.avatar || undefined}
             alt={user?.username || "Profile"}
-            size="lg"
+            size="md"
             radius="xl"
           />
           <div>

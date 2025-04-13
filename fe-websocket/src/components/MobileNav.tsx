@@ -77,18 +77,21 @@ const MobileNav = () => {
             }`}
           >
             <div className="relative">
-              <Avatar
-                src={user?.avatar || "/logo2.png"}
-                alt={user?.username || "Profile"}
-                size="sm"
-                radius="xl"
-                className={`border-2 transition-all duration-200 group-hover:scale-110 ${
-                  pathname === '/profile' ? 'border-primery' : 'border-transparent'
-                }`}
-              />
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
+                <div className="relative p-0.5 rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
+                  <Avatar
+                    src={user?.avatar || "/logo2.png"}
+                    alt={user?.username || "Profile"}
+                    size="sm"
+                    radius="xl"
+                    className="border-2 border-[#FAFAFA] dark:border-[#121212] transition-all duration-300 group-hover:scale-105"
+                  />
+                </div>
+              </div>
               {pathname === '/profile' && (
                 <div
-                  className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full bg-primery"
+                  className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]"
                 />
               )}
             </div>
