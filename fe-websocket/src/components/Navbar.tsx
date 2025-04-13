@@ -43,7 +43,7 @@ const Navbar = () => {
         </Link>
 
         {/* Search Bar */}
-        <div className={`flex-1 max-w-2xl mx-4 ${isSearchFocused ? 'w-full' : 'w-auto'}`}>
+        <div className={`flex-1 hidden md:block max-w-2xl mx-4 ${isSearchFocused ? 'w-full' : 'w-auto'}`}>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#666666] dark:text-[#A0A0A0]" size={20} />
             <input
@@ -58,7 +58,7 @@ const Navbar = () => {
 
         {/* Main Menu */}
         <div className="flex items-center space-x-4">
-          <Link href="/" className={`p-2 rounded-full hover:bg-[#FAFAFA] dark:hover:bg-[#121212] ${pathname === '/' ? 'icon-primery' : 'text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA]'}`}>
+          <Link href="/" className={`p-2 rounded-full hidden md:block hover:bg-[#FAFAFA] dark:hover:bg-[#121212] ${pathname === '/' ? 'icon-primery' : 'text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA]'}`}>
             <Home size={24} />
           </Link>
 
@@ -72,7 +72,7 @@ const Navbar = () => {
             <span className="absolute top-1 right-1 w-2 h-2 bg-[#ED4956] rounded-full"></span>
           </Link>
 
-          <button className="p-2 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90">
+          <button className="p-2 rounded-full hidden md:block bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90">
             <Plus size={24} />
           </button>
           
