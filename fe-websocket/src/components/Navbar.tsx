@@ -75,52 +75,67 @@ const Navbar = () => {
           <button className="p-2 rounded-full hidden md:block bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90">
             <Plus size={24} />
           </button>
-          
+
           <div className="relative">
             <button
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="p-1 flex item-center justify-center rounded-full hover:bg-[#FAFAFA] dark:hover:bg-[#121212]"
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="p-0.5 cursor-pointer rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-[#DD2A7B]"
             >
-              <Avatar
-                src={user?.avatar || undefined}
-                alt={user?.username || "Profile"}
-                size="lg"
-                radius="xl"
-              />
-            </button>
-            
-            {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-[#FAFAFA] dark:bg-[#121212] border border-[#DBDBDB] dark:border-[#262626] rounded-lg shadow-lg py-2">
-                {/* User Info Section */}
-                <div className="px-4 py-3 border-b border-[#DBDBDB] dark:border-[#262626]">
-                  <div className="flex items-center space-x-3">
-                    <Avatar
-                      src={user?.avatar || "/default-avatar.png"}
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
+                <div className="relative p-0.5 rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
+                  <Avatar
+                      src={user?.avatar || undefined}
                       alt={user?.username || "Profile"}
                       size="md"
                       radius="xl"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-[#262626] dark:text-[#FAFAFA] truncate">
-                        {user?.username || "Guest"}
-                      </p>
-                      <p className="text-sm text-[#666666] dark:text-[#A0A0A0] truncate">
-                        {user?.email || ""}
-                      </p>
+                      className="border-2 border-[#FAFAFA] dark:border-[#121212]"
+                  />
+                </div>
+              </div>
+            </button>
+
+            {isProfileOpen && (
+                <div
+                    className="absolute right-0 mt-2 w-64 bg-[#FAFAFA] dark:bg-[#121212] border border-[#DBDBDB] dark:border-[#262626] rounded-lg shadow-lg py-2 transform transition-all duration-300 ease-in-out">
+                  {/* User Info Section */}
+                  <div className="px-4 py-3 border-b border-[#DBDBDB] dark:border-[#262626]">
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
+                        <div className="relative p-0.5 rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
+                          <Avatar
+                              src={user?.avatar || undefined}
+                              alt={user?.username || "Profile"}
+                              size="md"
+                              radius="xl"
+                              className="border-2 border-[#FAFAFA] dark:border-[#121212]"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-[#262626] dark:text-[#FAFAFA] truncate">
+                          {user?.username || "Guest"}
+                        </p>
+                        <p className="text-sm text-[#666666] dark:text-[#A0A0A0] truncate">
+                          {user?.email || ""}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Menu Items */}
-                <Link href="/profile" className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Profile</Link>
-                <Link href="/settings" className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Settings</Link>
-                <button 
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]"
-                >
-                  Logout
-                </button>
-              </div>
+                  {/* Menu Items */}
+                  <Link href="/profile"
+                        className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Profile</Link>
+                  <Link href="/settings"
+                        className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Settings</Link>
+                  <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]"
+                  >
+                    Logout
+                  </button>
+                </div>
             )}
           </div>
         </div>
