@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Box, MantineProvider, createTheme } from "@mantine/core";
 import { UserProvider } from "@/store/UserContext";
 import "@mantine/dates/styles.css";
+import "@mantine/core/styles.css";
 
 export const queryClient = new QueryClient();
 
@@ -25,12 +26,16 @@ const theme = createTheme({
             "#d9480f",
         ],
     },
+    fontFamily: 'var(--font-geist-sans)',
 });
 
 const RootWrapper = ({ children }: Readonly<{ children: ReactNode }>) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <MantineProvider theme={theme}>
+            <MantineProvider 
+                theme={theme}
+                defaultColorScheme="light"
+            >
                 <UserProvider>
                     <Box className="relative">
                         {children}
