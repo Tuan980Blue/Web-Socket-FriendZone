@@ -668,7 +668,7 @@ const LeftSidebar = ()=>{
         }
     ];
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
-        className: "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-[#FAFAFA] dark:bg-[#121212] border-r border-[#DBDBDB] dark:border-[#262626] overflow-y-auto",
+        className: "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-[#FAFAFA] dark:bg-[#121212] border-r border-[#DBDBDB] dark:border-[#262626] overflow-y-auto hidden md:block",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             className: "p-4",
             children: [
@@ -938,7 +938,7 @@ const systemNotifications = [
 ];
 function RightSidebar() {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "fixed right-0 top-16 w-80 h-[calc(100vh-4rem)] bg-[#FAFAFA] dark:bg-[#121212] border-l border-[#DBDBDB] dark:border-[#262626] p-4 overflow-y-auto",
+        className: "fixed hidden lg:block right-0 top-16 w-80 h-[calc(100vh-4rem)] bg-[#FAFAFA] dark:bg-[#121212] border-l border-[#DBDBDB] dark:border-[#262626] p-4 overflow-y-auto",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "mb-6",

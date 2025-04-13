@@ -30,7 +30,7 @@ const LeftSidebar = () => {
   ];
 
   return (
-    <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-[#FAFAFA] dark:bg-[#121212] border-r border-[#DBDBDB] dark:border-[#262626] overflow-y-auto">
+    <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-[#FAFAFA] dark:bg-[#121212] border-r border-[#DBDBDB] dark:border-[#262626] overflow-y-auto hidden md:block">
       <div className="p-4">
         {/* Profile Summary */}
         <Link href="/profile" className="flex items-center space-x-2 p-1 rounded-lg hover:bg-[#FAFAFA] dark:hover:bg-[#121212]">

@@ -9,6 +9,7 @@ import {ReelProvider} from "@/hooks/useReelsData";
 import Navbar from "@/components/Navbar";
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSidebar from "@/components/RightSidebar";
+import MobileNav from "@/components/MobileNav";
 import { usePathname } from 'next/navigation';
 
 export default function Layout({
@@ -57,13 +58,14 @@ export default function Layout({
                         <Navbar/>
                         <div className="flex-1 flex relative">
                             <LeftSidebar/>
-                            <main className={`flex-1 ml-64 ${isProfilePage ? '' : 'mr-80'} mt-16`}>
+                            <main className={`flex-1 md:ml-64 ${isProfilePage ? '' : 'lg:mr-80'} mt-16 pb-16 md:pb-0`}>
                                 <div className="px-4 md:px-6 lg:px-8 p-8">
                                     {children}
                                 </div>
                             </main>
-                            {!isProfilePage && <RightSidebar/>}
+                            {!isProfilePage && <div className="hidden lg:block"><RightSidebar/></div>}
                         </div>
+                        <MobileNav />
                     </div>
                 </ReelProvider>
             </UserProvider>
