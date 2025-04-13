@@ -17,21 +17,87 @@ class UserService {
   // Find user by email
   async findByEmail(email) {
     return prisma.user.findUnique({
-      where: { email }
+      where: { email },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        password: true,
+        fullName: true,
+        avatar: true,
+        bio: true,
+        status: true,
+        lastSeen: true,
+        createdAt: true,
+        updatedAt: true,
+        isPrivate: true,
+        website: true,
+        location: true,
+        phoneNumber: true,
+        gender: true,
+        birthDate: true,
+        followersCount: true,
+        followingCount: true,
+        postsCount: true
+      }
     });
   }
 
   // Find user by username
   async findByUsername(username) {
     return prisma.user.findUnique({
-      where: { username }
+      where: { username },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        password: true,
+        fullName: true,
+        avatar: true,
+        bio: true,
+        status: true,
+        lastSeen: true,
+        createdAt: true,
+        updatedAt: true,
+        isPrivate: true,
+        website: true,
+        location: true,
+        phoneNumber: true,
+        gender: true,
+        birthDate: true,
+        followersCount: true,
+        followingCount: true,
+        postsCount: true
+      }
     });
   }
 
   // Find user by ID
   async findById(id) {
     return prisma.user.findUnique({
-      where: { id }
+      where: { id },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        password: true,
+        fullName: true,
+        avatar: true,
+        bio: true,
+        status: true,
+        lastSeen: true,
+        createdAt: true,
+        updatedAt: true,
+        isPrivate: true,
+        website: true,
+        location: true,
+        phoneNumber: true,
+        gender: true,
+        birthDate: true,
+        followersCount: true,
+        followingCount: true,
+        postsCount: true
+      }
     });
   }
 
@@ -77,11 +143,23 @@ class UserService {
         id: true,
         username: true,
         email: true,
+        password: true,
         fullName: true,
         avatar: true,
+        bio: true,
         status: true,
         lastSeen: true,
-        createdAt: true
+        createdAt: true,
+        updatedAt: true,
+        isPrivate: true,
+        website: true,
+        location: true,
+        phoneNumber: true,
+        gender: true,
+        birthDate: true,
+        followersCount: true,
+        followingCount: true,
+        postsCount: true
       }
     });
   }

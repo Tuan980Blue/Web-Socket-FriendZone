@@ -93,7 +93,23 @@ router.post('/login', async (req, res) => {
       user: {
         id: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        fullName: user.fullName,
+        gender: user.gender,
+        birthDate: user.birthDate,
+        avatar: user.avatar,
+        status: user.status,
+        lastSeen: user.lastSeen,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        isPrivate: user.isPrivate,
+        website: user.website,
+        location: user.location,
+        phoneNumber: user.phoneNumber,
+        bio: user.bio,
+        followersCount: user.followersCount,
+        followingCount: user.followingCount,
+        postsCount: user.postsCount
       },
       token
     });
