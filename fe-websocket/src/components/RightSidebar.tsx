@@ -28,7 +28,7 @@ const systemNotifications = [
 
 export default function RightSidebar() {
   return (
-    <div className="fixed hidden lg:block right-0 top-16 w-80 h-[calc(100vh-4rem)] bg-[#FAFAFA] dark:bg-[#121212] border-l border-[#DBDBDB] dark:border-[#262626] p-4 overflow-y-auto">
+    <div className="fixed hidden lg:block right-0 top-16 w-76 h-[calc(100vh-4rem)] bg-[#FAFAFA] dark:bg-[#121212] border-l border-[#DBDBDB] dark:border-[#262626] p-4 overflow-y-auto">
       {/* Suggested Users Section */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">

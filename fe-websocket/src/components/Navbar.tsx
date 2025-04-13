@@ -20,7 +20,7 @@ const Navbar = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('tokenExpiration');
-    router.push('/auth/login');
+    router.push('/auth');
   };
 
   return (

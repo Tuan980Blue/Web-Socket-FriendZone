@@ -1,5 +1,5 @@
+import { FaUser, FaEnvelope, FaGlobe, FaMapMarkerAlt } from 'react-icons/fa';
 import { User } from '@/types/user';
-import { FaGlobe, FaGithub, FaLinkedin, FaCircle } from 'react-icons/fa';
 
 interface ProfileInfoProps {
   user: User;
@@ -7,80 +7,45 @@ interface ProfileInfoProps {
 
 export default function ProfileInfo({ user }: ProfileInfoProps) {
   return (
-    <div className="bg-white shadow rounded-lg p-6 mt-6">
+    <div className="bg-white dark:bg-[#121212] rounded-lg shadow-sm p-6 border border-[#DBDBDB] dark:border-[#262626]">
+      <h2 className="text-xl font-semibold text-[#262626] dark:text-[#FAFAFA] mb-4">Personal Information</h2>
       <div className="space-y-4">
-        {/* Bio */}
-        <div>
-          <h3 className="text-lg font-medium text-gray-900">About</h3>
-          <p className="mt-1 text-gray-600">{user.bio || 'No bio yet'}</p>
+        <div className="flex items-center space-x-3">
+          <FaEnvelope className="text-[#DD2A7B]" />
+          <div>
+            <p className="text-sm text-[#8E8E8E]">Email</p>
+            <p className="text-[#262626] dark:text-[#FAFAFA]">{user.email}</p>
+          </div>
         </div>
-
-        {/* Location */}
-        {user.location && (
-          <div className="flex items-center text-gray-600">
-            <FaGlobe className="mr-2" />
-            <span>{user.location}</span>
+        {user.bio && (
+          <div className="flex items-start space-x-3">
+            <FaUser className="text-[#DD2A7B] mt-1" />
+            <div>
+              <p className="text-sm text-[#8E8E8E]">Bio</p>
+              <p className="text-[#262626] dark:text-[#FAFAFA]">{user.bio}</p>
+            </div>
           </div>
         )}
-
-        {/* Join Date */}
-        <div className="text-gray-600">
-          Joined {new Date(user.createdAt).toLocaleDateString('en-US', {
-            month: 'long',
-            year: 'numeric'
-          })}
-        </div>
-
-        {/* Social Links */}
-        <div className="flex space-x-4">
-          {user.website && (
-            <a
-              href={user.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:text-blue-600"
-            >
-              <FaGlobe className="w-5 h-5" />
-            </a>
-          )}
-          {user.github && (
-            <a
-              href={user.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-700 hover:text-gray-800"
-            >
-              <FaGithub className="w-5 h-5" />
-            </a>
-          )}
-          {user.linkedin && (
-            <a
-              href={user.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-700"
-            >
-              <FaLinkedin className="w-5 h-5" />
-            </a>
-          )}
-        </div>
-
-        {/* Status */}
-        <div className="flex items-center">
-          <FaCircle
-            className={`w-2 h-2 mr-2 ${
-              user.isOnline ? 'text-green-500' : 'text-gray-400'
-            }`}
-          />
-          <span className="text-sm text-gray-600">
-            {user.isOnline ? 'Online' : 'Offline'}
-          </span>
-        </div>
-
-        {/* Privacy Settings */}
-        <div className="text-sm text-gray-500">
-          Profile visibility: {user.privacy || 'Public'}
-        </div>
+        {user.website && (
+          <div className="flex items-center space-x-3">
+            <FaGlobe className="text-[#DD2A7B]" />
+            <div>
+              <p className="text-sm text-[#8E8E8E]">Website</p>
+              <a href={user.website} className="text-[#3897F0] hover:underline" target="_blank" rel="noopener noreferrer">
+                {user.website}
+              </a>
+            </div>
+          </div>
+        )}
+        {user.location && (
+          <div className="flex items-center space-x-3">
+            <FaMapMarkerAlt className="text-[#DD2A7B]" />
+            <div>
+              <p className="text-sm text-[#8E8E8E]">Location</p>
+              <p className="text-[#262626] dark:text-[#FAFAFA]">{user.location}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

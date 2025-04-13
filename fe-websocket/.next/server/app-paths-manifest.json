@@ -1,6 +1,6 @@
 {
-  "/(layout)/page": "app/(layout)/page.js",
-  "/(layout)/reels/page": "app/(layout)/reels/page.js",
+  "/(layout)/profile/page": "app/(layout)/profile/page.js",
+  "/(no-layout)/auth/page": "app/(no-layout)/auth/page.js",
   "/_not-found/page": "app/_not-found/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js"
 }

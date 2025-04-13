@@ -112,6 +112,48 @@ const mockReels = [
         isSaved: true,
         createdAt: '2023-04-03T09:15:00Z',
         updatedAt: '2023-04-03T09:15:00Z'
+    },
+    {
+        id: '4',
+        userId: 'user3',
+        username: 'mikejohnson',
+        userAvatar: '/default-avatar.png',
+        videoUrl: 'https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4',
+        thumbnailUrl: '/reviewfilm.png',
+        caption: 'New dance moves! 💃 #dance #music #trending',
+        hashtags: [
+            'dance',
+            'music',
+            'trending'
+        ],
+        likes: 567,
+        comments: 32,
+        shares: 78,
+        isLiked: false,
+        isSaved: true,
+        createdAt: '2023-04-03T09:15:00Z',
+        updatedAt: '2023-04-03T09:15:00Z'
+    },
+    {
+        id: '5',
+        userId: 'user3',
+        username: 'mikejohnson',
+        userAvatar: '/default-avatar.png',
+        videoUrl: 'https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4',
+        thumbnailUrl: '/reviewfilm.png',
+        caption: 'New dance moves! 💃 #dance #music #trending',
+        hashtags: [
+            'dance',
+            'music',
+            'trending'
+        ],
+        likes: 567,
+        comments: 32,
+        shares: 78,
+        isLiked: false,
+        isSaved: true,
+        createdAt: '2023-04-03T09:15:00Z',
+        updatedAt: '2023-04-03T09:15:00Z'
     }
 ];
 function ReelProvider({ children }) {
@@ -222,7 +264,7 @@ function ReelProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/hooks/useReelsData.tsx",
-        lineNumber: 195,
+        lineNumber: 229,
         columnNumber: 5
     }, this);
 }
@@ -298,7 +340,7 @@ const Navbar = ()=>{
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('tokenExpiration');
-        router.push('/auth/login');
+        router.push('/auth');
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
         className: "fixed top-0 left-0 right-0 h-16 bg-[#FAFAFA] dark:bg-[#121212] border-b border-[#DBDBDB] dark:border-[#262626] z-50",
@@ -938,7 +980,7 @@ const systemNotifications = [
 ];
 function RightSidebar() {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "fixed hidden lg:block right-0 top-16 w-80 h-[calc(100vh-4rem)] bg-[#FAFAFA] dark:bg-[#121212] border-l border-[#DBDBDB] dark:border-[#262626] p-4 overflow-y-auto",
+        className: "fixed hidden lg:block right-0 top-16 w-76 h-[calc(100vh-4rem)] bg-[#FAFAFA] dark:bg-[#121212] border-l border-[#DBDBDB] dark:border-[#262626] p-4 overflow-y-auto",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "mb-6",
