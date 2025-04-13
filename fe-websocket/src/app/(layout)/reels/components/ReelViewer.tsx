@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Reel } from '@/types/reel';
 import { useReelsData } from '@/hooks/useReelsData';
-import { Avatar, Button, Text, ActionIcon, Paper, Textarea } from '@mantine/core';
-import { Heart, MessageCircle, Share2, Bookmark, Volume2, VolumeX, Send } from 'lucide-react';
+import { Avatar, Button, Text, ActionIcon, Paper, Textarea, Modal } from '@mantine/core';
+import { Heart, MessageCircle, Share2, Bookmark, Volume2, VolumeX, Send, X } from 'lucide-react';
 
 interface ReelViewerProps {
   reel: Reel;
@@ -16,8 +16,10 @@ export default function ReelViewer({ reel, onNext, onPrev }: ReelViewerProps) {
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
   const [comment, setComment] = useState('');
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { likeReel, saveReel, shareReel, addComment } = useReelsData();
+  const isLargeScreen = window.innerWidth >= 1024;
 
   // Handle video playback
   useEffect(() => {
@@ -101,6 +103,60 @@ export default function ReelViewer({ reel, onNext, onPrev }: ReelViewerProps) {
     });
   };
 
+  // Comments Section Component
+  const CommentsSection = () => (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
+        <Text color="white" fw={500}>Comments ({reel.comments})</Text>
+        {!isLargeScreen && (
+          <ActionIcon 
+            variant="subtle" 
+            color="white" 
+            size="lg"
+            onClick={() => setIsCommentModalOpen(false)}
+          >
+            <X size={20} />
+          </ActionIcon>
+        )}
+      </div>
+      
+      {/* Comment Input */}
+      <div className="flex items-center space-x-2 mb-4">
+        <Textarea
+          placeholder="Add a comment..."
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          className="flex-1"
+          minRows={1}
+          maxRows={3}
+          styles={{
+            input: {
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              color: 'white',
+              border: 'none',
+            },
+          }}
+        />
+        <ActionIcon 
+          variant="filled" 
+          color="blue" 
+          size="lg" 
+          onClick={handleComment}
+          disabled={!comment.trim()}
+        >
+          <Send size={16} />
+        </ActionIcon>
+      </div>
+      
+      {/* Comment List - Placeholder */}
+      <div className="space-y-4">
+        <Text color="white" size="sm" className="text-center opacity-70">
+          No comments yet. Be the first to comment!
+        </Text>
+      </div>
+    </div>
+  );
+
   return (
     <div className="relative h-[80vh] w-full max-w-2xl mx-auto bg-black rounded-lg overflow-hidden">
       {/* Video Player */}
@@ -170,6 +226,17 @@ export default function ReelViewer({ reel, onNext, onPrev }: ReelViewerProps) {
                   fill={reel.isSaved ? 'white' : 'none'} 
                 />
               </ActionIcon>
+
+              {!isLargeScreen && (
+                <ActionIcon 
+                  variant="subtle" 
+                  color="white" 
+                  size="lg" 
+                  onClick={() => setIsCommentModalOpen(true)}
+                >
+                  <MessageCircle size={20} />
+                </ActionIcon>
+              )}
             </div>
           </div>
         </div>
@@ -196,50 +263,31 @@ export default function ReelViewer({ reel, onNext, onPrev }: ReelViewerProps) {
         </div>
       </div>
       
-      {/* Comments Section */}
-      <Paper className="absolute right-0 top-0 bottom-0 w-80 bg-white/10 backdrop-blur-md p-4 overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
-          <Text color="white" fw={500}>Comments ({reel.comments})</Text>
-          <ActionIcon variant="subtle" color="white" size="lg">
-            <MessageCircle size={20} />
-          </ActionIcon>
-        </div>
-        
-        {/* Comment Input */}
-        <div className="flex items-center space-x-2 mb-4">
-          <Textarea
-            placeholder="Add a comment..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="flex-1"
-            minRows={1}
-            maxRows={3}
-            styles={{
-              input: {
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                color: 'white',
-                border: 'none',
-              },
-            }}
-          />
-          <ActionIcon 
-            variant="filled" 
-            color="blue" 
-            size="lg" 
-            onClick={handleComment}
-            disabled={!comment.trim()}
-          >
-            <Send size={16} />
-          </ActionIcon>
-        </div>
-        
-        {/* Comment List - Placeholder */}
-        <div className="space-y-4">
-          <Text color="white" size="sm" className="text-center opacity-70">
-            No comments yet. Be the first to comment!
-          </Text>
-        </div>
-      </Paper>
+      {/* Comments Section - Only show on large screens */}
+      {isLargeScreen && (
+        <Paper className="absolute right-0 top-0 bottom-0 w-1/3 bg-white/10 backdrop-blur-md p-4 overflow-y-auto">
+          <CommentsSection />
+        </Paper>
+      )}
+      
+      {/* Comments Modal - Only show on smaller screens */}
+      <Modal
+        opened={isCommentModalOpen}
+        onClose={() => setIsCommentModalOpen(false)}
+        size="100%"
+        fullScreen
+        padding="md"
+        withCloseButton={false}
+        styles={{
+          body: {
+            backgroundColor: 'black',
+            height: '100%',
+            padding: '1rem',
+          },
+        }}
+      >
+        <CommentsSection />
+      </Modal>
       
       {/* Navigation Buttons */}
       {onPrev && (
