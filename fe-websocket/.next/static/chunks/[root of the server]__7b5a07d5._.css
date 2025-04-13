@@ -1659,12 +1659,6 @@
   }
 
   @media (width >= 48rem) {
-    .md\:mr-80 {
-      margin-right: calc(var(--spacing) * 80);
-    }
-  }
-
-  @media (width >= 48rem) {
     .md\:ml-64 {
       margin-left: calc(var(--spacing) * 64);
     }
@@ -1725,12 +1719,6 @@
   }
 
   @media (width >= 64rem) {
-    .lg\:mr-86 {
-      margin-right: calc(var(--spacing) * 86);
-    }
-  }
-
-  @media (width >= 64rem) {
     .lg\:block {
       display: block;
     }
@@ -1763,12 +1751,6 @@
   @media (width >= 80rem) {
     .xl\:grid-cols-3 {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  @media (width >= 80rem) {
-    .xl\:grid-cols-4 {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 

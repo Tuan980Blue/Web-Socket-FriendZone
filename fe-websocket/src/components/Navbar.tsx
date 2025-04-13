@@ -62,12 +62,12 @@ const Navbar = () => {
             <Home size={24} />
           </Link>
 
-          <Link href="/messages" className="relative p-2 rounded-full hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA]">
+          <Link href="/messages" className={`relative p-2 rounded-full hover:bg-[#FAFAFA] dark:hover:bg-[#121212] ${pathname === '/messages' ? 'icon-primery' : 'text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA]'}`}>
             <MessageSquare size={24} />
             <span className="absolute top-1 right-1 w-2 h-2 bg-[#ED4956] rounded-full"></span>
           </Link>
           
-          <Link href="/notifications" className="relative p-2 rounded-full hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA]">
+          <Link href="/notifications" className={`relative p-2 rounded-full hover:bg-[#FAFAFA] dark:hover:bg-[#121212] ${pathname === '/notifications' ? 'icon-primery' : 'text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA]'}`}>
             <Bell size={24} />
             <span className="absolute top-1 right-1 w-2 h-2 bg-[#ED4956] rounded-full"></span>
           </Link>

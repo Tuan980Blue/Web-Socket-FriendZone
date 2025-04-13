@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 import {
   Home,
   Search,
-  PlusSquare,
-  Heart, 
-  Video
+  CircleFadingPlus ,
+  Heart,
+  Film
 } from 'lucide-react';
 import { Avatar, Tooltip } from '@mantine/core';
 import { useUserData } from '@/hooks/useUserData';
@@ -19,8 +19,8 @@ const MobileNav = () => {
   const menuItems = [
     { icon: Home, label: 'Home', href: '/' },
     { icon: Search, label: 'Search', href: '/search' },
-    { icon: Video, label: 'Reels', href: '/reels' },
-    { icon: PlusSquare, label: 'Create', href: '/create' },
+    { icon: Film , label: 'Reels', href: '/reels' },
+    { icon: CircleFadingPlus, label: 'Create', href: '/create' },
     { icon: Heart, label: 'Activity', href: '/activity' },
   ];
 
