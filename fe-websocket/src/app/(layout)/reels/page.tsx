@@ -5,7 +5,7 @@ import ReelViewer from './components/ReelViewer';
 import ReelGrid from './components/ReelGrid';
 import { useReelsData } from '@/hooks/useReelsData';
 import { Reel } from '@/types/reel';
-import { Button, SegmentedControl, Modal } from '@mantine/core';
+import { Button, SegmentedControl, Modal, Skeleton, Grid } from '@mantine/core';
 import { Upload } from 'lucide-react';
 
 export default function ReelsPage() {
@@ -48,7 +48,23 @@ export default function ReelsPage() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex justify-between items-center mb-6">
+          <Skeleton height={36} width={200} />
+          <Skeleton height={36} width={120} />
+        </div>
+        <Grid>
+          {[...Array(6)].map((_, index) => (
+            <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4 }}>
+              <Skeleton height={400} radius="md" />
+              <Skeleton height={20} width="70%" mt="sm" />
+              <Skeleton height={20} width="40%" mt="xs" />
+            </Grid.Col>
+          ))}
+        </Grid>
+      </div>
+    );
   }
 
   if (error) {
