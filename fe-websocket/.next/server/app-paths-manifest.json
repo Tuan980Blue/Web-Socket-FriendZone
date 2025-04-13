@@ -1,7 +1,12 @@
 {
+  "/(layout)/explore/page": "app/(layout)/explore/page.js",
+  "/(layout)/friends/page": "app/(layout)/friends/page.js",
+  "/(layout)/messages/page": "app/(layout)/messages/page.js",
+  "/(layout)/notifications/page": "app/(layout)/notifications/page.js",
   "/(layout)/page": "app/(layout)/page.js",
   "/(layout)/profile/page": "app/(layout)/profile/page.js",
   "/(layout)/reels/page": "app/(layout)/reels/page.js",
+  "/(layout)/saved/page": "app/(layout)/saved/page.js",
   "/_not-found/page": "app/_not-found/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js"
 }

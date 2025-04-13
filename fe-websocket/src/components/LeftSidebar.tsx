@@ -3,15 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  Home, 
-  Users, 
-  Image as ImageIcon, 
-  Bookmark, 
-  Compass, 
-  Plus,
+import {
+  Home,
+  Users,
+  Film,
+  Bookmark,
+  Compass,
   Moon,
-  Sun
+  Sun, CircleFadingPlus
 } from 'lucide-react';
 import { Avatar } from '@mantine/core';
 import { useUserData } from '@/hooks/useUserData';
@@ -24,7 +23,7 @@ const LeftSidebar = () => {
   const menuItems = [
     { icon: Home, label: 'News Feed', href: '/' },
     { icon: Users, label: 'Friends', href: '/friends' },
-    { icon: ImageIcon, label: 'Reels', href: '/reels' },
+    { icon: Film , label: 'Reels', href: '/reels' },
     { icon: Bookmark, label: 'Saved', href: '/saved' },
     { icon: Compass, label: 'Explore', href: '/explore' },
   ];
@@ -75,7 +74,7 @@ const LeftSidebar = () => {
 
         {/* Create Post Button */}
         <button className="w-full mt-4 p-2 bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white rounded-lg hover:opacity-90 flex items-center justify-center space-x-2">
-          <Plus size={20} />
+          <CircleFadingPlus size={20} />
           <span>Create Post</span>
         </button>
 
