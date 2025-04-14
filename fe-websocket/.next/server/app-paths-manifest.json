@@ -1,4 +1,6 @@
 {
+  "/(layout)/follows/page": "app/(layout)/follows/page.js",
+  "/(layout)/friends/page": "app/(layout)/friends/page.js",
   "/(layout)/page": "app/(layout)/page.js",
   "/(layout)/profile/page": "app/(layout)/profile/page.js",
   "/(no-layout)/auth/page": "app/(no-layout)/auth/page.js",
