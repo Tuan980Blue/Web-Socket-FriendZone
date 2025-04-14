@@ -40,6 +40,11 @@ export const auth = {
     const response = await api.post('/auth/forgot-password', { email });
     return response.data;
   },
+
+  getCurrentUser: async () => {
+    const response = await api.get('/auth/me');
+    return response.data;
+  },
 };
 
 export default api; 

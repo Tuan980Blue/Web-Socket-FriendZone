@@ -80,7 +80,6 @@ class UserService {
         id: true,
         username: true,
         email: true,
-        password: true,
         fullName: true,
         avatar: true,
         bio: true,
