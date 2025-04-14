@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { TextInput, PasswordInput, Button, Group, Stack, Select, Text } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Group, Stack, Select, Text, Divider, rem } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { auth } from '@/services/api';
 import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
+import { IconBrandGoogle, IconBrandFacebook } from '@tabler/icons-react';
 
 export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
@@ -49,7 +50,6 @@ export default function RegisterForm() {
         color: 'green',
       });
       
-      // Redirect to login tab
       router.push('/auth?tab=login');
     } catch (error) {
       const axiosError = error as AxiosError<{ error: string }>;
@@ -63,79 +63,164 @@ export default function RegisterForm() {
     }
   };
 
+  const inputStyles = {
+    input: {
+      '&:focus': {
+        borderColor: 'var(--primary-gradient-via)',
+      },
+    },
+  };
+
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Stack>
+      <Stack gap="sm">
         <TextInput
           required
+          size="sm"
           label="Username"
-          placeholder="Enter your username"
+          placeholder="Choose a username"
+          radius="md"
           {...form.getInputProps('username')}
+          styles={inputStyles}
         />
         
         <TextInput
           required
+          size="sm"
           label="Email"
           placeholder="Enter your email"
+          radius="md"
           {...form.getInputProps('email')}
+          styles={inputStyles}
         />
         
         <PasswordInput
           required
+          size="sm"
           label="Password"
-          placeholder="Enter your password"
+          placeholder="Create a password"
+          radius="md"
           {...form.getInputProps('password')}
+          styles={inputStyles}
         />
 
         <PasswordInput
           required
+          size="sm"
           label="Confirm Password"
           placeholder="Confirm your password"
+          radius="md"
           {...form.getInputProps('confirmPassword')}
+          styles={inputStyles}
         />
         
         <TextInput
           required
+          size="sm"
           label="Full Name"
           placeholder="Enter your full name"
+          radius="md"
           {...form.getInputProps('fullName')}
+          styles={inputStyles}
         />
         
         <Select
           required
+          size="sm"
           label="Gender"
           placeholder="Select your gender"
+          radius="md"
           data={[
             { value: 'MALE', label: 'Male' },
             { value: 'FEMALE', label: 'Female' },
             { value: 'OTHER', label: 'Other' },
           ]}
           {...form.getInputProps('gender')}
+          styles={inputStyles}
         />
         
         <DateInput
           required
+          size="sm"
           label="Birth Date"
           placeholder="Select your birth date"
+          radius="md"
           maxDate={new Date()}
           {...form.getInputProps('birthDate')}
+          styles={inputStyles}
         />
 
-        <Group justify="space-between" mt="xl">
-          <Text size="sm" c="dimmed">
+        <Button 
+          type="submit" 
+          loading={loading}
+          size="sm"
+          radius="md"
+          fullWidth
+          mt="xs"
+          style={{
+            background: 'linear-gradient(45deg, var(--primary-gradient-from), var(--primary-gradient-via), var(--primary-gradient-to))',
+          }}
+        >
+          Create Account
+        </Button>
+
+        <Group gap="xs" justify="center" mt="xs">
+          <Divider w={80} />
+          <Text size="xs" c="dimmed">or</Text>
+          <Divider w={80} />
+        </Group>
+
+        <Group grow>
+          <Button
+            variant="default"
+            size="sm"
+            radius="md"
+            leftSection={<IconBrandGoogle style={{ width: rem(16), height: rem(16) }} />}
+            styles={{
+              root: {
+                borderColor: 'var(--border)',
+                '&:hover': {
+                  backgroundColor: 'var(--background)',
+                },
+              },
+            }}
+          >
+            Google
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            radius="md"
+            leftSection={<IconBrandFacebook style={{ width: rem(16), height: rem(16) }} />}
+            styles={{
+              root: {
+                borderColor: 'var(--border)',
+                '&:hover': {
+                  backgroundColor: 'var(--background)',
+                },
+              },
+            }}
+          >
+            Facebook
+          </Button>
+        </Group>
+
+        <Group justify="center" mt="xs">
+          <Text size="xs" c="dimmed">
             Already have an account?{' '}
             <Text
               component="span"
-              c="blue"
-              style={{ cursor: 'pointer' }}
+              style={{ 
+                cursor: 'pointer',
+                background: 'linear-gradient(45deg, var(--primary-gradient-from), var(--primary-gradient-via), var(--primary-gradient-to))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}
               onClick={() => router.push('/auth?tab=login')}
             >
-              Login
+              Log in
             </Text>
           </Text>
-          <Button type="submit" loading={loading}>
-            Register
-          </Button>
         </Group>
       </Stack>
     </form>

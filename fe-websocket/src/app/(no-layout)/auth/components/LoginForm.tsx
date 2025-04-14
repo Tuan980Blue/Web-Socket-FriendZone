@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { TextInput, PasswordInput, Button, Stack, Text, Group } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Stack, Text, Group, Divider, rem } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { auth } from '@/services/api';
 import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { useUserData } from '@/hooks/useUserData';
+import { IconBrandGoogle, IconBrandFacebook } from '@tabler/icons-react';
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
@@ -55,36 +56,119 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Stack>
+      <Stack gap="sm">
         <TextInput
           required
+          size="sm"
           label="Email"
           placeholder="Enter your email"
+          radius="md"
           {...form.getInputProps('email')}
+          styles={{
+            input: {
+              '&:focus': {
+                borderColor: 'var(--primary-gradient-via)',
+              },
+            },
+          }}
         />
         
         <PasswordInput
           required
+          size="sm"
           label="Password"
           placeholder="Enter your password"
+          radius="md"
           {...form.getInputProps('password')}
+          styles={{
+            input: {
+              '&:focus': {
+                borderColor: 'var(--primary-gradient-via)',
+              },
+            },
+          }}
         />
 
-        <Group justify="space-between" mt="xl">
-          <Text size="sm" c="dimmed">
+        <Text 
+          size="xs" 
+          c="blue" 
+          style={{ cursor: 'pointer', alignSelf: 'flex-end' }}
+          onClick={() => router.push('/auth?tab=forgot-password')}
+        >
+          Forgot password?
+        </Text>
+
+        <Button 
+          type="submit" 
+          loading={loading}
+          size="sm"
+          radius="md"
+          fullWidth
+          mt="xs"
+          style={{
+            background: 'linear-gradient(45deg, var(--primary-gradient-from), var(--primary-gradient-via), var(--primary-gradient-to))',
+          }}
+        >
+          Log in
+        </Button>
+
+        <Group gap="xs" justify="center" mt="xs">
+          <Divider w={80} />
+          <Text size="xs" c="dimmed">or</Text>
+          <Divider w={80} />
+        </Group>
+
+        <Group grow>
+          <Button
+            variant="default"
+            size="sm"
+            radius="md"
+            leftSection={<IconBrandGoogle style={{ width: rem(16), height: rem(16) }} />}
+            styles={{
+              root: {
+                borderColor: 'var(--border)',
+                '&:hover': {
+                  backgroundColor: 'var(--background)',
+                },
+              },
+            }}
+          >
+            Google
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            radius="md"
+            leftSection={<IconBrandFacebook style={{ width: rem(16), height: rem(16) }} />}
+            styles={{
+              root: {
+                borderColor: 'var(--border)',
+                '&:hover': {
+                  backgroundColor: 'var(--background)',
+                },
+              },
+            }}
+          >
+            Facebook
+          </Button>
+        </Group>
+
+        <Group justify="center" mt="xs">
+          <Text size="xs" c="dimmed">
             Don&apos;t have an account?{' '}
             <Text
               component="span"
-              c="blue"
-              style={{ cursor: 'pointer' }}
+              style={{ 
+                cursor: 'pointer',
+                background: 'linear-gradient(45deg, var(--primary-gradient-from), var(--primary-gradient-via), var(--primary-gradient-to))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}
               onClick={() => router.push('/auth?tab=register')}
             >
-              Register
+              Sign up
             </Text>
           </Text>
-          <Button type="submit" loading={loading}>
-            Login
-          </Button>
         </Group>
       </Stack>
     </form>
