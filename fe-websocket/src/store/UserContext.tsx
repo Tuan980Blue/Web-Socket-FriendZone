@@ -2,6 +2,7 @@
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserContextType } from '../types/user';
+import { auth } from '@/services/api';
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
 
@@ -10,42 +11,34 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Function to fetch user data from server
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setUser(null);
+        return;
+      }
+
+      // Call API to get latest user data
+      const response = await auth.getCurrentUser();
+      setUser(response.user);
+    } catch (err) {
+      console.error('Error fetching user data:', err);
+      setError('Failed to load user data');
+      setUser(null);
+      // Clear invalid session
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('tokenExpiration');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Check for existing user data on initial load
   useEffect(() => {
-    const checkUserSession = () => {
-      try {
-        const token = localStorage.getItem('token');
-        const userData = localStorage.getItem('user');
-        const tokenExpiration = localStorage.getItem('tokenExpiration');
-        
-        if (token && userData && tokenExpiration) {
-          const expirationTime = parseInt(tokenExpiration);
-          const currentTime = new Date().getTime();
-          
-          if (currentTime < expirationTime) {
-            // Token is still valid
-            setUser(JSON.parse(userData));
-          } else {
-            // Token has expired, clear storage
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            localStorage.removeItem('tokenExpiration');
-            setUser(null);
-          }
-        } else {
-          // No token or user data
-          setUser(null);
-        }
-      } catch (err) {
-        console.error('Error checking user session:', err);
-        setError('Failed to load user session');
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkUserSession();
+    fetchUserData();
   }, []);
 
   // Custom setUser function that also updates localStorage
@@ -68,7 +61,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     user,
     setUser: updateUser,
     isLoading,
-    error
+    error,
+    refreshUserData: fetchUserData // Expose refresh function
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
