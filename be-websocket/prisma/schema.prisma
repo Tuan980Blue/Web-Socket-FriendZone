@@ -16,7 +16,7 @@ model User {
   username       String     @unique
   password       String
   fullName       String?
-  avatar         String?    @default("default-avatar.png")
+  avatar         String?    @default("/image-person.png")
   bio            String?    @default("")
   status         UserStatus @default(OFFLINE)
   lastSeen       DateTime   @default(now())
