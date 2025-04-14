@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Reel } from '@/types/reel';
 import { Card, Text, Avatar, ActionIcon } from '@mantine/core';
 import { Heart, MessageCircle, Share2, Bookmark, Play } from 'lucide-react';
+import Image from 'next/image';
 
 interface ReelGridProps {
   reels: Reel[];
@@ -25,10 +26,11 @@ export default function ReelGrid({ reels, onReelClick }: ReelGridProps) {
         >
           {/* Thumbnail */}
           <div className="relative aspect-[9/16] w-full">
-            <img
+            <Image
               src={reel.thumbnailUrl || '/placeholder-video.jpg'}
               alt={reel.caption || 'Reel thumbnail'}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
             
             {/* Video Preview (autoplay on hover) */}
