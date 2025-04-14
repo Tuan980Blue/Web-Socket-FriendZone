@@ -1,4 +1,4 @@
-# 🌐 Web-Socket-Social
+# 🌐 [Link-PreView-Web](https://tuananhhuflit.id.vn)
 
 **Web-Socket-Social** là một nền tảng mạng xã hội thời gian thực được xây dựng với WebSocket, nơi người dùng có thể nhắn tin, tương tác và cập nhật trạng thái ngay lập tức – không cần F5!
 
@@ -34,4 +34,3 @@ Dễ dàng backup và restore
 Có monitoring tools
 WebSocket: Có 2 lựa chọn:
 Sử dụng WebSocket trực tiếp từ backend (nếu deploy trên Render/Railway)
-
