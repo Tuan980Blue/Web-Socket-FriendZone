@@ -77,25 +77,33 @@ const Navbar = () => {
           </button>
 
           <div className="relative">
-            <button
+            {user ? (
+              <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="p-0.5 cursor-pointer rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-[#DD2A7B]"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
-                <div className="relative p-0.5 rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
-                  <Avatar
+              >
+                <div className="relative">
+                  <div className="relative p-0.5 border border-[#FAFAFA] dark:border-[#121212] rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
+                    <Avatar
                       src={user?.avatar || undefined}
                       alt={user?.username || "Profile"}
-                      size="md"
+                      size={30}
                       radius="xl"
-                      className="border-2 border-[#FAFAFA] dark:border-[#121212]"
-                  />
+                    />
+                  </div>
                 </div>
-              </div>
-            </button>
+              </button>
+            ) : (
+                <Link
+                    href="/auth"
+                    className="px-4 py-2 border border-[#DD2A7B] rounded-lg text-sm font-semibold text-black hover:bg-gray-200 transition duration-150"
+                >
+                  Đăng nhập
+                </Link>
 
-            {isProfileOpen && (
+            )}
+
+            {isProfileOpen && user && (
                 <div
                     className="absolute right-0 mt-2 w-64 bg-[#FAFAFA] dark:bg-[#121212] border border-[#DBDBDB] dark:border-[#262626] rounded-lg shadow-lg py-2 transform transition-all duration-300 ease-in-out">
                   {/* User Info Section */}

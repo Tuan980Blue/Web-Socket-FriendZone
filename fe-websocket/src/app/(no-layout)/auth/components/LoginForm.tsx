@@ -123,7 +123,7 @@ export default function LoginForm() {
             variant="default"
             size="sm"
             radius="md"
-            leftSection={<IconBrandGoogle style={{ width: rem(16), height: rem(16) }} />}
+            leftSection={<IconBrandGoogle style={{ width: rem(16), height: rem(16), color: "orangered"}} />}
             styles={{
               root: {
                 borderColor: 'var(--border)',
@@ -139,7 +139,7 @@ export default function LoginForm() {
             variant="default"
             size="sm"
             radius="md"
-            leftSection={<IconBrandFacebook style={{ width: rem(16), height: rem(16) }} />}
+            leftSection={<IconBrandFacebook style={{ width: rem(16), height: rem(16) , color: "blue"}} />}
             styles={{
               root: {
                 borderColor: 'var(--border)',
