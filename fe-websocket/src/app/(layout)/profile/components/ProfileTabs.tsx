@@ -4,10 +4,9 @@ import { FaImage, FaHeart, FaUserFriends, FaBookmark, FaChartLine } from 'react-
 type TabType = 'posts' | 'photos' | 'likes' | 'friends' | 'saved' | 'activity';
 
 interface ProfileTabsProps {
-  userId: string;
 }
 
-export default function ProfileTabs({ userId }: ProfileTabsProps) {
+export default function ProfileTabs({}: ProfileTabsProps) {
   const [activeTab, setActiveTab] = useState<TabType>('posts');
 
   const tabs = [
