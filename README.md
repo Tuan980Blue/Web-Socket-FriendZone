@@ -19,6 +19,10 @@
 - **Auth**: JWT 
 - **Realtime Layer**: Socket.IO / ws / WebSocket API
 
+### 🚀 Work Follow Chat Online
+![image](https://github.com/user-attachments/assets/879c3c09-2557-4e51-a606-16a67776ca80)
+
+
 setup cho dự án của bạn:
 Frontend: Deploy trên Vercel
 Tích hợp tốt với Next.js
