@@ -23,6 +23,10 @@ const Navbar = () => {
     router.push('/auth');
   };
 
+  const handleOptionClick = () => {
+    setIsProfileOpen(false);
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 h-16 bg-[#FAFAFA] dark:bg-[#121212] border-b border-[#DBDBDB] dark:border-[#262626] z-50">
       <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
@@ -134,11 +138,16 @@ const Navbar = () => {
 
                   {/* Menu Items */}
                   <Link href="/profile"
+                        onClick={handleOptionClick}
                         className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Profile</Link>
                   <Link href="/settings"
+                        onClick={handleOptionClick}
                         className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Settings</Link>
                   <button
-                      onClick={handleLogout}
+                      onClick={() => {
+                        handleLogout();
+                        handleOptionClick();
+                      }}
                       className="w-full text-left px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]"
                   >
                     Logout
