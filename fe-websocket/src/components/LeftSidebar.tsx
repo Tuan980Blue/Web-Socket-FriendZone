@@ -22,7 +22,7 @@ const LeftSidebar = () => {
 
   const menuItems = [
     { icon: Home, label: 'News Feed', href: '/' },
-    { icon: Users, label: 'Friends', href: '/friends' },
+    { icon: Users, label: 'Follows', href: '/follows' },
     { icon: Film , label: 'Reels', href: '/reels' },
     { icon: Bookmark, label: 'Saved', href: '/saved' },
     { icon: Compass, label: 'Explore', href: '/explore' },
