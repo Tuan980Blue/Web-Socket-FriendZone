@@ -23,12 +23,12 @@
 ![image](https://github.com/user-attachments/assets/879c3c09-2557-4e51-a606-16a67776ca80)
 
 
-setup cho dự án của bạn:
+setup cho dự án :
 Frontend: Deploy trên Vercel
 Tích hợp tốt với Next.js
 Dễ dàng setup và maintain
 Có CI/CD tự động
-Backend: Deploy trên Render hoặc Railway
+Backend: Deploy trên Render
 Hỗ trợ WebSocket tốt
 Dễ dàng kết nối với MongoDB
 Có SSL miễn phí
@@ -37,4 +37,4 @@ Database: Sử dụng MongoDB Atlas
 Dễ dàng backup và restore
 Có monitoring tools
 WebSocket: Có 2 lựa chọn:
-Sử dụng WebSocket trực tiếp từ backend (nếu deploy trên Render/Railway)
+Sử dụng WebSocket trực tiếp từ backend (nếu deploy trên Render)
