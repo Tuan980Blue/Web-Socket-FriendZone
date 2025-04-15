@@ -6,191 +6,13 @@ import {
     Container,
     Title,
     Tabs,
-    Card,
-    Avatar,
-    Text,
-    Group,
-    Button,
-    Skeleton,
     Stack,
-    Badge,
-    ActionIcon,
-    Tooltip,
-    Divider,
     Center,
+    Text,
 } from '@mantine/core';
-import { IconUserPlus, IconUserMinus, IconClock, IconRefresh } from '@tabler/icons-react';
-import { formatDistanceToNow } from 'date-fns';
-import { vi } from 'date-fns/locale';
-
-interface User {
-    id: string;
-    username: string;
-    fullName: string;
-    avatar: string;
-    bio: string;
-    status: string;
-    lastSeen: string;
-    followersCount: number;
-    followingCount: number;
-    mutualFollowersCount?: number;
-    isFollowing?: boolean;
-}
-
-interface UserCardProps {
-    user: User;
-    onFollow: (userId: string) => void;
-    onUnfollow: (userId: string) => void;
-    isLoading: boolean;
-    showMutualFollowers?: boolean;
-}
-
-const UserCard = ({ user, onFollow, onUnfollow, isLoading, showMutualFollowers = false }: UserCardProps) => {
-    return (
-        <Card withBorder padding="lg" radius="md">
-            <Group justify="space-between" align="flex-start">
-                <Group gap="sm">
-                    <Avatar
-                        src={user.avatar}
-                        alt={user.username}
-                        size="lg"
-                        radius="xl"
-                    />
-                    <div>
-                        <Text fw={500} size="lg">
-                            {user.fullName}
-                        </Text>
-                        <Text size="sm" c="dimmed">
-                            @{user.username}
-                        </Text>
-                        {user.bio && (
-                            <Text size="sm" mt="xs" lineClamp={2}>
-                                {user.bio}
-                            </Text>
-                        )}
-                        <Group gap="xs" mt="xs">
-                            <Badge
-                                variant="light"
-                                color={user.status === 'ONLINE' ? 'green' : 'gray'}
-                            >
-                                {user.status}
-                            </Badge>
-                            <Group gap={4}>
-                                <IconClock size={14} />
-                                <Text size="xs" c="dimmed">
-                                    {formatDistanceToNow(new Date(user.lastSeen), {
-                                        addSuffix: true,
-                                        locale: vi,
-                                    })}
-                                </Text>
-                            </Group>
-                            {showMutualFollowers && user.mutualFollowersCount && user.mutualFollowersCount > 0 && (
-                                <Text size="xs" c="dimmed">
-                                    {user.mutualFollowersCount} bạn chung
-                                </Text>
-                            )}
-                        </Group>
-                    </div>
-                </Group>
-                <Tooltip
-                    label={user.isFollowing ? 'Hủy theo dõi' : 'Theo dõi'}
-                    position="left"
-                >
-                    <ActionIcon
-                        variant={user.isFollowing ? 'light' : 'filled'}
-                        color={user.isFollowing ? 'red' : 'blue'}
-                        size="lg"
-                        radius="xl"
-                        onClick={() =>
-                            user.isFollowing ? onUnfollow(user.id) : onFollow(user.id)
-                        }
-                        loading={isLoading}
-                    >
-                        {user.isFollowing ? (
-                            <IconUserMinus size={20} />
-                        ) : (
-                            <IconUserPlus size={20} />
-                        )}
-                    </ActionIcon>
-                </Tooltip>
-            </Group>
-        </Card>
-    );
-};
-
-const SuggestionCard = ({ user, onFollow, isLoading }: UserCardProps) => {
-    return (
-        <Card withBorder padding="md" radius="md">
-            <Group justify="space-between" align="center">
-                <Group gap="sm">
-                    <Avatar
-                        src={user.avatar}
-                        alt={user.username}
-                        size="md"
-                        radius="xl"
-                    />
-                    <div>
-                        <Text fw={500} size="sm">
-                            {user.fullName}
-                        </Text>
-                        <Text size="xs" c="dimmed">
-                            @{user.username}
-                        </Text>
-                        {user.mutualFollowersCount && user.mutualFollowersCount > 0 && (
-                            <Text size="xs" c="dimmed" mt={2}>
-                                {user.mutualFollowersCount} bạn chung
-                            </Text>
-                        )}
-                    </div>
-                </Group>
-                <Button
-                    variant="light"
-                    color="blue"
-                    size="xs"
-                    radius="xl"
-                    leftSection={<IconUserPlus size={14} />}
-                    onClick={() => onFollow(user.id)}
-                    loading={isLoading}
-                >
-                    Theo dõi
-                </Button>
-            </Group>
-        </Card>
-    );
-};
-
-const LoadingSkeleton = () => (
-    <Stack gap="md">
-        {[1, 2, 3].map((i) => (
-            <Card withBorder padding="lg" radius="md" key={i}>
-                <Group gap="sm">
-                    <Skeleton height={50} circle />
-                    <div style={{ flex: 1 }}>
-                        <Skeleton height={20} width="40%" mb="xs" />
-                        <Skeleton height={15} width="20%" />
-                    </div>
-                </Group>
-            </Card>
-        ))}
-    </Stack>
-);
-
-const SuggestionLoadingSkeleton = () => (
-    <Stack gap="md">
-        {[1, 2, 3, 4, 5].map((i) => (
-            <Card withBorder padding="md" radius="md" key={i}>
-                <Group gap="sm">
-                    <Skeleton height={40} circle />
-                    <div style={{ flex: 1 }}>
-                        <Skeleton height={16} width="30%" mb="xs" />
-                        <Skeleton height={12} width="20%" />
-                    </div>
-                    <Skeleton height={24} width={80} radius="xl" />
-                </Group>
-            </Card>
-        ))}
-    </Stack>
-);
+import UserCard from './components/UserCard';
+import LoadingSkeleton from './components/LoadingSkeleton';
+import SuggestionsHeader from './components/SuggestionsHeader';
 
 const FollowsPage = () => {
     const {
@@ -204,18 +26,13 @@ const FollowsPage = () => {
         refreshSuggestions,
     } = useFollows();
 
-    /*
-     Use a loading state for each section
-    */
     const [isLoadingFollowers, setIsLoadingFollowers] = useState(false);
     const [isLoadingFollowing, setIsLoadingFollowing] = useState(false);
     const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
 
-    // Update loading states when activeTab changes
     useEffect(() => {
         if (activeTab === 'followers') {
             setIsLoadingFollowers(true);
-            // Simulate loading time
             setTimeout(() => setIsLoadingFollowers(false), 500);
         } else if (activeTab === 'following') {
             setIsLoadingFollowing(true);
@@ -228,7 +45,7 @@ const FollowsPage = () => {
 
     return (
         <Container size="md" py="xl">
-            <Title order={2} mb="xl">
+            <Title order={2} mb="xl" className="text-primary">
                 Quan hệ
             </Title>
             <Tabs 
@@ -238,15 +55,25 @@ const FollowsPage = () => {
                         setActiveTab(value);
                     }
                 }}
+                className="bg-white rounded-lg shadow-sm"
             >
-                <Tabs.List grow mb="md">
-                    <Tabs.Tab value="followers">
+                <Tabs.List grow mb="md" className="border-b border-gray-200">
+                    <Tabs.Tab 
+                        value="followers"
+                        className="hover:bg-gray-50 transition-colors duration-200"
+                    >
                         Người theo dõi ({followers?.length || 0})
                     </Tabs.Tab>
-                    <Tabs.Tab value="following">
+                    <Tabs.Tab 
+                        value="following"
+                        className="hover:bg-gray-50 transition-colors duration-200"
+                    >
                         Đang theo dõi ({following?.length || 0})
                     </Tabs.Tab>
-                    <Tabs.Tab value="suggestions">
+                    <Tabs.Tab 
+                        value="suggestions"
+                        className="hover:bg-gray-50 transition-colors duration-200"
+                    >
                         Gợi ý ({suggestions?.length || 0})
                     </Tabs.Tab>
                 </Tabs.List>
@@ -256,7 +83,7 @@ const FollowsPage = () => {
                         <LoadingSkeleton />
                     ) : (
                         <Stack gap="md">
-                            {followers?.map((user: User) => (
+                            {followers?.map((user) => (
                                 <UserCard
                                     key={user.id}
                                     user={user}
@@ -266,9 +93,11 @@ const FollowsPage = () => {
                                 />
                             ))}
                             {followers?.length === 0 && (
-                                <Text c="dimmed" ta="center" py="xl">
-                                    Chưa có người theo dõi
-                                </Text>
+                                <Center py="xl">
+                                    <Text c="dimmed" ta="center">
+                                        Chưa có người theo dõi
+                                    </Text>
+                                </Center>
                             )}
                         </Stack>
                     )}
@@ -279,7 +108,7 @@ const FollowsPage = () => {
                         <LoadingSkeleton />
                     ) : (
                         <Stack gap="md">
-                            {following?.map((user: User) => (
+                            {following?.map((user) => (
                                 <UserCard
                                     key={user.id}
                                     user={user}
@@ -289,9 +118,11 @@ const FollowsPage = () => {
                                 />
                             ))}
                             {following?.length === 0 && (
-                                <Text c="dimmed" ta="center" py="xl">
-                                    Chưa theo dõi ai
-                                </Text>
+                                <Center py="xl">
+                                    <Text c="dimmed" ta="center">
+                                        Chưa theo dõi ai
+                                    </Text>
+                                </Center>
                             )}
                         </Stack>
                     )}
@@ -299,33 +130,22 @@ const FollowsPage = () => {
 
                 <Tabs.Panel value="suggestions">
                     <Stack gap="md">
-                        <Group justify="space-between" align="center">
-                            <Text fw={500} size="lg">
-                                Gợi ý cho bạn
-                            </Text>
-                            <Button
-                                variant="subtle"
-                                color="gray"
-                                size="xs"
-                                leftSection={<IconRefresh size={14} />}
-                                onClick={refreshSuggestions}
-                                loading={isLoadingSuggestions}
-                            >
-                                Làm mới
-                            </Button>
-                        </Group>
-                        <Divider />
+                        <SuggestionsHeader 
+                            onRefresh={refreshSuggestions}
+                            isLoading={isLoadingSuggestions}
+                        />
                         {isLoadingSuggestions ? (
-                            <SuggestionLoadingSkeleton />
+                            <LoadingSkeleton variant="suggestion" count={5} />
                         ) : (
                             <Stack gap="md">
-                                {suggestions?.map((user: User) => (
-                                    <SuggestionCard
+                                {suggestions?.map((user) => (
+                                    <UserCard
                                         key={user.id}
                                         user={user}
                                         onFollow={handleFollow}
                                         onUnfollow={handleUnfollow}
                                         isLoading={isLoadingSuggestions}
+                                        variant="suggestion"
                                         showMutualFollowers
                                     />
                                 ))}
