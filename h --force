@@ -1,0 +1,69 @@
+[33m7ae2454[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdesign-auth[m[33m)[m Ignore .next/ directory
+[33m43c087c[m Merge branch 'main' into design-auth
+[33meca54a2[m add function follow
+[33mc63e9f6[m add function follow
+[33mb95315c[m add function follow
+[33m233eb65[m add function follow
+[33mbe55cbf[m add function follow
+[33mc750184[m[33m ([m[1;32mmain[m[33m)[m Update README.md
+[33m5ef1e43[m Merge pull request #21 from Tuan980Blue/design-auth
+[33m08e4627[m Merge branch 'main' into design-auth
+[33m719fa20[m add function follow
+[33mdfff223[m Merge pull request #20 from Tuan980Blue/design-auth
+[33m80fc341[m fix database
+[33m7dca271[m Merge pull request #19 from Tuan980Blue/design-auth
+[33m8c4c508[m fix database
+[33mf752bc7[m Merge pull request #18 from Tuan980Blue/design-auth
+[33m0d72af6[m fix database
+[33mb90326f[m Merge pull request #17 from Tuan980Blue/design-auth
+[33m4af3485[m Merge branch 'main' into design-auth
+[33m4be8acf[m fix fetch data User
+[33m2abb9bd[m fix fetch data User
+[33mbde776e[m Merge pull request #16 from Tuan980Blue/design-auth
+[33m8821916[m Merge branch 'main' into design-auth
+[33m411a8b1[m fix UI Auth
+[33m6e96d7f[m Merge pull request #15 from Tuan980Blue/design-auth
+[33md9fb1a1[m fix UI Auth
+[33m53fb0db[m fix UI Auth
+[33md891943[m Merge pull request #14 from Tuan980Blue/design-auth
+[33m14ab4dd[m fix UI Auth
+[33mad3c723[m fix UI Auth
+[33m874c91f[m[33m ([m[1;32mfix-home[m[33m)[m Update README.md
+[33mc3223b1[m Update README.md
+[33m8706b09[m Merge pull request #13 from Tuan980Blue/fix-home
+[33m2e96297[m Merge branch 'main' into fix-home
+[33mbd627fa[m fix useParam
+[33maef9ac5[m Merge pull request #12 from Tuan980Blue/fix-home
+[33m77dfd07[m delete ProfileTabs.tsx
+[33m7f941d0[m Merge pull request #11 from Tuan980Blue/fix-home
+[33m81dae94[m fix profile
+[33m59f139d[m Merge pull request #10 from Tuan980Blue/fix-home
+[33m7baddde[m fix profile
+[33m399b2c8[m Update README.md
+[33ma4fa9a4[m Merge pull request #9 from Tuan980Blue/fix-home
+[33maafaf29[m fix profile
+[33m701fcd1[m fix profile
+[33m70a7e90[m Merge pull request #8 from Tuan980Blue/fix-home
+[33m9afd6ad[m fix profile
+[33mfcef95c[m fix profile
+[33m32dd877[m Merge pull request #7 from Tuan980Blue/fix-home
+[33mfc12494[m Refactor home component for improved layout and responsiveness
+[33m7186386[m Merge pull request #6 from Tuan980Blue/fix-home
+[33mb19c5ee[m fix all
+[33m563c9e9[m Merge pull request #5 from Tuan980Blue/fix-home
+[33mc71a58a[m Merge branch 'main' into fix-home
+[33m7900e73[m fix all
+[33ma7a4cf5[m fix all
+[33mfdff367[m Update README.md
+[33maaa7f54[m Merge pull request #4 from Tuan980Blue/fix-home
+[33mbac92f5[m Merge branch 'main' into fix-home
+[33ma0013eb[m Merge branch 'main' into fix-home
+[33m9d7b316[m fix all
+[33m2f34a6f[m Merge pull request #3 from Tuan980Blue/fix-home
+[33m8028a92[m fix all
+[33m0cf11b3[m Merge pull request #2 from Tuan980Blue/fix-home
+[33me922b87[m fix all
+[33m90c52c3[m Merge pull request #1 from Tuan980Blue/fix-home
+[33m3a4d12a[m fix-home
+[33m3208a4b[m Add fe-websocket as regular folder
+[33ma32a534[m first commit
