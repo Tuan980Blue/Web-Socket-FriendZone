@@ -11,28 +11,17 @@ import {
 import { IconUserPlus, IconUserMinus, IconClock } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { User } from '@/types/user';
 
-interface User {
-    id: string;
-    username: string;
-    fullName: string;
-    avatar: string;
-    bio: string;
-    status: string;
-    lastSeen: string;
-    followersCount: number;
-    followingCount: number;
-    mutualFollowersCount?: number;
-    isFollowing?: boolean;
-}
-
-interface UserCardProps {
+export interface UserCardProps {
     user: User;
-    onFollow: (userId: string) => void;
-    onUnfollow: (userId: string) => void;
-    isLoading: boolean;
-    showMutualFollowers?: boolean;
+    onFollow: (userId: string) => Promise<void>;
+    onUnfollow: (userId: string) => Promise<void>;
+    isLoading?: boolean;
     variant?: 'default' | 'suggestion';
+    showMutualFollowers?: boolean;
+    showFollowButton?: boolean;
+    showUnfollowButton?: boolean;
 }
 
 const UserCard = ({ 

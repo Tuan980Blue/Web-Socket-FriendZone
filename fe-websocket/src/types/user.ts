@@ -22,6 +22,8 @@ export interface User {
   followersCount: number;
   followingCount: number;
   postsCount: number;
+  isFollowing?: boolean;
+  mutualFollowersCount?: number;
 }
 
 export interface UserContextType {
