@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useFollows } from '@/hooks/useFollows';
 import {
     Container,
@@ -24,24 +24,10 @@ const FollowsPage = () => {
         handleFollow,
         handleUnfollow,
         refreshSuggestions,
+        isLoadingFollowers,
+        isLoadingFollowing,
+        isLoadingSuggestions
     } = useFollows();
-
-    const [isLoadingFollowers, setIsLoadingFollowers] = useState(false);
-    const [isLoadingFollowing, setIsLoadingFollowing] = useState(false);
-    const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
-
-    useEffect(() => {
-        if (activeTab === 'followers') {
-            setIsLoadingFollowers(true);
-            setTimeout(() => setIsLoadingFollowers(false), 500);
-        } else if (activeTab === 'following') {
-            setIsLoadingFollowing(true);
-            setTimeout(() => setIsLoadingFollowing(false), 500);
-        } else if (activeTab === 'suggestions') {
-            setIsLoadingSuggestions(true);
-            setTimeout(() => setIsLoadingSuggestions(false), 500);
-        }
-    }, [activeTab]);
 
     return (
         <Container size="md" py="xl">
@@ -90,6 +76,8 @@ const FollowsPage = () => {
                                     onFollow={handleFollow}
                                     onUnfollow={handleUnfollow}
                                     isLoading={isLoadingFollowers}
+                                    showFollowButton={!user.isFollowing}
+                                    showUnfollowButton={user.isFollowing}
                                 />
                             ))}
                             {followers?.length === 0 && (
@@ -115,6 +103,8 @@ const FollowsPage = () => {
                                     onFollow={handleFollow}
                                     onUnfollow={handleUnfollow}
                                     isLoading={isLoadingFollowing}
+                                    showFollowButton={false}
+                                    showUnfollowButton={true}
                                 />
                             ))}
                             {following?.length === 0 && (
@@ -147,6 +137,8 @@ const FollowsPage = () => {
                                         isLoading={isLoadingSuggestions}
                                         variant="suggestion"
                                         showMutualFollowers
+                                        showFollowButton={!user.isFollowing}
+                                        showUnfollowButton={user.isFollowing}
                                     />
                                 ))}
                                 {suggestions?.length === 0 && (

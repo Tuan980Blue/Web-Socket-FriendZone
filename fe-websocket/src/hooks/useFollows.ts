@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { followService, User } from '../services/followService';
+import { followService } from '../services/followService';
+import { User } from '@/types/user';
 
 export const useFollows = () => {
     const [activeTab, setActiveTab] = useState<'followers' | 'following' | 'suggestions'>('followers');
@@ -14,51 +15,62 @@ export const useFollows = () => {
 
     // Fetch data only when needed
     const fetchFollowers = useCallback(async () => {
-        if (followers.length === 0) {
-            setIsLoading(prev => ({ ...prev, followers: true }));
-            try {
-                const data = await followService.getFollowers();
-                setFollowers(data);
-            } catch (error) {
-                console.error('Error fetching followers:', error);
-            } finally {
-                setIsLoading(prev => ({ ...prev, followers: false }));
-            }
+        setIsLoading(prev => ({ ...prev, followers: true }));
+        try {
+            const data = await followService.getFollowers();
+
+            setFollowers(data);
+        } catch (error) {
+            console.error('Error fetching followers:', error);
+        } finally {
+            setIsLoading(prev => ({ ...prev, followers: false }));
         }
-    }, [followers.length]);
+    }, []);
 
     const fetchFollowing = useCallback(async () => {
-        if (following.length === 0) {
-            setIsLoading(prev => ({ ...prev, following: true }));
-            try {
-                const data = await followService.getFollowing();
-                setFollowing(data);
-            } catch (error) {
-                console.error('Error fetching following:', error);
-            } finally {
-                setIsLoading(prev => ({ ...prev, following: false }));
-            }
+        setIsLoading(prev => ({ ...prev, following: true }));
+        try {
+            const data = await followService.getFollowing();
+            // All users in following list are being followed
+            const followingWithStatus = data.map(user => ({ ...user, isFollowing: true }));
+            setFollowing(followingWithStatus);
+        } catch (error) {
+            console.error('Error fetching following:', error);
+        } finally {
+            setIsLoading(prev => ({ ...prev, following: false }));
         }
-    }, [following.length]);
+    }, []);
 
     const fetchSuggestions = useCallback(async () => {
-        if (suggestions.length === 0) {
-            setIsLoading(prev => ({ ...prev, suggestions: true }));
-            try {
-                const data = await followService.getSuggestions();
-                setSuggestions(data);
-            } catch (error) {
-                console.error('Error fetching suggestions:', error);
-            } finally {
-                setIsLoading(prev => ({ ...prev, suggestions: false }));
-            }
+        setIsLoading(prev => ({ ...prev, suggestions: true }));
+        try {
+            const data = await followService.getSuggestions();
+            // Check follow status for each suggestion
+            const suggestionsWithStatus = await Promise.all(
+                data.map(async (user) => {
+                    const isFollowing = await followService.checkFollowStatus(user.id);
+                    return { ...user, isFollowing };
+                })
+            );
+            setSuggestions(suggestionsWithStatus);
+        } catch (error) {
+            console.error('Error fetching suggestions:', error);
+        } finally {
+            setIsLoading(prev => ({ ...prev, suggestions: false }));
         }
-    }, [suggestions.length]);
+    }, []);
 
     // Handle follow/unfollow with optimistic updates
     const handleFollow = useCallback(async (userId: string) => {
         try {
-            // Optimistic update for suggestions
+            // Optimistic update for all lists
+            setFollowers(prev => 
+                prev.map(user => 
+                    user.id === userId 
+                        ? { ...user, isFollowing: true }
+                        : user
+                )
+            );
             setSuggestions(prev => 
                 prev.map(user => 
                     user.id === userId 
@@ -69,17 +81,22 @@ export const useFollows = () => {
 
             await followService.followUser(userId);
 
-            // Update followers count for the target user
-            setSuggestions(prev =>
+            // Refresh lists to ensure consistency
+            if (activeTab === 'followers') {
+                fetchFollowers();
+            } else if (activeTab === 'suggestions') {
+                fetchSuggestions();
+            }
+        } catch (error) {
+            console.error('Error following user:', error);
+            // Revert optimistic updates on error
+            setFollowers(prev =>
                 prev.map(user =>
                     user.id === userId
-                        ? { ...user, followersCount: user.followersCount + 1 }
+                        ? { ...user, isFollowing: false }
                         : user
                 )
             );
-        } catch (error) {
-            console.error('Error following user:', error);
-            // Revert optimistic update on error
             setSuggestions(prev =>
                 prev.map(user =>
                     user.id === userId
@@ -88,22 +105,47 @@ export const useFollows = () => {
                 )
             );
         }
-    }, []);
+    }, [activeTab, fetchFollowers, fetchSuggestions]);
 
     const handleUnfollow = useCallback(async (userId: string) => {
         try {
-            // Optimistic update
+            // Optimistic update for all lists
+            setFollowers(prev => 
+                prev.map(user => 
+                    user.id === userId 
+                        ? { ...user, isFollowing: false }
+                        : user
+                )
+            );
             setFollowing(prev =>
                 prev.filter(user => user.id !== userId)
             );
+            setSuggestions(prev => 
+                prev.map(user => 
+                    user.id === userId 
+                        ? { ...user, isFollowing: false }
+                        : user
+                )
+            );
 
             await followService.unfollowUser(userId);
+
+            // Refresh lists to ensure consistency
+            if (activeTab === 'followers') {
+                fetchFollowers();
+            } else if (activeTab === 'following') {
+                fetchFollowing();
+            } else if (activeTab === 'suggestions') {
+                fetchSuggestions();
+            }
         } catch (error) {
             console.error('Error unfollowing user:', error);
-            // Revert optimistic update on error
+            // Revert optimistic updates on error
+            fetchFollowers();
             fetchFollowing();
+            fetchSuggestions();
         }
-    }, [fetchFollowing]);
+    }, [activeTab, fetchFollowers, fetchFollowing, fetchSuggestions]);
 
     // Load data based on active tab
     const loadDataForTab = useCallback((tab: 'followers' | 'following' | 'suggestions') => {

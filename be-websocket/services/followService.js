@@ -23,7 +23,31 @@ const getFollowers = async (userId) => {
                 },
             },
         });
-        return followers.map(follow => follow.follower);
+
+        // Get all follower IDs
+        const followerIds = followers.map(follow => follow.follower.id);
+
+        // Check if current user is following back each follower
+        const followingStatus = await prisma.follow.findMany({
+            where: {
+                followerId: userId,
+                followingId: {
+                    in: followerIds
+                }
+            },
+            select: {
+                followingId: true
+            }
+        });
+
+        // Create a map of following status
+        const followingMap = new Map(followingStatus.map(f => [f.followingId, true]));
+
+        // Return followers with isFollowing status
+        return followers.map(follow => ({
+            ...follow.follower,
+            isFollowing: followingMap.has(follow.follower.id)
+        }));
     } catch (error) {
         throw new Error('Error fetching followers: ' + error.message);
     }
@@ -62,32 +86,26 @@ const getSuggestions = async (userId) => {
         // Lấy danh sách ID của những người đã follow
         const following = await prisma.follow.findMany({
             where: {
-                followerId: userId,
+                followerId: userId
             },
             select: {
-                followingId: true,
-            },
+                followingId: true
+            }
         });
         const followingIds = following.map(f => f.followingId);
 
-        // Lấy danh sách ID của những người đã follow mình
-        const followers = await prisma.follow.findMany({
-            where: {
-                followingId: userId,
-            },
-            select: {
-                followerId: true,
-            },
-        });
-        const followerIds = followers.map(f => f.followerId);
-
-        // Lấy danh sách người dùng chưa follow và chưa follow mình
+        // Lấy danh sách người dùng mình chưa follow
         const suggestions = await prisma.user.findMany({
             where: {
                 AND: [
                     { id: { not: userId } }, // Không phải chính mình
-                    { id: { notIn: [...followingIds, ...followerIds] } }, // Chưa follow và chưa follow mình
-                ],
+                    { id: { notIn: [...followingIds] } },
+                    {
+                        lastSeen: {
+                            gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 30 days ago
+                        }
+                    }
+                ]
             },
             select: {
                 id: true,
@@ -98,9 +116,12 @@ const getSuggestions = async (userId) => {
                 status: true,
                 lastSeen: true,
                 followersCount: true,
-                followingCount: true,
+                followingCount: true
             },
-            take: 10, // Giới hạn 10 gợi ý
+            orderBy: {
+                followersCount: 'desc'
+            },
+            take: 10
         });
 
         return suggestions;
