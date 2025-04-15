@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const notificationService = require('./notificationService');
 
 // Lấy danh sách người đang follow mình (followers)
 const getFollowers = async (userId) => {
@@ -143,6 +144,9 @@ const followUser = async (followerId, followingId) => {
             where: { id: followerId },
             data: { followingCount: { increment: 1 } },
         });
+
+        // Tạo thông báo follow
+        await notificationService.createFollowNotification(followerId, followingId);
 
         return follow;
     } catch (error) {

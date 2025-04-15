@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
+const followRoutes = require('./routes/follow');
+const notificationRoutes = require('./routes/notification');
 const prisma = require('./prisma/client');
 
 const app = express();
@@ -13,6 +15,8 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/follows', followRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {

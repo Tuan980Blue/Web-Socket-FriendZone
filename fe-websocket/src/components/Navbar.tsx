@@ -82,21 +82,23 @@ const Navbar = () => {
 
           <div className="relative">
             {user ? (
-              <button
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="p-0.5 cursor-pointer rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-[#DD2A7B]"
-              >
-                <div className="relative">
-                  <div className="relative p-0.5 border border-[#FAFAFA] dark:border-[#121212] rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
-                    <Avatar
-                      src={user?.avatar || undefined}
-                      alt={user?.username || "Profile"}
-                      size={30}
-                      radius="xl"
-                    />
+                <button
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="border border-[#DD2A7B] dark:border-[#121212] cursor-pointer rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-[#DD2A7B]"
+                >
+                  <div className="relative">
+                    <div
+                        className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
+                    <div className="relative rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
+                      <Avatar
+                          src={user?.avatar || undefined}
+                          alt={user?.username || "Profile"}
+                          size="md"
+                          radius="xl"
+                      />
+                    </div>
                   </div>
-                </div>
-              </button>
+                </button>
             ) : (
                 <Link
                     href="/auth"
