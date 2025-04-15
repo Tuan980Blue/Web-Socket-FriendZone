@@ -1,5 +1,5 @@
 import React from 'react';
-import { Group, Text, Button, Divider } from '@mantine/core';
+import { Group, Text, Button, Divider, Stack } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 
 interface SuggestionsHeaderProps {
@@ -9,25 +9,29 @@ interface SuggestionsHeaderProps {
 
 const SuggestionsHeader = ({ onRefresh, isLoading }: SuggestionsHeaderProps) => {
     return (
-        <>
+        <Stack gap="xs">
             <Group justify="space-between" align="center">
-                <Text fw={500} size="lg" className="text-primary">
-                    Gợi ý cho bạn
+                <Text 
+                    fw={500} 
+                    size="lg" 
+                    className="text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]"
+                >
+                    Gợi ý theo dõi
                 </Text>
                 <Button
-                    variant="subtle"
-                    color="gray"
-                    size="xs"
-                    leftSection={<IconRefresh size={14} />}
+                    variant="light"
+                    size="sm"
+                    radius="xl"
                     onClick={onRefresh}
                     loading={isLoading}
-                    className="hover:bg-gray-100 transition-colors duration-200"
+                    className="bg-gradient-to-r from-[#F58529]/10 via-[#DD2A7B]/10 to-[#515BD4]/10 border-0 hover:scale-105 transition-transform duration-200"
+                    leftSection={<IconRefresh size={16} className="text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]" />}
                 >
                     Làm mới
                 </Button>
             </Group>
-            <Divider my="sm" className="border-gray-200" />
-        </>
+            <Divider color="#DBDBDB" className="dark:border-[#262626]" />
+        </Stack>
     );
 };
 

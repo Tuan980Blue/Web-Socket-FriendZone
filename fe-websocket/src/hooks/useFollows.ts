@@ -1,172 +1,186 @@
 import { useState, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { followService } from '../services/followService';
 import { User } from '@/types/user';
 
+// Query keys
+const QUERY_KEYS = {
+    FOLLOWERS: 'followers',
+    FOLLOWING: 'following',
+    SUGGESTIONS: 'suggestions'
+};
+
 export const useFollows = () => {
     const [activeTab, setActiveTab] = useState<'followers' | 'following' | 'suggestions'>('followers');
-    const [followers, setFollowers] = useState<User[]>([]);
-    const [following, setFollowing] = useState<User[]>([]);
-    const [suggestions, setSuggestions] = useState<User[]>([]);
-    const [isLoading, setIsLoading] = useState<Record<string, boolean>>({
-        followers: false,
-        following: false,
-        suggestions: false
+    const queryClient = useQueryClient();
+
+    // Fetch followers
+    const { data: followers = [], isLoading: isLoadingFollowers } = useQuery({
+        queryKey: [QUERY_KEYS.FOLLOWERS],
+        queryFn: async () => {
+            const data = await followService.getFollowers();
+            return data;
+        },
+        staleTime: 5 * 60 * 1000, // 5 minutes
     });
 
-    // Fetch data only when needed
-    const fetchFollowers = useCallback(async () => {
-        setIsLoading(prev => ({ ...prev, followers: true }));
-        try {
-            const data = await followService.getFollowers();
-
-            setFollowers(data);
-        } catch (error) {
-            console.error('Error fetching followers:', error);
-        } finally {
-            setIsLoading(prev => ({ ...prev, followers: false }));
-        }
-    }, []);
-
-    const fetchFollowing = useCallback(async () => {
-        setIsLoading(prev => ({ ...prev, following: true }));
-        try {
+    // Fetch following
+    const { data: following = [], isLoading: isLoadingFollowing } = useQuery({
+        queryKey: [QUERY_KEYS.FOLLOWING],
+        queryFn: async () => {
             const data = await followService.getFollowing();
-            // All users in following list are being followed
-            const followingWithStatus = data.map(user => ({ ...user, isFollowing: true }));
-            setFollowing(followingWithStatus);
-        } catch (error) {
-            console.error('Error fetching following:', error);
-        } finally {
-            setIsLoading(prev => ({ ...prev, following: false }));
-        }
-    }, []);
+            return data.map(user => ({ ...user, isFollowing: true }));
+        },
+        staleTime: 5 * 60 * 1000, // 5 minutes
+    });
 
-    const fetchSuggestions = useCallback(async () => {
-        setIsLoading(prev => ({ ...prev, suggestions: true }));
-        try {
+    // Fetch suggestions
+    const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery({
+        queryKey: [QUERY_KEYS.SUGGESTIONS],
+        queryFn: async () => {
             const data = await followService.getSuggestions();
-            // Check follow status for each suggestion
             const suggestionsWithStatus = await Promise.all(
                 data.map(async (user) => {
                     const isFollowing = await followService.checkFollowStatus(user.id);
                     return { ...user, isFollowing };
                 })
             );
-            setSuggestions(suggestionsWithStatus);
-        } catch (error) {
-            console.error('Error fetching suggestions:', error);
-        } finally {
-            setIsLoading(prev => ({ ...prev, suggestions: false }));
-        }
-    }, []);
+            return suggestionsWithStatus;
+        },
+        staleTime: 5 * 60 * 1000, // 5 minutes
+    });
 
-    // Handle follow/unfollow with optimistic updates
-    const handleFollow = useCallback(async (userId: string) => {
-        try {
-            // Optimistic update for all lists
-            setFollowers(prev => 
-                prev.map(user => 
-                    user.id === userId 
-                        ? { ...user, isFollowing: true }
-                        : user
-                )
-            );
-            setSuggestions(prev => 
-                prev.map(user => 
-                    user.id === userId 
-                        ? { ...user, isFollowing: true }
-                        : user
-                )
-            );
+    // Follow mutation
+    const followMutation = useMutation({
+        mutationFn: followService.followUser,
+        onMutate: async (userId) => {
+            // Cancel any outgoing refetches
+            await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.FOLLOWERS] });
+            await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.SUGGESTIONS] });
 
-            await followService.followUser(userId);
+            // Snapshot the previous value
+            const previousFollowers = queryClient.getQueryData<User[]>([QUERY_KEYS.FOLLOWERS]);
+            const previousSuggestions = queryClient.getQueryData<User[]>([QUERY_KEYS.SUGGESTIONS]);
 
-            // Refresh lists to ensure consistency
-            if (activeTab === 'followers') {
-                fetchFollowers();
-            } else if (activeTab === 'suggestions') {
-                fetchSuggestions();
+            // Optimistically update followers
+            if (previousFollowers) {
+                queryClient.setQueryData<User[]>([QUERY_KEYS.FOLLOWERS], (old) =>
+                    old?.map(user => 
+                        user.id === userId 
+                            ? { ...user, isFollowing: true }
+                            : user
+                    )
+                );
             }
-        } catch (error) {
-            console.error('Error following user:', error);
+
+            // Optimistically update suggestions
+            if (previousSuggestions) {
+                queryClient.setQueryData<User[]>([QUERY_KEYS.SUGGESTIONS], (old) =>
+                    old?.map(user => 
+                        user.id === userId 
+                            ? { ...user, isFollowing: true }
+                            : user
+                    )
+                );
+            }
+
+            return { previousFollowers, previousSuggestions };
+        },
+        onError: (err, userId, context) => {
             // Revert optimistic updates on error
-            setFollowers(prev =>
-                prev.map(user =>
-                    user.id === userId
-                        ? { ...user, isFollowing: false }
-                        : user
-                )
-            );
-            setSuggestions(prev =>
-                prev.map(user =>
-                    user.id === userId
-                        ? { ...user, isFollowing: false }
-                        : user
-                )
-            );
-        }
-    }, [activeTab, fetchFollowers, fetchSuggestions]);
+            if (context?.previousFollowers) {
+                queryClient.setQueryData([QUERY_KEYS.FOLLOWERS], context.previousFollowers);
+            }
+            if (context?.previousSuggestions) {
+                queryClient.setQueryData([QUERY_KEYS.SUGGESTIONS], context.previousSuggestions);
+            }
+        },
+        onSettled: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.FOLLOWERS] });
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.FOLLOWING] });
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.SUGGESTIONS] });
+        },
+    });
+
+    // Unfollow mutation
+    const unfollowMutation = useMutation({
+        mutationFn: followService.unfollowUser,
+        onMutate: async (userId) => {
+            // Cancel any outgoing refetches
+            await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.FOLLOWERS] });
+            await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.FOLLOWING] });
+            await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.SUGGESTIONS] });
+
+            // Snapshot the previous values
+            const previousFollowers = queryClient.getQueryData<User[]>([QUERY_KEYS.FOLLOWERS]);
+            const previousFollowing = queryClient.getQueryData<User[]>([QUERY_KEYS.FOLLOWING]);
+            const previousSuggestions = queryClient.getQueryData<User[]>([QUERY_KEYS.SUGGESTIONS]);
+
+            // Optimistically update followers
+            if (previousFollowers) {
+                queryClient.setQueryData<User[]>([QUERY_KEYS.FOLLOWERS], (old) =>
+                    old?.map(user => 
+                        user.id === userId 
+                            ? { ...user, isFollowing: false }
+                            : user
+                    )
+                );
+            }
+
+            // Optimistically update following
+            if (previousFollowing) {
+                queryClient.setQueryData<User[]>([QUERY_KEYS.FOLLOWING], (old) =>
+                    old?.filter(user => user.id !== userId)
+                );
+            }
+
+            // Optimistically update suggestions
+            if (previousSuggestions) {
+                queryClient.setQueryData<User[]>([QUERY_KEYS.SUGGESTIONS], (old) =>
+                    old?.map(user => 
+                        user.id === userId 
+                            ? { ...user, isFollowing: false }
+                            : user
+                    )
+                );
+            }
+
+            return { previousFollowers, previousFollowing, previousSuggestions };
+        },
+        onError: (err, userId, context) => {
+            // Revert optimistic updates on error
+            if (context?.previousFollowers) {
+                queryClient.setQueryData([QUERY_KEYS.FOLLOWERS], context.previousFollowers);
+            }
+            if (context?.previousFollowing) {
+                queryClient.setQueryData([QUERY_KEYS.FOLLOWING], context.previousFollowing);
+            }
+            if (context?.previousSuggestions) {
+                queryClient.setQueryData([QUERY_KEYS.SUGGESTIONS], context.previousSuggestions);
+            }
+        },
+        onSettled: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.FOLLOWERS] });
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.FOLLOWING] });
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.SUGGESTIONS] });
+        },
+    });
+
+    // Handle follow/unfollow
+    const handleFollow = useCallback(async (userId: string) => {
+        await followMutation.mutateAsync(userId);
+    }, [followMutation]);
 
     const handleUnfollow = useCallback(async (userId: string) => {
-        try {
-            // Optimistic update for all lists
-            setFollowers(prev => 
-                prev.map(user => 
-                    user.id === userId 
-                        ? { ...user, isFollowing: false }
-                        : user
-                )
-            );
-            setFollowing(prev =>
-                prev.filter(user => user.id !== userId)
-            );
-            setSuggestions(prev => 
-                prev.map(user => 
-                    user.id === userId 
-                        ? { ...user, isFollowing: false }
-                        : user
-                )
-            );
-
-            await followService.unfollowUser(userId);
-
-            // Refresh lists to ensure consistency
-            if (activeTab === 'followers') {
-                fetchFollowers();
-            } else if (activeTab === 'following') {
-                fetchFollowing();
-            } else if (activeTab === 'suggestions') {
-                fetchSuggestions();
-            }
-        } catch (error) {
-            console.error('Error unfollowing user:', error);
-            // Revert optimistic updates on error
-            fetchFollowers();
-            fetchFollowing();
-            fetchSuggestions();
-        }
-    }, [activeTab, fetchFollowers, fetchFollowing, fetchSuggestions]);
-
-    // Load data based on active tab
-    const loadDataForTab = useCallback((tab: 'followers' | 'following' | 'suggestions') => {
-        switch (tab) {
-            case 'followers':
-                fetchFollowers();
-                break;
-            case 'following':
-                fetchFollowing();
-                break;
-            case 'suggestions':
-                fetchSuggestions();
-                break;
-        }
-    }, [fetchFollowers, fetchFollowing, fetchSuggestions]);
+        await unfollowMutation.mutateAsync(userId);
+    }, [unfollowMutation]);
 
     // Handle tab change
     const handleTabChange = useCallback((tab: 'followers' | 'following' | 'suggestions') => {
         setActiveTab(tab);
-        loadDataForTab(tab);
-    }, [loadDataForTab]);
+    }, []);
 
     return {
         followers,
@@ -174,11 +188,11 @@ export const useFollows = () => {
         suggestions,
         activeTab,
         setActiveTab: handleTabChange,
-        isLoadingFollowers: isLoading.followers,
-        isLoadingFollowing: isLoading.following,
-        isLoadingSuggestions: isLoading.suggestions,
+        isLoadingFollowers,
+        isLoadingFollowing,
+        isLoadingSuggestions,
         handleFollow,
         handleUnfollow,
-        refreshSuggestions: fetchSuggestions
+        refreshSuggestions: () => queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.SUGGESTIONS] })
     };
 }; 
