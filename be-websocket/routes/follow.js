@@ -4,7 +4,7 @@ const followService = require('../services/followService');
 const authMiddleware = require('../middleware/auth');
 
 // Lấy danh sách người đang follow mình (followers)
-router.get('/followers', authMiddleware, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
         const followers = await followService.getFollowers(userId);

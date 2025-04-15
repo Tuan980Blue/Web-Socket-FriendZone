@@ -1,9 +1,16 @@
 {
-  "/(layout)/follows/page": "app/(layout)/follows/page.js",
-  "/(layout)/friends/page": "app/(layout)/friends/page.js",
-  "/(layout)/page": "app/(layout)/page.js",
-  "/(layout)/profile/page": "app/(layout)/profile/page.js",
-  "/(no-layout)/auth/page": "app/(no-layout)/auth/page.js",
   "/_not-found/page": "app/_not-found/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js"
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/(layout)/createPost/page": "app/(layout)/createPost/page.js",
+  "/(layout)/explore/page": "app/(layout)/explore/page.js",
+  "/(layout)/follows/page": "app/(layout)/follows/page.js",
+  "/(layout)/reels/page": "app/(layout)/reels/page.js",
+  "/(layout)/messages/page": "app/(layout)/messages/page.js",
+  "/(layout)/profile/page": "app/(layout)/profile/page.js",
+  "/(layout)/notifications/page": "app/(layout)/notifications/page.js",
+  "/(layout)/home/page": "app/(layout)/home/page.js",
+  "/(no-layout)/auth/page": "app/(no-layout)/auth/page.js",
+  "/(no-layout)/unauthorized/page": "app/(no-layout)/unauthorized/page.js",
+  "/(layout)/saved/page": "app/(layout)/saved/page.js",
+  "/(layout)/page": "app/(layout)/page.js"
 }
