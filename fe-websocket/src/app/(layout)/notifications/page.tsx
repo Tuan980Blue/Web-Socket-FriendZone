@@ -6,29 +6,43 @@ import {
     Container,
     Title,
     Card,
+    Avatar,
     Text,
     Group,
-    Avatar,
-    Stack,
-    Skeleton,
     Badge,
     ActionIcon,
     Tooltip,
-    Pagination,
+    Skeleton,
+    Stack,
     Center,
+    Button,
 } from '@mantine/core';
 import {
     IconHeart,
     IconMessageCircle,
     IconUserPlus,
+    IconMoodSmile,
+    IconCheck,
+    IconRefresh,
     IconAt,
     IconHash,
     IconEye,
-    IconMoodSmile,
-    IconCheck,
 } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+
+interface Notification {
+    id: string;
+    type: string;
+    data: string;
+    isRead: boolean;
+    createdAt: string;
+}
+
+interface NotificationCardProps {
+    notification: Notification;
+    onMarkAsRead: (id: string) => void;
+}
 
 const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -72,7 +86,7 @@ const getNotificationColor = (type: string) => {
     }
 };
 
-const NotificationCard = ({ notification, onMarkAsRead }: any) => {
+const NotificationCard = ({ notification, onMarkAsRead }: NotificationCardProps) => {
     const data = JSON.parse(notification.data);
 
     return (
@@ -155,56 +169,52 @@ const LoadingSkeleton = () => (
 const NotificationsPage = () => {
     const {
         notifications,
-        total,
-        page,
-        totalPages,
-        unreadCount,
         isLoading,
+        unreadCount,
         handleMarkAsRead,
-        handlePageChange,
+        handleMarkAllAsRead,
+        refreshNotifications
     } = useNotifications();
 
     return (
         <Container size="md" py="xl">
             <Group justify="space-between" mb="xl">
                 <Title order={2}>Thông báo</Title>
-                {unreadCount > 0 && (
-                    <Badge size="lg" variant="filled" color="blue">
-                        {unreadCount} chưa đọc
-                    </Badge>
-                )}
+                <Group>
+                    <Button
+                        variant="light"
+                        leftSection={<IconCheck size={20} />}
+                        onClick={handleMarkAllAsRead}
+                        disabled={unreadCount === 0}
+                    >
+                        Đánh dấu tất cả đã đọc
+                    </Button>
+                    <Button
+                        variant="light"
+                        leftSection={<IconRefresh size={20} />}
+                        onClick={refreshNotifications}
+                    >
+                        Làm mới
+                    </Button>
+                </Group>
             </Group>
 
             {isLoading ? (
                 <LoadingSkeleton />
+            ) : notifications.length === 0 ? (
+                <Center py="xl">
+                    <Text c="dimmed">Không có thông báo nào</Text>
+                </Center>
             ) : (
-                <>
-                    <Stack gap="md" mb="xl">
-                        {notifications.map((notification) => (
-                            <NotificationCard
-                                key={notification.id}
-                                notification={notification}
-                                onMarkAsRead={handleMarkAsRead}
-                            />
-                        ))}
-                        {notifications.length === 0 && (
-                            <Text c="dimmed" ta="center" py="xl">
-                                Chưa có thông báo nào
-                            </Text>
-                        )}
-                    </Stack>
-
-                    {totalPages > 1 && (
-                        <Center>
-                            <Pagination
-                                value={page}
-                                onChange={handlePageChange}
-                                total={totalPages}
-                                withEdges
-                            />
-                        </Center>
-                    )}
-                </>
+                <Stack gap="md">
+                    {notifications.map((notification) => (
+                        <NotificationCard
+                            key={notification.id}
+                            notification={notification as unknown as Notification}
+                            onMarkAsRead={handleMarkAsRead}
+                        />
+                    ))}
+                </Stack>
             )}
         </Container>
     );

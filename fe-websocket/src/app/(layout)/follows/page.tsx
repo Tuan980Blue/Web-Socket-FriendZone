@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFollows } from '@/hooks/useFollows';
 import {
     Container,
@@ -18,7 +18,6 @@ import {
     Tooltip,
     Divider,
     Center,
-    rem,
 } from '@mantine/core';
 import { IconUserPlus, IconUserMinus, IconClock, IconRefresh } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -200,15 +199,32 @@ const FollowsPage = () => {
         suggestions,
         activeTab,
         setActiveTab,
-        isLoadingFollowers,
-        isLoadingFollowing,
-        isLoadingSuggestions,
         handleFollow,
         handleUnfollow,
-        isFollowing,
-        isUnfollowing,
         refreshSuggestions,
     } = useFollows();
+
+    /*
+     Use a loading state for each section
+    */
+    const [isLoadingFollowers, setIsLoadingFollowers] = useState(false);
+    const [isLoadingFollowing, setIsLoadingFollowing] = useState(false);
+    const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+
+    // Update loading states when activeTab changes
+    useEffect(() => {
+        if (activeTab === 'followers') {
+            setIsLoadingFollowers(true);
+            // Simulate loading time
+            setTimeout(() => setIsLoadingFollowers(false), 500);
+        } else if (activeTab === 'following') {
+            setIsLoadingFollowing(true);
+            setTimeout(() => setIsLoadingFollowing(false), 500);
+        } else if (activeTab === 'suggestions') {
+            setIsLoadingSuggestions(true);
+            setTimeout(() => setIsLoadingSuggestions(false), 500);
+        }
+    }, [activeTab]);
 
     return (
         <Container size="md" py="xl">
@@ -246,7 +262,7 @@ const FollowsPage = () => {
                                     user={user}
                                     onFollow={handleFollow}
                                     onUnfollow={handleUnfollow}
-                                    isLoading={isFollowing || isUnfollowing}
+                                    isLoading={isLoadingFollowers}
                                 />
                             ))}
                             {followers?.length === 0 && (
@@ -269,7 +285,7 @@ const FollowsPage = () => {
                                     user={user}
                                     onFollow={handleFollow}
                                     onUnfollow={handleUnfollow}
-                                    isLoading={isFollowing || isUnfollowing}
+                                    isLoading={isLoadingFollowing}
                                 />
                             ))}
                             {following?.length === 0 && (
@@ -309,7 +325,7 @@ const FollowsPage = () => {
                                         user={user}
                                         onFollow={handleFollow}
                                         onUnfollow={handleUnfollow}
-                                        isLoading={isFollowing || isUnfollowing}
+                                        isLoading={isLoadingSuggestions}
                                         showMutualFollowers
                                     />
                                 ))}

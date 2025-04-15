@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file://D%3A/Projects/WebSocket-Social/fe-websocket/src/app/%28layout%29/home/page.tsx"],"sourcesContent":["'use client';\r\n\r\nimport React from 'react';\r\n\r\nconst Home = () => {\r\n    return (\r\n        <div className=\"max-w-7xl mx-auto\">\r\n            <h1 className=\"text-3xl font-bold text-gray-900 dark:text-white\">Welcome to FriendZone</h1>\r\n            <p className=\"mt-4 text-lg text-gray-600 dark:text-gray-300\">\r\n                Connect with friends and share your thoughts in real-time.\r\n            </p>\r\n        </div>\r\n    );\r\n};\r\n\r\nexport default Home;"],"names":[],"mappings":";;;;AAAA;;AAIA,MAAM,OAAO;IACT,qBACI,8OAAC;QAAI,WAAU;;0BACX,8OAAC;gBAAG,WAAU;0BAAmD;;;;;;0BACjE,8OAAC;gBAAE,WAAU;0BAAgD;;;;;;;;;;;;AAKzE;uCAEe","debugId":null}}]
-}
