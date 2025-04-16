@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUserData } from '@/hooks/useUserData';
+import { useProfileData } from '@/hooks/useProfileData';
 
 // Components
 import ProfileHero from './components/ProfileHero';
@@ -10,46 +10,39 @@ import ProfileStats from './components/ProfileStats';
 import ProfileTabs from './components/ProfileTabs';
 import ProfileStories from './components/ProfileStories';
 import ProfileInfo from "@/app/(layout)/profile/components/ProfileInfo";
+import ProfileSkeleton from './components/ProfileSkeleton';
 
 export default function Profile() {
-  const { user, isLoading } = useUserData();
   const router = useRouter();
   const [isDarkMode] = useState(false);
   const [activeTab, setActiveTab] = useState('posts');
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.push('/auth');
-    }
-  }, [user, isLoading, router]);
+  // Get current user's profile data
+  const { profileUser, isLoading } = useProfileData(undefined);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#121212]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-96 bg-[#DBDBDB] dark:bg-[#262626] rounded-lg"></div>
-            <div className="mt-4 h-32 bg-[#DBDBDB] dark:bg-[#262626] rounded-lg"></div>
-          </div>
-        </div>
-      </div>
-    );
+  // Redirect to auth if not logged in
+  if (!isLoading && !profileUser) {
+    router.push('/auth');
   }
 
-  if (!user) {
+  if (isLoading) {
+    return <ProfileSkeleton />;
+  }
+
+  if (!profileUser) {
     return null;
   }
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#121212]' : 'bg-[#FAFAFA]'}`}>
       {/* Hero Section */}
-      <ProfileHero user={user} />
+      <ProfileHero user={profileUser} isCurrentUser={true} />
       
       {/* Stories Section */}
-      <ProfileStories user={user} />
+      <ProfileStories user={profileUser} />
       
       {/* Stats with Animation */}
-      <ProfileStats user={user} />
+      <ProfileStats user={profileUser} />
       
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -67,7 +60,7 @@ export default function Profile() {
               )}
               {activeTab === 'introduces' && (
                   <div>
-                    <ProfileInfo user={user}/>
+                    <ProfileInfo user={profileUser}/>
                   </div>
               )}
               {activeTab === 'photos' && (

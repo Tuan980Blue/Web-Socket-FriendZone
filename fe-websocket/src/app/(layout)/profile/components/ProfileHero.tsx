@@ -5,6 +5,7 @@ import {Button} from "@mantine/core";
 
 interface ProfileHeroProps {
   user: User;
+  isCurrentUser: boolean;
 }
 
 const renderBio = (bio: string | null | undefined) => {
@@ -19,7 +20,7 @@ const renderBio = (bio: string | null | undefined) => {
   ));
 };
 
-export default function ProfileHero({ user }: ProfileHeroProps) {
+export default function ProfileHero({ user, isCurrentUser }: ProfileHeroProps) {
   return (
     <div className="relative">
       {/* Cover Image */}
@@ -62,12 +63,16 @@ export default function ProfileHero({ user }: ProfileHeroProps) {
 
           {/* Action Buttons */}
           <div className="flex gap-3 mt-4 md:mt-0">
-            <Button className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
-              Follow
-            </Button>
-            <Button className="px-6 py-2 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-colors">
-              Message
-            </Button>
+            {!isCurrentUser && (
+              <>
+                <Button className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
+                  {user.isFollowing ? 'Unfollow' : 'Follow'}
+                </Button>
+                <Button className="px-6 py-2 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-colors">
+                  Message
+                </Button>
+              </>
+            )}
             <Button className="p-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />

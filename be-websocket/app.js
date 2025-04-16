@@ -4,6 +4,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const followRoutes = require('./routes/follow');
 const notificationRoutes = require('./routes/notification');
+const usersRoutes = require('./routes/users');
 const prisma = require('./prisma/client');
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api/auth', authRoutes);
 app.use('/api/follows', followRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/users', usersRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
