@@ -20,7 +20,7 @@ const MobileNav = () => {
     { icon: Home, label: 'Home', href: '/' },
     { icon: Search, label: 'Search', href: '/search' },
     { icon: Film , label: 'Reels', href: '/reels' },
-    { icon: CircleFadingPlus, label: 'Create', href: '/posts' },
+    { icon: CircleFadingPlus, label: 'Posts', href: '/posts' },
     { icon: Users , label: 'Follow', href: '/follows' },
   ];
 
