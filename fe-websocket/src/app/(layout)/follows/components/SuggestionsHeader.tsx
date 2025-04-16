@@ -14,7 +14,7 @@ const SuggestionsHeader = ({ onRefresh, isLoading }: SuggestionsHeaderProps) => 
                 <Text 
                     fw={500} 
                     size="lg" 
-                    className="text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]"
+                    className="text-transparent italic bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]"
                 >
                     Gợi ý theo dõi
                 </Text>
@@ -24,8 +24,8 @@ const SuggestionsHeader = ({ onRefresh, isLoading }: SuggestionsHeaderProps) => 
                     radius="xl"
                     onClick={onRefresh}
                     loading={isLoading}
-                    className="bg-gradient-to-r from-[#F58529]/10 via-[#DD2A7B]/10 to-[#515BD4]/10 border-0 hover:scale-105 transition-transform duration-200"
-                    leftSection={<IconRefresh size={16} className="text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]" />}
+                    className="bg-gradient-to-r from-[#F58529]/10 via-[#DD2A7B]/10 to-[#515BD4]/10 border-0 transition-transform duration-200"
+                    leftSection={<IconRefresh size={16} className="text-blue-400 bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]" />}
                 >
                     Làm mới
                 </Button>
