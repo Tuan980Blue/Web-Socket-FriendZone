@@ -6,7 +6,7 @@ import {
   Home,
   Search,
   CircleFadingPlus ,
-  Heart,
+  Users ,
   Film
 } from 'lucide-react';
 import { Avatar, Tooltip } from '@mantine/core';
@@ -21,7 +21,7 @@ const MobileNav = () => {
     { icon: Search, label: 'Search', href: '/search' },
     { icon: Film , label: 'Reels', href: '/reels' },
     { icon: CircleFadingPlus, label: 'Create', href: '/create' },
-    { icon: Heart, label: 'Activity', href: '/activity' },
+    { icon: Users , label: 'Follow', href: '/follows' },
   ];
 
   return (
