@@ -6,6 +6,7 @@ interface PageProps {
   params: {
     userId: string;
   };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 export default function ProfilePage({ params }: PageProps) {

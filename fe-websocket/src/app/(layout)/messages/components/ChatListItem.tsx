@@ -1,5 +1,6 @@
 import React from 'react';
 import { Check, CheckCheck } from 'lucide-react';
+import Image from 'next/image';
 
 interface ChatListItemProps {
     avatar: string;
@@ -24,7 +25,13 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
         <div className="flex items-center p-4 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
             <div className="relative">
                 <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700">
-                    {avatar && <img src={avatar} alt={name} className="w-full h-full rounded-full object-cover" />}
+                    <Image 
+                        src={avatar || '/default-avatar.png'} 
+                        alt={name} 
+                        width={40} 
+                        height={40} 
+                        className="w-full h-full rounded-full object-cover"
+                    />
                 </div>
                 {isOnline && (
                     <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800" />

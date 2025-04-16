@@ -1,5 +1,6 @@
 import React from 'react';
 import { Check, CheckCheck, Clock } from 'lucide-react';
+import Image from 'next/image';
 
 interface MessageBubbleProps {
     content: string;
@@ -35,10 +36,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         switch (type) {
             case 'image':
                 return (
-                    <img
-                        src={content}
-                        alt="Message image"
-                        className="max-w-xs rounded-lg object-cover"
+                    <Image 
+                        src={content || '/default-image.png'} 
+                        alt="Message image" 
+                        width={200} 
+                        height={200} 
+                        className="rounded-lg"
                     />
                 );
             case 'voice':
