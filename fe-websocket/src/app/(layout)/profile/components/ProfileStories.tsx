@@ -29,7 +29,7 @@ export default function ProfileStories({ user }: ProfileStoriesProps) {
             <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-blue-500 p-1">
               <Image
                 src={story.image}
-                alt={story.title}
+                alt={user.username}
                 fill
                 className="object-cover rounded-full"
               />
