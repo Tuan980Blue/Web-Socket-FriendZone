@@ -3,12 +3,13 @@
 import ProfilePageClient from './ProfilePageClient';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     userId: string;
-  };
+  }>;
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export default function ProfilePage({ params }: PageProps) {
-  return <ProfilePageClient userId={params.userId} />;
+export default async function ProfilePage({ params }: PageProps) {
+  const resolvedParams = await params;
+  return <ProfilePageClient userId={resolvedParams.userId} />;
 }
