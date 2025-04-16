@@ -1,84 +1,115 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notificationService, Notification } from '../services/notificationService';
 
+// Query keys
+const QUERY_KEYS = {
+    NOTIFICATIONS: 'notifications',
+    UNREAD_COUNT: 'unread-count'
+};
+
 export const useNotifications = () => {
-    const [notifications, setNotifications] = useState<Notification[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(0);
+    const queryClient = useQueryClient();
 
-    // Fetch notifications only when needed
-    const fetchNotifications = useCallback(async () => {
-        if (notifications.length === 0) {
-            setIsLoading(true);
-            try {
-                const data = await notificationService.getNotifications();
-                setNotifications(data);
-                setUnreadCount(data.filter(n => !n.read).length);
-            } catch (error) {
-                console.error('Error fetching notifications:', error);
-            } finally {
-                setIsLoading(false);
+    // Fetch notifications
+    const { data: notifications = [], isLoading } = useQuery({
+        queryKey: [QUERY_KEYS.NOTIFICATIONS],
+        queryFn: async () => {
+            const response = await notificationService.getNotifications();
+            return response.notifications.map(notif => ({
+                ...notif,
+                data: JSON.parse(notif.data as unknown as string)
+            }));
+        },
+        staleTime: 3 * 60 * 1000, // 3 minutes
+    });
+
+    // Calculate unread count
+    const unreadCount = notifications.filter(n => !n.isRead).length;
+
+    // Mark notification as read mutation
+    const markAsReadMutation = useMutation({
+        mutationFn: notificationService.markAsRead,
+        onMutate: async (notificationId) => {
+            // Cancel any outgoing refetches
+            await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.NOTIFICATIONS] });
+
+            // Snapshot the previous value
+            const previousNotifications = queryClient.getQueryData<Notification[]>([QUERY_KEYS.NOTIFICATIONS]);
+
+            // Optimistically update notifications
+            if (previousNotifications) {
+                queryClient.setQueryData<Notification[]>([QUERY_KEYS.NOTIFICATIONS], (old) =>
+                    old?.map(notification =>
+                        notification.id === notificationId
+                            ? { ...notification, isRead: true }
+                            : notification
+                    )
+                );
             }
-        }
-    }, [notifications.length]);
 
-    // Handle marking notifications as read with optimistic updates
-    const handleMarkAsRead = useCallback(async (notificationId: string) => {
-        try {
-            // Optimistic update
-            setNotifications(prev =>
-                prev.map(notification =>
-                    notification.id === notificationId
-                        ? { ...notification, read: true }
-                        : notification
-                )
-            );
-            setUnreadCount(prev => Math.max(0, prev - 1));
-
-            await notificationService.markAsRead(notificationId);
-        } catch (error) {
-            console.error('Error marking notification as read:', error);
+            return { previousNotifications };
+        },
+        onError: (err, notificationId, context) => {
             // Revert optimistic update on error
-            fetchNotifications();
-        }
-    }, [fetchNotifications]);
+            if (context?.previousNotifications) {
+                queryClient.setQueryData([QUERY_KEYS.NOTIFICATIONS], context.previousNotifications);
+            }
+        },
+        onSettled: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.NOTIFICATIONS] });
+        },
+    });
 
-    const handleMarkAllAsRead = useCallback(async () => {
-        try {
-            // Optimistic update
-            setNotifications(prev =>
-                prev.map(notification => ({ ...notification, read: true }))
-            );
-            setUnreadCount(0);
+    // Mark all notifications as read mutation
+    const markAllAsReadMutation = useMutation({
+        mutationFn: notificationService.markAllAsRead,
+        onMutate: async () => {
+            // Cancel any outgoing refetches
+            await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.NOTIFICATIONS] });
 
-            await notificationService.markAllAsRead();
-        } catch (error) {
-            console.error('Error marking all notifications as read:', error);
+            // Snapshot the previous value
+            const previousNotifications = queryClient.getQueryData<Notification[]>([QUERY_KEYS.NOTIFICATIONS]);
+
+            // Optimistically update notifications
+            if (previousNotifications) {
+                queryClient.setQueryData<Notification[]>([QUERY_KEYS.NOTIFICATIONS], (old) =>
+                    old?.map(notification => ({ ...notification, isRead: true }))
+                );
+            }
+
+            return { previousNotifications };
+        },
+        onError: (err, _, context) => {
             // Revert optimistic update on error
-            fetchNotifications();
-        }
-    }, [fetchNotifications]);
+            if (context?.previousNotifications) {
+                queryClient.setQueryData([QUERY_KEYS.NOTIFICATIONS], context.previousNotifications);
+            }
+        },
+        onSettled: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.NOTIFICATIONS] });
+        },
+    });
 
     // Add new notification
-    const addNotification = useCallback((notification: Notification) => {
-        setNotifications(prev => [notification, ...prev]);
-        if (!notification.read) {
-            setUnreadCount(prev => prev + 1);
-        }
-    }, []);
-
-    // Initial fetch
-    useEffect(() => {
-        fetchNotifications();
-    }, [fetchNotifications]);
+    const addNotification = (notification: Notification) => {
+        const formattedNotification = {
+            ...notification,
+            data: JSON.parse(notification.data as unknown as string)
+        };
+        queryClient.setQueryData<Notification[]>([QUERY_KEYS.NOTIFICATIONS], (old) => 
+            old ? [formattedNotification, ...old] : [formattedNotification]
+        );
+    };
 
     return {
         notifications,
         isLoading,
         unreadCount,
-        handleMarkAsRead,
-        handleMarkAllAsRead,
+        handleMarkAsRead: markAsReadMutation.mutate,
+        handleMarkAllAsRead: markAllAsReadMutation.mutate,
         addNotification,
-        refreshNotifications: fetchNotifications
+        refreshNotifications: () => queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.NOTIFICATIONS] })
     };
 }; 

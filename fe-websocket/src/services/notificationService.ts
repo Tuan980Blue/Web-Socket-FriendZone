@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 const api = axios.create({
     baseURL: API_URL,
@@ -20,15 +20,27 @@ api.interceptors.request.use((config) => {
 
 export interface Notification {
     id: string;
+    userId: string;
     type: string;
-    message: string;
-    read: boolean;
-    createdAt: string;
-    user: {
-        id: string;
-        username: string;
-        avatar: string;
+    data: {
+        followerId: string;
+        followerUsername: string;
+        followerFullName: string;
+        followerAvatar: string;
+        timestamp: string;
     };
+    isRead: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+interface BackendResponse {
+    notifications: Notification[];
+    limit: number;
+    page: number;
+    total: number;
+    totalPages: number;
+    success: boolean;
 }
 
 class NotificationService {
@@ -43,9 +55,9 @@ class NotificationService {
         return NotificationService.instance;
     }
 
-    async getNotifications(): Promise<Notification[]> {
+    async getNotifications(): Promise<BackendResponse> {
         const response = await api.get('/notifications');
-        return response.data.data.notifications;
+        return response.data.data;
     }
 
     async markAsRead(notificationId: string): Promise<void> {
