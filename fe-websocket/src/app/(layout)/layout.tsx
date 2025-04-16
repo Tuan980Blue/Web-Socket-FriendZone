@@ -16,7 +16,7 @@ export default function Layout({
                                    children,
                                }: Readonly<{ children: React.ReactNode }>) {
     const pathname = usePathname();
-    const isProfilePage = pathname === '/profile';
+    const isProfilePage = pathname === '/profile' || pathname.startsWith('/profile/');
 
     return (
         <MantineProvider
