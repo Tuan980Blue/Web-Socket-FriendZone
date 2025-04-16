@@ -3,9 +3,10 @@
 import ProfilePageClient from './ProfilePageClient';
 
 type Props = {
-  params: { userId: string };
+  params: Promise<{ userId: string }>;
 };
 
 export default async function ProfilePage({ params }: Props) {
-  return <ProfilePageClient userId={params.userId} />;
+  const { userId } = await params;
+  return <ProfilePageClient userId={userId} />;
 }
