@@ -2,6 +2,11 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { User } from '@/types/user';
 import {Button} from "@mantine/core";
+import {IconUserPlus} from "@tabler/icons-react";
+import { RiUserFollowLine } from "react-icons/ri";
+import { IoMdMore } from "react-icons/io";
+import { AiOutlineMessage } from "react-icons/ai";
+import React from "react";
 
 interface ProfileHeroProps {
   user: User;
@@ -63,20 +68,53 @@ export default function ProfileHero({ user, isCurrentUser }: ProfileHeroProps) {
 
           {/* Action Buttons */}
           <div className="flex gap-3 mt-4 md:mt-0">
-            {!isCurrentUser && (
+            {isCurrentUser ? (
+              <Button
+                className="px-6 py-2 rounded-lg border border-[#DBDBDB] dark:border-[#262626] text-[#262626] dark:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#121212] transition-colors duration-200"
+              >
+                Chỉnh sửa trang cá nhân
+              </Button>
+            ) : (
               <>
-                <Button className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
-                  {user.isFollowing ? 'Unfollow' : 'Follow'}
-                </Button>
-                <Button className="px-6 py-2 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-colors">
+                {user.isFollowing ? (
+                    <Button
+                        variant="light"
+                        size="sm"
+                        radius="md"
+                        className="transition-all duration-200 bg-[#FAFAFA] dark:bg-[#121212] border border-[#DBDBDB] dark:border-[#262626] text-[#262626] dark:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#121212]"
+                        leftSection={<RiUserFollowLine size={14} className="text-[#262626] dark:text-[#FAFAFA]"/>}
+                    >
+                      Đang theo dõi
+                    </Button>
+                ) : (
+                    <Button
+                        variant="filled"
+                        size="sm"
+                        radius="md"
+                        className="bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90 transition-all duration-200"
+                        leftSection={<IconUserPlus size={14} />}
+                    >
+                      Theo dõi
+                    </Button>
+                )}
+                <Button
+                    variant="outline"
+                    size="sm"
+                    radius="md"
+                    className="border border-[#DBDBDB] dark:border-[#262626] text-[#262626] dark:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#121212] transition-all duration-200"
+                    leftSection={<AiOutlineMessage size={14} />}
+                >
                   Message
                 </Button>
               </>
             )}
-            <Button className="p-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-              </svg>
+            <Button
+                variant="subtle"
+                size="sm"
+                radius="md"
+                className="text-[#262626] dark:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#121212] transition-all duration-200"
+            >
+              <IoMdMore size={24}/>
             </Button>
           </div>
         </div>

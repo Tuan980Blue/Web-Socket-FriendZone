@@ -1,14 +1,16 @@
 'use client';
 
 import React from 'react';
+import QuickPost from "@/components/quickPost/QuickPost";
 
 const Home = () => {
     return (
         <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome to FriendZone</h1>
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-                Connect with friends and share your thoughts in real-time.
-            </p>
+            {/* Quick Post Section */}
+            <QuickPost isCurrentUser={true} />
+            <div>
+                Các bài đăng của mọi người ở đây.....
+            </div>
         </div>
     );
 };
