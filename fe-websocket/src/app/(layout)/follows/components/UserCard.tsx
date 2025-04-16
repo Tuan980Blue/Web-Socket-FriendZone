@@ -69,7 +69,7 @@ const UserCard = ({
                                 size={nameSize} 
                                 className="text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]"
                             >
-                                {user.fullName}
+                                {user.fullName || user.username}
                             </Text>
                             <Text size="sm" className="text-[#8E8E8E] dark:text-[#A0A0A0]">
                                 @{user.username}
