@@ -36,8 +36,7 @@ class ProfileService {
       };
     } catch (error) {
       console.error('Error fetching profile:', error);
-      throw new Error('Failed to fetch profile data');
-    }
+      throw new Error(`Failed to fetch profile data: ${error.message}`);
   }
 
   async updateProfile(id: string, data: Partial<User>): Promise<User> {
