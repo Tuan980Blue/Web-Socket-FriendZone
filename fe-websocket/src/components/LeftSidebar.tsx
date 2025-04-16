@@ -73,11 +73,10 @@ const LeftSidebar = () => {
         </nav>
 
         {/* Create Post Button */}
-        <button className="w-full mt-4 p-2 bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white rounded-lg hover:opacity-90 flex items-center justify-center space-x-2">
+        <Link href={"/posts"} className="w-full mt-4 p-2 bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white rounded-lg hover:opacity-90 flex items-center justify-center space-x-2">
           <CircleFadingPlus size={20} />
           <span>Create Post</span>
-        </button>
-
+        </Link>
 
         <div className="mt-6">
           <h3 className="text-sm font-medium text-[#666666] dark:text-[#A0A0A0] mb-2">More..</h3>

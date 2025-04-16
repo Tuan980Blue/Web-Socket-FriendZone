@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Bell, Home, MessageSquare, Plus, Search } from 'lucide-react';
+import {Bell, CircleFadingPlus, Home, MessageSquare, Search} from 'lucide-react';
 import { Avatar } from '@mantine/core';
 import Image from "next/image";
 import { useUserData } from '@/hooks/useUserData';
@@ -76,9 +76,9 @@ const Navbar = () => {
             <span className="absolute top-1 right-1 w-2 h-2 bg-[#ED4956] rounded-full"></span>
           </Link>
 
-          <button className="p-2 rounded-full hidden md:block bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90">
-            <Plus size={24} />
-          </button>
+          <Link href="/posts" className={`p-2 rounded-full hidden md:block bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90 ${pathname === '/post' ? 'icon-primery' : 'text-[#666666] dark:text-[#A0A0A0] dark:hover:text-[#FAFAFA]'}`}>
+            <CircleFadingPlus size={24} />
+          </Link>
 
           <div className="relative">
             {user ? (

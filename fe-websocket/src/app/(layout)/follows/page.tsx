@@ -164,7 +164,7 @@ const FollowsPage = () => {
                             )}
                         </Tabs.Panel>
 
-                        <Tabs.Panel value="following" pt="xl">
+                        <Tabs.Panel value="following" pt="xl" >
                             {isLoadingFollowing ? (
                                 <LoadingSkeleton />
                             ) : (
@@ -191,7 +191,7 @@ const FollowsPage = () => {
                             )}
                         </Tabs.Panel>
 
-                        <Tabs.Panel value="suggestions" pt="xl">
+                        <Tabs.Panel value="suggestions" pt="xl" >
                             <Stack gap="md">
                                 <SuggestionsHeader 
                                     onRefresh={refreshSuggestions}

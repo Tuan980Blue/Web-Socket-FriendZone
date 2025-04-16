@@ -35,57 +35,57 @@ const UserCard = ({
     variant = 'default'
 }: UserCardProps) => {
     const isSuggestion = variant === 'suggestion';
-    const cardPadding = isSuggestion ? 'md' : 'lg';
-    const avatarSize = isSuggestion ? 'md' : 'lg';
-    const nameSize = isSuggestion ? 'sm' : 'lg';
+    const cardPadding = isSuggestion ? 'sm' : 'md';
+    const avatarSize = isSuggestion ? 'sm' : 'md';
+    const nameSize = isSuggestion ? 'sm' : 'md';
 
     return (
         <Card 
             withBorder 
             padding={cardPadding} 
-            radius="lg"
-            className="hover:shadow-lg transition-all duration-300 bg-[#FAFAFA] dark:bg-[#121212] border-[#DBDBDB] dark:border-[#262626]"
+            radius="md"
+            className="hover:shadow-md transition-all duration-200 bg-white dark:bg-[#121212] border-[#DBDBDB] dark:border-[#262626]"
         >
-            <Group justify="space-between" align="flex-start">
-                <Group gap="md" className="flex-1">
+            <Group justify="space-between" align="center" gap="sm">
+                <Group gap="sm" className="flex-1">
                     <Link href={`/profile/${user.id}`} className="hover:opacity-80 transition-opacity">
                         <div className="relative">
                             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
-                            <div className="relative p-0.5 rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
+                            <div className="relative p-0.5 rounded-full bg-white dark:bg-[#121212]">
                                 <Avatar
                                     src={user.avatar}
                                     alt={user.username}
                                     size={avatarSize}
                                     radius="xl"
-                                    className="border-2 border-[#FAFAFA] dark:border-[#121212]"
+                                    className="border-2 border-white dark:border-[#121212]"
                                 />
                             </div>
                         </div>
                     </Link>
-                    <Stack gap={4} className="flex-1">
+                    <Stack gap={2} className="flex-1">
                         <Link href={`/profile/${user.id}`} className="hover:opacity-80 transition-opacity">
                             <Text 
-                                fw={600} 
+                                fw={500} 
                                 size={nameSize} 
-                                className="text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]"
+                                className="text-[#262626] dark:text-white"
                             >
                                 {user.fullName || user.username}
                             </Text>
-                            <Text size="sm" className="text-[#8E8E8E] dark:text-[#A0A0A0]">
+                            <Text size="xs" className="text-[#8E8E8E] dark:text-[#A0A0A0]">
                                 @{user.username}
                             </Text>
                         </Link>
-                        <Group wrap="wrap">
+                        <Group gap="xs" wrap="wrap">
                             <Badge
                                 variant="light"
                                 color={user.status === 'ONLINE' ? 'green' : 'gray'}
                                 className="bg-opacity-20"
-                                size="sm"
+                                size="xs"
                             >
                                 {user.status}
                             </Badge>
-                            <Group gap={4}>
-                                <IconClock size={14} className="text-[#8E8E8E]" />
+                            <Group gap={2}>
+                                <IconClock size={12} className="text-[#8E8E8E]" />
                                 <Text size="xs" className="text-[#8E8E8E]">
                                     {formatDistanceToNow(new Date(user.lastSeen), {
                                         addSuffix: true,
@@ -94,14 +94,14 @@ const UserCard = ({
                                 </Text>
                             </Group>
                             {showMutualFollowers && user.mutualFollowersCount && user.mutualFollowersCount > 0 && (
-                                <Group gap={4}>
-                                    <IconUsers size={14} className="text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]" />
+                                <Group gap={2}>
+                                    <IconUsers size={12} className="text-[#8E8E8E]" />
                                     <Text size="xs" className="text-[#8E8E8E]">
                                         {user.mutualFollowersCount} bạn chung
                                     </Text>
                                 </Group>
                             )}
-                            <Text size="xs" color={"pink"}>
+                            <Text size="xs" className="text-[#8E8E8E]">
                                 {user.followersCount} người theo dõi
                             </Text>
                         </Group>
@@ -115,7 +115,7 @@ const UserCard = ({
                         <Button
                             variant="light"
                             color="red"
-                            size="sm"
+                            size="xs"
                             radius="xl"
                             onClick={() => onUnfollow(user.id)}
                             loading={isLoading}
@@ -125,12 +125,13 @@ const UserCard = ({
                         </Button>
                     ) : (
                         <Button
-                            variant="outline"
-                            size={"compact-sm"}
-                            radius="md"
+                            variant="filled"
+                            size="xs"
+                            radius="xl"
                             onClick={() => onFollow(user.id)}
                             loading={isLoading}
-                            leftSection={<IconUserPlus size={14} />}
+                            leftSection={<IconUserPlus size={12} />}
+                            className="bg-[#0095F6] hover:bg-[#1877F2]"
                         >
                             Theo dõi
                         </Button>
