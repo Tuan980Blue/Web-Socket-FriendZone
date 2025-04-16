@@ -19,9 +19,8 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-class ProfileService {
-
-  async getProfileById(id: string): Promise<User> {
+export class ProfileService {
+  getProfileById = async (id: string): Promise<User> => {
     try {
       const response = await api.get(`/users/${id}`);
       const userData = response.data.user;
@@ -38,9 +37,9 @@ class ProfileService {
       console.error('Error fetching profile:', error);
       throw new Error('Failed to fetch profile data');
     }
-  }
+  };
 
-  async updateProfile(id: string, data: Partial<User>): Promise<User> {
+  updateProfile = async (id: string, data: Partial<User>): Promise<User> => {
     try {
       const response = await api.put(`/users/${id}`, data);
       const userData = response.data.user;
@@ -56,9 +55,9 @@ class ProfileService {
       console.error('Error updating profile:', error);
       throw new Error('Failed to update profile');
     }
-  }
+  };
 
-  async updateAvatar(id: string, file: File): Promise<string> {
+  updateAvatar = async (id: string, file: File): Promise<string> => {
     try {
       const formData = new FormData();
       formData.append('avatar', file);
@@ -74,9 +73,9 @@ class ProfileService {
       console.error('Error updating avatar:', error);
       throw new Error('Failed to update avatar');
     }
-  }
+  };
 
-  async updateCover(id: string, file: File): Promise<string> {
+  updateCover = async (id: string, file: File): Promise<string> => {
     try {
       const formData = new FormData();
       formData.append('cover', file);
@@ -92,7 +91,7 @@ class ProfileService {
       console.error('Error updating cover:', error);
       throw new Error('Failed to update cover');
     }
-  }
+  };
 }
 
 export const profileService = new ProfileService(); 
