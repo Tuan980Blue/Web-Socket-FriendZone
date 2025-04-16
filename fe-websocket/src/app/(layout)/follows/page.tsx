@@ -55,7 +55,7 @@ const FollowsPage = () => {
                                             <div className="w-full h-full rounded-full bg-white dark:bg-[#121212] p-[2px]">
                                                 <Image 
                                                     src={user?.avatar || '/default-avatar.png'}
-                                                    alt={user?.username}
+                                                    alt={user?.username || 'User avatar'}
                                                     width={40}
                                                     height={40}
                                                     className="w-full h-full rounded-full object-cover"
