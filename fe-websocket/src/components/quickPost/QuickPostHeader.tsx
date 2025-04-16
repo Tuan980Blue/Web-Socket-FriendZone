@@ -21,14 +21,16 @@ export default function QuickPostHeader({ isExpanded, setIsExpanded }: QuickPost
       <div className="flex-1">
         <div className="flex justify-between items-center mb-2">
           <h3 className={`font-semibold text-lg ${theme === 'dark' ? 'text-[#FAFAFA]' : 'text-[#262626]'}`}>
-            Tạo bài viết mới
+            {isExpanded ? 'Tạo bài viết mới' : 'Bạn đang nghĩ gì?'}
           </h3>
-          <button 
-            onClick={() => setIsExpanded(false)}
-            className={`p-1.5 rounded-full hover:bg-[#FAFAFA] dark:hover:bg-[#262626] transition-colors duration-200`}
-          >
-            <X size={20} className={theme === 'dark' ? 'text-[#8E8E8E]' : 'text-[#8E8E8E]'} />
-          </button>
+          {isExpanded && (
+            <button 
+              onClick={() => setIsExpanded(false)}
+              className={`p-1.5 rounded-full hover:bg-[#FAFAFA] dark:hover:bg-[#262626] transition-colors duration-200`}
+            >
+              <X size={20} className={theme === 'dark' ? 'text-[#8E8E8E]' : 'text-[#8E8E8E]'} />
+            </button>
+          )}
         </div>
       </div>
     </div>
