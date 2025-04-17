@@ -96,25 +96,28 @@ const getUserNotifications = async (userId, page = 1, limit = 20) => {
             take: limit,
         });
 
-        // Ensure data field is valid JSON
+        // Ensure data field is valid JSON and handle null values
         const processedNotifications = notifications.map(notification => {
             try {
-                // If data is null or empty, set it to an empty object
+                // If data is null or empty, set it to an empty object string
                 if (!notification.data) {
                     return {
                         ...notification,
-                        data: JSON.stringify({})
+                        data: '{}'
                     };
                 }
                 
                 // Try to parse the data to ensure it's valid JSON
-                JSON.parse(notification.data);
-                return notification;
-            } catch (error) {
-                // If parsing fails, set data to an empty object
+                const parsedData = JSON.parse(notification.data);
                 return {
                     ...notification,
-                    data: JSON.stringify({})
+                    data: JSON.stringify(parsedData)
+                };
+            } catch (error) {
+                // If parsing fails, set data to an empty object string
+                return {
+                    ...notification,
+                    data: '{}'
                 };
             }
         });
@@ -133,6 +136,7 @@ const getUserNotifications = async (userId, page = 1, limit = 20) => {
             totalPages: Math.ceil(total / limit),
         };
     } catch (error) {
+        console.error('Error in getUserNotifications:', error);
         throw new Error('Error fetching notifications: ' + error.message);
     }
 };
