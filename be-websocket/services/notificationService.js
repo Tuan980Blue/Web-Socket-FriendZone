@@ -52,15 +52,25 @@ const createNotification = async (userId, type, data) => {
         // Generate content based on type and data
         const content = generateNotificationContent(type, jsonData);
 
+        // Create notification with only the fields that are defined in the Prisma schema
         const notification = await prisma.notification.create({
             data: {
                 userId,
                 type,
                 content,
-                data: jsonData,
                 isRead: false,
             },
         });
+        
+        // If the notification was created successfully and we have data to store,
+        // update it with the data field
+        if (notification && jsonData) {
+            await prisma.notification.update({
+                where: { id: notification.id },
+                data: { data: jsonData }
+            });
+        }
+        
         return notification;
     } catch (error) {
         throw new Error('Error creating notification: ' + error.message);
