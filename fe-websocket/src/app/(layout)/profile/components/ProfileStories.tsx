@@ -9,8 +9,8 @@ interface ProfileStoriesProps {
 export default function ProfileStories({ user }: ProfileStoriesProps) {
   // Mock stories data - in real app this would come from the backend
   const stories = [
-    { id: 1, image: '/story1.jpg', title: 'Beach Day' },
-    { id: 2, image: '/story2.jpg', title: 'Food' },
+    { id: 1, image: '/image-person.png', title: 'Beach Day' },
+    { id: 2, image: '/image-person.png', title: 'Food' },
   ];
 
   return (

@@ -4,11 +4,27 @@ const prisma = new PrismaClient();
 // Tạo thông báo mới
 const createNotification = async (userId, type, data) => {
     try {
+        // Ensure data is valid JSON
+        let jsonData;
+        if (typeof data === 'string') {
+            try {
+                // If data is already a string, try to parse it to ensure it's valid JSON
+                JSON.parse(data);
+                jsonData = data;
+            } catch (error) {
+                // If parsing fails, stringify the data
+                jsonData = JSON.stringify(data || {});
+            }
+        } else {
+            // If data is an object, stringify it
+            jsonData = JSON.stringify(data || {});
+        }
+
         const notification = await prisma.notification.create({
             data: {
                 userId,
                 type,
-                data: JSON.stringify(data),
+                data: jsonData,
                 isRead: false,
             },
         });
@@ -80,6 +96,29 @@ const getUserNotifications = async (userId, page = 1, limit = 20) => {
             take: limit,
         });
 
+        // Ensure data field is valid JSON
+        const processedNotifications = notifications.map(notification => {
+            try {
+                // If data is null or empty, set it to an empty object
+                if (!notification.data) {
+                    return {
+                        ...notification,
+                        data: JSON.stringify({})
+                    };
+                }
+                
+                // Try to parse the data to ensure it's valid JSON
+                JSON.parse(notification.data);
+                return notification;
+            } catch (error) {
+                // If parsing fails, set data to an empty object
+                return {
+                    ...notification,
+                    data: JSON.stringify({})
+                };
+            }
+        });
+
         const total = await prisma.notification.count({
             where: {
                 userId,
@@ -87,7 +126,7 @@ const getUserNotifications = async (userId, page = 1, limit = 20) => {
         });
 
         return {
-            notifications,
+            notifications: processedNotifications,
             total,
             page,
             limit,
