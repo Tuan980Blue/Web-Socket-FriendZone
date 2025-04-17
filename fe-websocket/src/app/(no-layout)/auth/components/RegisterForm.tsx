@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextInput, PasswordInput, Button, Group, Stack, Select, Text, Divider, rem } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Group, Stack, Select, Text, Divider, rem, SimpleGrid } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -72,83 +72,87 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
+    <form onSubmit={form.onSubmit(handleSubmit)} className={"w-[100%]"}>
       <Stack gap="sm">
         <TextInput
-          required
-          size="sm"
-          label="Username"
-          placeholder="Choose a username"
-          radius="md"
-          {...form.getInputProps('username')}
-          styles={inputStyles}
+            required
+            size="sm"
+            label="Full Name"
+            placeholder="Enter your full name"
+            radius="md"
+            {...form.getInputProps('fullName')}
+            styles={inputStyles}
         />
-        
-        <TextInput
-          required
-          size="sm"
-          label="Email"
-          placeholder="Enter your email"
-          radius="md"
-          {...form.getInputProps('email')}
-          styles={inputStyles}
-        />
-        
-        <PasswordInput
-          required
-          size="sm"
-          label="Password"
-          placeholder="Create a password"
-          radius="md"
-          {...form.getInputProps('password')}
-          styles={inputStyles}
-        />
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
+          <TextInput
+            required
+            size="sm"
+            label="Username"
+            placeholder="Choose a username"
+            radius="md"
+            {...form.getInputProps('username')}
+            styles={inputStyles}
+          />
+          
+          <TextInput
+            required
+            size="sm"
+            label="Email"
+            placeholder="Enter your email"
+            radius="md"
+            {...form.getInputProps('email')}
+            styles={inputStyles}
+          />
+        </SimpleGrid>
 
-        <PasswordInput
-          required
-          size="sm"
-          label="Confirm Password"
-          placeholder="Confirm your password"
-          radius="md"
-          {...form.getInputProps('confirmPassword')}
-          styles={inputStyles}
-        />
-        
-        <TextInput
-          required
-          size="sm"
-          label="Full Name"
-          placeholder="Enter your full name"
-          radius="md"
-          {...form.getInputProps('fullName')}
-          styles={inputStyles}
-        />
-        
-        <Select
-          required
-          size="sm"
-          label="Gender"
-          placeholder="Select your gender"
-          radius="md"
-          data={[
-            { value: 'MALE', label: 'Male' },
-            { value: 'FEMALE', label: 'Female' },
-            { value: 'OTHER', label: 'Other' },
-          ]}
-          {...form.getInputProps('gender')}
-          styles={inputStyles}
-        />
-        
-        <DateInput
-          required
-          size="sm"
-          label="Birth Date"
-          placeholder="Select your birth date"
-          radius="md"
-          maxDate={new Date()}
-          {...form.getInputProps('birthDate')}
-          styles={inputStyles}
-        />
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
+          <PasswordInput
+            required
+            size="sm"
+            label="Password"
+            placeholder="Create a password"
+            radius="md"
+            {...form.getInputProps('password')}
+            styles={inputStyles}
+          />
+
+          <PasswordInput
+            required
+            size="sm"
+            label="Confirm Password"
+            placeholder="Confirm your password"
+            radius="md"
+            {...form.getInputProps('confirmPassword')}
+            styles={inputStyles}
+          />
+        </SimpleGrid>
+
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
+          <DateInput
+              required
+              size="sm"
+              label="Birth Date"
+              placeholder="Select your birth date"
+              radius="md"
+              maxDate={new Date()}
+              {...form.getInputProps('birthDate')}
+              styles={inputStyles}
+          />
+          <Select
+            required
+            size="sm"
+            label="Gender"
+            placeholder="Select your gender"
+            radius="md"
+            data={[
+              { value: 'MALE', label: 'Male' },
+              { value: 'FEMALE', label: 'Female' },
+              { value: 'OTHER', label: 'Other' },
+            ]}
+            {...form.getInputProps('gender')}
+            styles={inputStyles}
+          />
+        </SimpleGrid>
 
         <Button 
           type="submit" 
@@ -170,7 +174,7 @@ export default function RegisterForm() {
           <Divider w={80} />
         </Group>
 
-        <Group grow>
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="sm">
           <Button
             variant="default"
             size="sm"
@@ -203,7 +207,7 @@ export default function RegisterForm() {
           >
             Facebook
           </Button>
-        </Group>
+        </SimpleGrid>
 
         <Group justify="center" mt="xs">
           <Text size="xs" c="dimmed">

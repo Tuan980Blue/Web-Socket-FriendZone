@@ -129,7 +129,7 @@ function AuthContent() {
                 </Grid.Col>
 
                 {/* Right side - Form */}
-                <Grid.Col span={{base: 12, md: 6}} h="100%" className={"lg:mt-15"}>
+                <Grid.Col span={{base: 12, md: 6}} h="100%" className={"lg:mt-10"}>
                     <Box
                         h="100%"
                         style={{
@@ -140,7 +140,7 @@ function AuthContent() {
                         }}
                     >
                         <Box
-                            maw={380}
+                            maw={440}
                             mx="auto"
                             w="100%"
                             style={{
