@@ -20,29 +20,14 @@ import {
 } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
-
-interface Notification {
-    id: string;
-    userId: string;
-    type: string;
-    data: {
-        followerId: string;
-        followerUsername: string;
-        followerFullName: string;
-        followerAvatar: string;
-        timestamp: string;
-    };
-    isRead: boolean;
-    createdAt: string;
-    updatedAt: string;
-}
+import { Notification } from '@/services/notificationService';
 
 interface NotificationCardProps {
     notification: Notification;
     onMarkAsRead: (id: string) => void;
 }
 
-const getNotificationIcon = (type: string) => {
+const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
         case 'LIKE':
             return <IconHeart size={20} color="red" />;
@@ -63,7 +48,7 @@ const getNotificationIcon = (type: string) => {
     }
 };
 
-const getNotificationColor = (type: string) => {
+const getNotificationColor = (type: Notification['type']) => {
     switch (type) {
         case 'LIKE':
             return 'red';
@@ -84,81 +69,76 @@ const getNotificationColor = (type: string) => {
     }
 };
 
-const getNotificationMessage = (type: string, data: Notification['data']) => {
-    switch (type) {
-        case 'LIKE':
-            return `${data.followerFullName} đã thích bài viết của bạn`;
-        case 'COMMENT':
-            return `${data.followerFullName} đã bình luận về bài viết của bạn`;
+const getAvatarUrl = (notification: Notification) => {
+    const data = notification.data;
+    switch (notification.type) {
         case 'FOLLOW':
-            return `${data.followerFullName} đã theo dõi bạn`;
+            return data.followerAvatar;
+        case 'LIKE':
+            return data.likerAvatar;
+        case 'COMMENT':
+            return data.commenterAvatar;
         case 'MENTION':
-            return `${data.followerFullName} đã nhắc đến bạn trong một bình luận`;
+            return data.mentionerAvatar;
         case 'TAG':
-            return `${data.followerFullName} đã gắn thẻ bạn trong một bài viết`;
+            return data.taggerAvatar;
         case 'STORY_VIEW':
-            return `${data.followerFullName} đã xem story của bạn`;
+            return data.viewerAvatar;
         case 'STORY_REACTION':
-            return `${data.followerFullName} đã phản ứng với story của bạn`;
+            return data.reactorAvatar;
         default:
-            return 'Bạn có một thông báo mới';
+            return '/image-person.png';
     }
 };
 
 export const NotificationCard = ({ notification, onMarkAsRead }: NotificationCardProps) => {
+    const handleMarkAsRead = () => {
+        onMarkAsRead(notification.id);
+    };
+
     return (
-        <Card
-            withBorder
-            padding="lg"
-            radius="md"
-            style={{
-                opacity: notification.isRead ? 0.7 : 1,
-            }}
-        >
+        <Card withBorder padding="lg" radius="md">
             <Group justify="space-between" align="flex-start">
                 <Group gap="sm">
                     <Avatar
-                        src={notification.data.followerAvatar || '/image-person.png'}
-                        alt={notification.data.followerFullName}
-                        size="md"
+                        src={getAvatarUrl(notification)}
+                        alt="Avatar"
                         radius="xl"
+                        size="md"
                     />
                     <div>
-                        <Text size="sm" lineClamp={2}>
-                            {getNotificationMessage(notification.type, notification.data)}
+                        <Text size="sm" fw={500}>
+                            {notification.content}
                         </Text>
-                        <Group gap="xs" mt="xs">
-                            <Badge
-                                variant="light"
-                                color={getNotificationColor(notification.type)}
-                            >
-                                {getNotificationIcon(notification.type)}
-                            </Badge>
-                            <Text size="xs" c="dimmed">
-                                {formatDistanceToNow(
-                                    new Date(notification.createdAt),
-                                    {
-                                        addSuffix: true,
-                                        locale: vi,
-                                    }
-                                )}
-                            </Text>
-                        </Group>
+                        <Text size="xs" c="dimmed">
+                            {formatDistanceToNow(new Date(notification.createdAt), {
+                                addSuffix: true,
+                                locale: vi,
+                            })}
+                        </Text>
                     </div>
                 </Group>
-                {!notification.isRead && (
-                    <Tooltip label="Đánh dấu đã đọc" position="left">
-                        <ActionIcon
-                            variant="light"
-                            color="blue"
-                            size="lg"
-                            radius="xl"
-                            onClick={() => onMarkAsRead(notification.id)}
-                        >
-                            <IconCheck size={20} />
-                        </ActionIcon>
-                    </Tooltip>
-                )}
+
+                <Group gap="xs">
+                    <Badge
+                        color={getNotificationColor(notification.type)}
+                        variant="light"
+                        leftSection={getNotificationIcon(notification.type)}
+                    >
+                        {notification.type}
+                    </Badge>
+                    {!notification.isRead && (
+                        <Tooltip label="Đánh dấu đã đọc">
+                            <ActionIcon
+                                variant="light"
+                                color="blue"
+                                onClick={handleMarkAsRead}
+                            >
+                                <IconCheck size={16} />
+                            </ActionIcon>
+                        </Tooltip>
+                    )}
+                </Group>
             </Group>
         </Card>
     );

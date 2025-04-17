@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNotifications } from '@/hooks/useNotifications';
 import {
     Container,
@@ -10,6 +10,8 @@ import {
     Alert,
     Center,
     Stack,
+    Pagination,
+    Text,
 } from '@mantine/core';
 import {
     IconCheck,
@@ -20,23 +22,48 @@ import { NotificationCard } from './components/NotificationCard';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 
 const NotificationsPage = () => {
+    const [page, setPage] = useState(1);
+    const limit = 20;
+
     const {
         notifications,
+        total,
+        totalPages,
         isLoading,
+        error,
         unreadCount,
         handleMarkAsRead,
         handleMarkAllAsRead,
         refreshNotifications
-    } = useNotifications();
+    } = useNotifications(page, limit);
 
     const handleMarkAllAsReadClick = () => {
         handleMarkAllAsRead();
+    };
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
     };
 
     if (isLoading) {
         return (
             <Container size="md" py="xl">
                 <LoadingSkeleton />
+            </Container>
+        );
+    }
+
+    if (error) {
+        return (
+            <Container size="md" py="xl">
+                <Alert
+                    icon={<IconAlertCircle size={20} />}
+                    title="Lỗi"
+                    color="red"
+                    variant="filled"
+                >
+                    Đã có lỗi xảy ra khi tải thông báo. Vui lòng thử lại sau.
+                </Alert>
             </Container>
         );
     }
@@ -77,15 +104,31 @@ const NotificationsPage = () => {
                     </Alert>
                 </Center>
             ) : (
-                <Stack gap="md">
-                    {notifications.map((notification) => (
-                        <NotificationCard
-                            key={notification.id}
-                            notification={notification}
-                            onMarkAsRead={handleMarkAsRead}
-                        />
-                    ))}
-                </Stack>
+                <>
+                    <Stack gap="md" mb="xl">
+                        {notifications.map((notification) => (
+                            <NotificationCard
+                                key={notification.id}
+                                notification={notification}
+                                onMarkAsRead={handleMarkAsRead}
+                            />
+                        ))}
+                    </Stack>
+
+                    {totalPages > 1 && (
+                        <Group justify="center" mt="xl">
+                            <Pagination
+                                value={page}
+                                onChange={handlePageChange}
+                                total={totalPages}
+                                withEdges
+                            />
+                            <Text size="sm" c="dimmed">
+                                Hiển thị {notifications.length} trong tổng số {total} thông báo
+                            </Text>
+                        </Group>
+                    )}
+                </>
             )}
         </Container>
     );

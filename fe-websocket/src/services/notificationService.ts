@@ -18,15 +18,42 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+export type NotificationType = 'LIKE' | 'COMMENT' | 'FOLLOW' | 'MENTION' | 'TAG' | 'STORY_VIEW' | 'STORY_REACTION';
+
 export interface Notification {
     id: string;
     userId: string;
-    type: string;
+    type: NotificationType;
+    content: string;
     data: {
-        followerId: string;
-        followerUsername: string;
-        followerFullName: string;
-        followerAvatar: string;
+        followerId?: string;
+        followerUsername?: string;
+        followerFullName?: string;
+        followerAvatar?: string;
+        likerId?: string;
+        likerUsername?: string;
+        likerFullName?: string;
+        likerAvatar?: string;
+        commenterId?: string;
+        commenterUsername?: string;
+        commenterFullName?: string;
+        commenterAvatar?: string;
+        mentionerId?: string;
+        mentionerUsername?: string;
+        mentionerFullName?: string;
+        mentionerAvatar?: string;
+        taggerId?: string;
+        taggerUsername?: string;
+        taggerFullName?: string;
+        taggerAvatar?: string;
+        viewerId?: string;
+        viewerUsername?: string;
+        viewerFullName?: string;
+        viewerAvatar?: string;
+        reactorId?: string;
+        reactorUsername?: string;
+        reactorFullName?: string;
+        reactorAvatar?: string;
         timestamp: string;
     };
     isRead: boolean;
@@ -55,8 +82,10 @@ class NotificationService {
         return NotificationService.instance;
     }
 
-    async getNotifications(): Promise<BackendResponse> {
-        const response = await api.get('/notifications');
+    async getNotifications(page = 1, limit = 20): Promise<BackendResponse> {
+        const response = await api.get('/notifications', {
+            params: { page, limit }
+        });
         return response.data.data;
     }
 
@@ -66,6 +95,11 @@ class NotificationService {
 
     async markAllAsRead(): Promise<void> {
         await api.put('/notifications/read-all');
+    }
+
+    async getUnreadCount(): Promise<number> {
+        const response = await api.get('/notifications/unread/count');
+        return response.data.data.count;
     }
 }
 
