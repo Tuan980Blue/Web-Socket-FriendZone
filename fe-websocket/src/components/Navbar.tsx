@@ -4,9 +4,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {Bell, CircleFadingPlus, Home, MessageSquare, Search} from 'lucide-react';
-import {Avatar, Tooltip} from '@mantine/core';
+import {Avatar} from '@mantine/core';
 import Image from "next/image";
 import { useUserData } from '@/hooks/useUserData';
+import UserHoverCard from './UserHoverCard';
 
 const Navbar = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -87,23 +88,7 @@ const Navbar = () => {
                     className="border border-gray-300 dark:border-[#121212] cursor-pointer rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-gray-200"
                 >
                   <div className="relative">
-                    <Tooltip label={user.fullName || undefined}
-                             withArrow
-                             className={"italic"}
-                    >
-                      <div className="relative">
-                        <div
-                            className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
-                        <div className="relative rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
-                          <Avatar
-                              src={user?.avatar || undefined}
-                              alt={user?.username || "Profile"}
-                              size="md"
-                              radius="xl"
-                          />
-                        </div>
-                      </div>
-                    </Tooltip>
+                    <UserHoverCard user={user} />
                   </div>
                 </button>
             ) : (
