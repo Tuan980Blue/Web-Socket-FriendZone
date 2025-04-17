@@ -2,7 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['localhost'],
+    domains: [
+      'randomuser.me',
+      'images.unsplash.com',
+      'picsum.photos'
+    ],
     remotePatterns: [
       {
         protocol: 'http',
