@@ -11,22 +11,35 @@ import "@mantine/core/styles.css";
 export const queryClient = new QueryClient();
 
 const theme = createTheme({
-    primaryColor: "orange",
+    primaryColor: "instagram",
     colors: {
-        orange: [
-            "#fff4e6",
-            "#ffe8cc",
-            "#ffd8a8",
-            "#ffc078",
-            "#ffa94d",
-            "#ff922b", // orange[5] - primary
-            "#fd7e14",
-            "#f76707",
-            "#e8590c",
-            "#d9480f",
+        instagram: [
+            '#F58529', // 0 - Orange
+            '#DD2A7B', // 1 - Pink
+            '#8134AF', // 2 - Purple
+            '#515BD4', // 3 - Blue
+            '#3897F0', // 4 - Light Blue (Follow/CTA)
+            '#ED4956', // 5 - Red (Notification/Like)
+            '#20C997', // 6 - Teal (Success)
+            '#8E8E8E', // 7 - Gray (Secondary Text)
+            '#262626', // 8 - Dark Gray (Primary Text)
+            '#FAFAFA', // 9 - Light Gray (Background)
         ],
     },
+    primaryShade: 3,
     fontFamily: 'var(--font-geist-sans)',
+    components: {
+        Button: {
+            defaultProps: {
+                radius: 'md',
+            },
+        },
+        Card: {
+            defaultProps: {
+                radius: 'md',
+            },
+        },
+    },
 });
 
 const RootWrapper = ({ children }: Readonly<{ children: ReactNode }>) => {

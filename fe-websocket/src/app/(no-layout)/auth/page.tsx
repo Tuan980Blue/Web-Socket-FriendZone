@@ -11,8 +11,8 @@ import {
     rem,
     Loader,
     Grid,
-    Box,
-    useMantineTheme, Text, Group,
+    Box
+    , Text, Group,
 } from '@mantine/core';
 import {IconLogin, IconUserPlus} from '@tabler/icons-react';
 import LoginForm from './components/LoginForm';
@@ -25,7 +25,6 @@ function AuthContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [activeTab, setActiveTab] = useState<string | null>('login');
-    const theme = useMantineTheme();
 
     useEffect(() => {
         // Check if user is already logged in
@@ -130,7 +129,7 @@ function AuthContent() {
                 </Grid.Col>
 
                 {/* Right side - Form */}
-                <Grid.Col span={{base: 12, md: 6}} h="100%">
+                <Grid.Col span={{base: 12, md: 6}} h="100%" className={"lg:mt-15"}>
                     <Box
                         h="100%"
                         style={{
@@ -138,7 +137,6 @@ function AuthContent() {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             padding: '2rem',
-                            backgroundColor: theme.colors.gray[0]
                         }}
                     >
                         <Box
@@ -230,7 +228,13 @@ export default function Auth() {
                     <Loader size="xl"/>
                 </Container>
             }>
-                <AuthContent/>
+                <div style={{
+                    background: 'linear-gradient(135deg, var(--background) 0%, var(--muted) 100%)',
+                    minHeight: '100vh',
+                    width: '100%'
+                }}>
+                    <AuthContent/>
+                </div>
             </Suspense>
         </main>
     );
