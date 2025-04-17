@@ -29,7 +29,7 @@ export default function ProfileHero({ user, isCurrentUser }: ProfileHeroProps) {
   return (
     <div className="relative">
       {/* Cover Image */}
-      <div className="h-70 w-full relative overflow-hidden">
+      <div className="h-65 w-full relative overflow-hidden">
         <Image
           src={'/backgroundprofile.png'}
           alt="Cover"
