@@ -1,6 +1,35 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+// Hàm tạo nội dung thông báo
+const generateNotificationContent = (type, data) => {
+    try {
+        const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+        
+        switch (type) {
+            case 'FOLLOW':
+                return `${parsedData.followerFullName || parsedData.followerUsername} đã follow bạn`;
+            case 'LIKE':
+                return `${parsedData.likerFullName || parsedData.likerUsername} đã thích bài viết của bạn`;
+            case 'COMMENT':
+                return `${parsedData.commenterFullName || parsedData.commenterUsername} đã bình luận về bài viết của bạn`;
+            case 'MENTION':
+                return `${parsedData.mentionerFullName || parsedData.mentionerUsername} đã nhắc đến bạn trong một bài viết`;
+            case 'TAG':
+                return `${parsedData.taggerFullName || parsedData.taggerUsername} đã gắn thẻ bạn trong một bài viết`;
+            case 'STORY_VIEW':
+                return `${parsedData.viewerFullName || parsedData.viewerUsername} đã xem story của bạn`;
+            case 'STORY_REACTION':
+                return `${parsedData.reactorFullName || parsedData.reactorUsername} đã phản ứng với story của bạn`;
+            default:
+                return 'Bạn có thông báo mới';
+        }
+    } catch (error) {
+        console.error('Error generating notification content:', error);
+        return 'Bạn có thông báo mới';
+    }
+};
+
 // Tạo thông báo mới
 const createNotification = async (userId, type, data) => {
     try {
@@ -20,10 +49,14 @@ const createNotification = async (userId, type, data) => {
             jsonData = JSON.stringify(data || {});
         }
 
+        // Generate content based on type and data
+        const content = generateNotificationContent(type, jsonData);
+
         const notification = await prisma.notification.create({
             data: {
                 userId,
                 type,
+                content,
                 data: jsonData,
                 isRead: false,
             },
@@ -48,17 +81,22 @@ const createFollowNotification = async (followerId, followingId) => {
             },
         });
 
+        if (!follower) {
+            throw new Error('Follower not found');
+        }
+
         // Tạo thông báo cho người được follow
         const notification = await createNotification(followingId, 'FOLLOW', {
-            followerId,
+            followerId: follower.id,
             followerUsername: follower.username,
-            followerFullName: follower.fullName,
-            followerAvatar: follower.avatar,
-            timestamp: new Date(),
+            followerFullName: follower.fullName || follower.username,
+            followerAvatar: follower.avatar || '/image-person.png',
+            timestamp: new Date().toISOString(),
         });
 
         return notification;
     } catch (error) {
+        console.error('Error creating follow notification:', error);
         throw new Error('Error creating follow notification: ' + error.message);
     }
 };
@@ -96,27 +134,35 @@ const getUserNotifications = async (userId, page = 1, limit = 20) => {
             take: limit,
         });
 
-        // Ensure data field is valid JSON and handle null values
+        // Process notifications to ensure both content and data are valid
         const processedNotifications = notifications.map(notification => {
             try {
-                // If data is null or empty, set it to an empty object string
-                if (!notification.data) {
-                    return {
-                        ...notification,
-                        data: '{}'
-                    };
+                // Handle content field
+                const content = notification.content || generateNotificationContent(notification.type, notification.data);
+
+                // Handle data field
+                let data = '{}';
+                if (notification.data) {
+                    try {
+                        // Try to parse the data to ensure it's valid JSON
+                        const parsedData = JSON.parse(notification.data);
+                        data = JSON.stringify(parsedData);
+                    } catch (error) {
+                        console.error('Error parsing notification data:', error);
+                        data = '{}';
+                    }
                 }
-                
-                // Try to parse the data to ensure it's valid JSON
-                const parsedData = JSON.parse(notification.data);
+
                 return {
                     ...notification,
-                    data: JSON.stringify(parsedData)
+                    content,
+                    data
                 };
             } catch (error) {
-                // If parsing fails, set data to an empty object string
+                console.error('Error processing notification:', error);
                 return {
                     ...notification,
+                    content: 'Bạn có thông báo mới',
                     data: '{}'
                 };
             }
