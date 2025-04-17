@@ -7,7 +7,6 @@ import {Bell, CircleFadingPlus, Home, MessageSquare, Search} from 'lucide-react'
 import {Avatar} from '@mantine/core';
 import Image from "next/image";
 import { useUserData } from '@/hooks/useUserData';
-import UserHoverCard from './UserHoverCard';
 
 const Navbar = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
