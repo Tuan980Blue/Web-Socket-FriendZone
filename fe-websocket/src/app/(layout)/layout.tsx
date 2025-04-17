@@ -11,17 +11,21 @@ import RightSidebar from "@/components/RightSidebar";
 import MobileNav from "@/components/MobileNav";
 import {usePathname} from 'next/navigation';
 import AuthGuard from "@/components/AuthGuardProps";
+import LoadingOverlay from "@/components/LoadingOverlay";
+import { useUserData } from "@/hooks/useUserData";
 
 export default function Layout({
                                    children,
                                }: Readonly<{ children: React.ReactNode }>) {
     const pathname = usePathname();
     const isProfilePage = pathname === '/profile' || pathname.startsWith('/profile/');
+    const { isLoading } = useUserData();
 
     return (
         <UserProvider>
             <ReelProvider>
                 <div className="min-h-screen flex flex-col">
+                    {isLoading && <LoadingOverlay />}
                     <Navbar/>
                     <div className="flex-1 flex relative">
                         <LeftSidebar/>
