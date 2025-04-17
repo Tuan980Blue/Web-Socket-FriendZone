@@ -118,7 +118,7 @@ export const NotificationCard = ({ notification, onMarkAsRead }: NotificationCar
             <Group justify="space-between" align="flex-start">
                 <Group gap="sm">
                     <Avatar
-                        src={notification.data.followerAvatar}
+                        src={notification.data.followerAvatar || '/image-person.png'}
                         alt={notification.data.followerFullName}
                         size="md"
                         radius="xl"

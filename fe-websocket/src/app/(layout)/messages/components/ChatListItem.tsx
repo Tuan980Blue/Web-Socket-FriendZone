@@ -26,7 +26,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
             <div className="relative">
                 <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700">
                     <Image 
-                        src={avatar || '/default-avatar.png'} 
+                        src={avatar || '/image-person.png'} 
                         alt={name} 
                         width={40} 
                         height={40} 

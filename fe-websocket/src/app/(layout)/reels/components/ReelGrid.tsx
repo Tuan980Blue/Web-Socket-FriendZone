@@ -54,7 +54,7 @@ export default function ReelGrid({ reels, onReelClick }: ReelGridProps) {
             <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
               <div className="flex items-center gap-2">
                 <Avatar 
-                  src={reel.userAvatar} 
+                  src={reel.userAvatar || '/image-person.png'} 
                   alt={reel.username} 
                   radius="xl" 
                   size="sm" 

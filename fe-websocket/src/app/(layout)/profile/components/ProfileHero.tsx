@@ -50,7 +50,7 @@ export default function ProfileHero({ user, isCurrentUser }: ProfileHeroProps) {
             className="relative w-36 h-36 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg"
           >
             <Image
-              src={user.avatar || '/logo2.png'}
+              src={user.avatar || '/image-person.png'}
               alt={user.username}
               fill
               className="object-cover"

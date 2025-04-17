@@ -246,7 +246,7 @@ export default function ReelViewer({ reel, onNext, onPrev }: ReelViewerProps) {
       <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
         <div className="flex items-start space-x-3">
           <Avatar 
-            src={reel.userAvatar} 
+            src={reel.userAvatar || '/image-person.png'} 
             alt={reel.username} 
             radius="xl" 
             size="md" 

@@ -56,8 +56,8 @@ const UserCard = ({
                                         className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
                                     <div className="relative p-0.5 rounded-full bg-white dark:bg-[#121212]">
                                         <Avatar
-                                            src={user.avatar}
-                                            alt={user.username}
+                                            src={user.avatar || '/image-person.png'}
+                                            alt={user.username || undefined}
                                             size={avatarSize}
                                             radius="xl"
                                             className="border-2 border-white dark:border-[#121212]"

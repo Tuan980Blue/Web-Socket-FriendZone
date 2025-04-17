@@ -37,7 +37,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
             case 'image':
                 return (
                     <Image 
-                        src={content || '/default-image.png'} 
+                        src={content || '/image-person.png'} 
                         alt="Message image" 
                         width={200} 
                         height={200} 
