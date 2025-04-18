@@ -63,10 +63,10 @@ const UserHoverCard = ({ user, children }: UserHoverCardProps) => {
         </Text>
 
         <Group mt="md" gap="xl">
-          <Text size="sm">
+          <Text size="sm" color={"blue"}>
             <b>{user?.followingCount || 0}</b> Following
           </Text>
-          <Text size="sm">
+          <Text size="sm" color={"pink"}>
             <b>{user?.followersCount || 0}</b> Followers
           </Text>
         </Group>
