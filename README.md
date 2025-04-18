@@ -20,8 +20,11 @@
 - **Realtime Layer**: Socket.IO / ws / WebSocket API
 
 ### 🚀 Work Follow Chat Online
-![image](https://github.com/user-attachments/assets/879c3c09-2557-4e51-a606-16a67776ca80)
+![workfollow-Chat](https://github.com/user-attachments/assets/9dbb4cc1-0bde-463e-97c5-f9b32ab46fa0)
+![workfollow-Chat](https://github.com/user-attachments/assets/e1d02694-4fde-4e6b-bf35-c291943c1e63)
 
+### 🚀 📝 State Message Chat Online
+![workfollow-Chat](https://github.com/user-attachments/assets/c97715b3-7fc4-4d6e-a249-cc71f7a6d852)
 
 setup cho dự án :
 Frontend: Deploy trên Vercel
