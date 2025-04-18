@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 // Hàm tạo nội dung thông báo
 const generateNotificationContent = (type, data) => {
     try {
+        // No need to parse data if it's already an object
         const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
         
         switch (type) {
@@ -33,26 +34,25 @@ const generateNotificationContent = (type, data) => {
 // Tạo thông báo mới
 const createNotification = async (userId, type, data) => {
     try {
-        // Ensure data is valid JSON
+        // Ensure data is a valid object
         let jsonData;
         if (typeof data === 'string') {
             try {
-                // If data is already a string, try to parse it to ensure it's valid JSON
-                JSON.parse(data);
-                jsonData = data;
+                // If data is a string, try to parse it to ensure it's valid JSON
+                jsonData = JSON.parse(data);
             } catch (error) {
-                // If parsing fails, stringify the data
-                jsonData = JSON.stringify(data || {});
+                // If parsing fails, use an empty object
+                jsonData = {};
             }
         } else {
-            // If data is an object, stringify it
-            jsonData = JSON.stringify(data || {});
+            // If data is already an object, use it directly
+            jsonData = data || {};
         }
 
         // Generate content based on type and data
         const content = generateNotificationContent(type, jsonData);
 
-        // Create notification with only the fields that are defined in the Prisma schema
+        // Create notification with the data field as a JSON object
         const notification = await prisma.notification.create({
             data: {
                 userId,
@@ -108,18 +108,8 @@ const getUserNotifications = async (userId, page = 1, limit = 20) => {
                 // Handle content field
                 const content = notification.content || generateNotificationContent(notification.type, notification.data);
 
-                // Handle data field
-                let data = '{}';
-                if (notification.data) {
-                    try {
-                        // Try to parse the data to ensure it's valid JSON
-                        const parsedData = JSON.parse(notification.data);
-                        data = JSON.stringify(parsedData);
-                    } catch (error) {
-                        console.error('Error parsing notification data:', error);
-                        data = '{}';
-                    }
-                }
+                // Handle data field - no need to parse since it's already a JSON object
+                const data = notification.data || {};
 
                 return {
                     ...notification,
@@ -131,7 +121,7 @@ const getUserNotifications = async (userId, page = 1, limit = 20) => {
                 return {
                     ...notification,
                     content: 'Bạn có thông báo mới',
-                    data: '{}'
+                    data: {}
                 };
             }
         });
