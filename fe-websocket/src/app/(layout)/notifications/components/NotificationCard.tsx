@@ -30,19 +30,19 @@ interface NotificationCardProps {
 const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
         case 'LIKE':
-            return <IconHeart size={20} color="red" />;
+            return <IconHeart size={14} color="red" />;
         case 'COMMENT':
-            return <IconMessageCircle size={20} color="blue" />;
+            return <IconMessageCircle size={14} color="blue" />;
         case 'FOLLOW':
-            return <IconUserPlus size={20} color="green" />;
+            return <IconUserPlus size={14} color="green" />;
         case 'MENTION':
-            return <IconAt size={20} color="purple" />;
+            return <IconAt size={14} color="purple" />;
         case 'TAG':
-            return <IconHash size={20} color="orange" />;
+            return <IconHash size={14} color="orange" />;
         case 'STORY_VIEW':
-            return <IconEye size={20} color="cyan" />;
+            return <IconEye size={14} color="cyan" />;
         case 'STORY_REACTION':
-            return <IconMoodSmile size={20} color="yellow" />;
+            return <IconMoodSmile size={14} color="yellow" />;
         default:
             return null;
     }
@@ -97,11 +97,11 @@ export const NotificationCard = ({ notification, onMarkAsRead }: NotificationCar
     };
 
     return (
-        <Card withBorder padding="lg" radius="md">
+        <Card withBorder padding="md" radius="md">
             <Group justify="space-between" align="flex-start">
                 <Group gap="sm">
                     <Avatar
-                        src={getAvatarUrl(notification)}
+                        src={getAvatarUrl(notification) || '/image-person.png'}
                         alt="Avatar"
                         radius="xl"
                         size="md"
