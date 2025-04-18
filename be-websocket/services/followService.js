@@ -169,7 +169,29 @@ const followUser = async (followerId, followingId) => {
         });
 
         // Tạo thông báo follow
-        await notificationService.createFollowNotification(followerId, followingId);
+        try {
+            // Lấy thông tin người follow
+            const follower = await prisma.user.findUnique({
+                where: { id: followerId },
+                select: {
+                    username: true,
+                    fullName: true,
+                    avatar: true,
+                },
+            });
+
+            // Tạo thông báo follow sử dụng hàm createNotification
+            await notificationService.createNotification(followingId, 'FOLLOW', {
+                followerId: followerId,
+                followerUsername: follower.username,
+                followerFullName: follower.fullName || follower.username,
+                followerAvatar: follower.avatar || '/image-person.png',
+                timestamp: new Date().toISOString(),
+            });
+        } catch (notificationError) {
+            console.error('Error creating follow notification:', notificationError);
+            // Không throw error ở đây vì follow đã thành công
+        }
 
         return follow;
     } catch (error) {
