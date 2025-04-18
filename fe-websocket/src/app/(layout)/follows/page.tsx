@@ -83,7 +83,7 @@ const FollowsPage = () => {
                                 size="lg" 
                                 variant="light" 
                                 className="bg-gradient-to-r from-[#F58529]/10 via-[#DD2A7B]/10 to-[#515BD4]/10 border-0"
-                                leftSection={<IconUsers size={14} className="text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]" />}
+                                leftSection={<IconUsers size={14} className="transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]" />}
                             >
                                 {followers?.length || 0} người theo dõi
                             </Badge>
@@ -91,7 +91,7 @@ const FollowsPage = () => {
                                 size="lg" 
                                 variant="light"
                                 className="bg-gradient-to-r from-[#F58529]/10 via-[#DD2A7B]/10 to-[#515BD4]/10 border-0"
-                                leftSection={<IconUserCheck size={14} className="text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]" />}
+                                leftSection={<IconUserCheck size={14} className="bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]" />}
                             >
                                 {following?.length || 0} đang theo dõi
                             </Badge>
@@ -141,7 +141,7 @@ const FollowsPage = () => {
                             {isLoadingFollowers ? (
                                 <LoadingSkeleton />
                             ) : (
-                                <Stack gap="md">
+                                <Stack gap="xs">
                                     {followers?.map((user) => (
                                         <UserCard
                                             key={user.id}
@@ -168,7 +168,7 @@ const FollowsPage = () => {
                             {isLoadingFollowing ? (
                                 <LoadingSkeleton />
                             ) : (
-                                <Stack gap="md">
+                                <Stack gap="xs">
                                     {following?.map((user) => (
                                         <UserCard
                                             key={user.id}
@@ -192,7 +192,7 @@ const FollowsPage = () => {
                         </Tabs.Panel>
 
                         <Tabs.Panel value="suggestions" pt="xl" >
-                            <Stack gap="md">
+                            <Stack gap="xs">
                                 <SuggestionsHeader 
                                     onRefresh={refreshSuggestions}
                                     isLoading={isLoadingSuggestions}

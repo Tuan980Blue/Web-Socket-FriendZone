@@ -104,7 +104,7 @@ const UserCard = ({
                                         </Text>
                                     </Group>
                                 )}
-                                <Text size="xs" className="text-[#8E8E8E]">
+                                <Text size="xs" color={"pink"}>
                                     {user.followersCount} người theo dõi
                                 </Text>
                             </Group>
@@ -118,24 +118,24 @@ const UserCard = ({
                     {user.isFollowing ? (
                         <Button
                             variant="light"
-                            color="red"
+                            color="blue"
                             size="xs"
                             radius="xl"
                             onClick={() => onUnfollow(user.id)}
                             loading={isLoading}
-                            className="transition-transform duration-200 bg-red-50 dark:bg-red-900/20"
+                            className="transition-transform duration-200 bg-blue-50 dark:bg-blue-900/20"
                         >
                             Đang theo dõi
                         </Button>
                     ) : (
                         <Button
                             variant="filled"
-                            size="xs"
-                            radius="xl"
+                            color={"blue"}
+                            size="compact-xs"
+                            radius="sm"
                             onClick={() => onFollow(user.id)}
                             loading={isLoading}
                             leftSection={<IconUserPlus size={12} />}
-                            className="bg-[#0095F6] hover:bg-[#1877F2]"
                         >
                             Theo dõi
                         </Button>
