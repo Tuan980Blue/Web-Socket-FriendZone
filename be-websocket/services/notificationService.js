@@ -58,56 +58,14 @@ const createNotification = async (userId, type, data) => {
                 userId,
                 type,
                 content,
+                data: jsonData,
                 isRead: false,
             },
         });
         
-        // If the notification was created successfully and we have data to store,
-        // update it with the data field
-        if (notification && jsonData) {
-            await prisma.notification.update({
-                where: { id: notification.id },
-                data: { data: jsonData }
-            });
-        }
-        
         return notification;
     } catch (error) {
         throw new Error('Error creating notification: ' + error.message);
-    }
-};
-
-// Tạo thông báo follow
-const createFollowNotification = async (followerId, followingId) => {
-    try {
-        // Lấy thông tin người follow
-        const follower = await prisma.user.findUnique({
-            where: { id: followerId },
-            select: {
-                id: true,
-                username: true,
-                fullName: true,
-                avatar: true,
-            },
-        });
-
-        if (!follower) {
-            throw new Error('Follower not found');
-        }
-
-        // Tạo thông báo cho người được follow
-        const notification = await createNotification(followingId, 'FOLLOW', {
-            followerId: follower.id,
-            followerUsername: follower.username,
-            followerFullName: follower.fullName || follower.username,
-            followerAvatar: follower.avatar || '/image-person.png',
-            timestamp: new Date().toISOString(),
-        });
-
-        return notification;
-    } catch (error) {
-        console.error('Error creating follow notification:', error);
-        throw new Error('Error creating follow notification: ' + error.message);
     }
 };
 
@@ -214,7 +172,6 @@ const getUnreadCount = async (userId) => {
 
 module.exports = {
     createNotification,
-    createFollowNotification,
     markAsRead,
     getUserNotifications,
     getUnreadCount,

@@ -3,7 +3,6 @@ const router = express.Router();
 const followService = require('../services/followService');
 const authMiddleware = require('../middleware/auth');
 const prisma = require('../lib/prisma');
-const { createFollowNotification } = require('../services/notificationService');
 
 // Lấy danh sách người đang follow mình (followers)
 router.get('/', authMiddleware, async (req, res) => {
@@ -62,22 +61,8 @@ router.post('/follow/:userId', authMiddleware, async (req, res) => {
             return res.status(400).json({ message: 'Already following this user' });
         }
 
-        // Tạo follow relationship
-        const follow = await prisma.follow.create({
-            data: {
-                followerId,
-                followingId,
-            },
-        });
-
-        // Tạo thông báo
-        try {
-            await createFollowNotification(followerId, followingId);
-        } catch (notificationError) {
-            console.error('Error creating follow notification:', notificationError);
-            // Không throw error ở đây vì follow đã thành công
-        }
-
+        // Tạo follow relationship và thông báo
+        const follow = await followService.followUser(followerId, followingId);
         res.status(201).json(follow);
     } catch (error) {
         console.error('Error in follow route:', error);
