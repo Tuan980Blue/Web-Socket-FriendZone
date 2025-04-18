@@ -38,3 +38,23 @@ Dễ dàng backup và restore
 Có monitoring tools
 WebSocket: Có 2 lựa chọn:
 Sử dụng WebSocket trực tiếp từ backend (nếu deploy trên Render)
+
+##Cơ chế
+Tạo tin nhắn tạm thời ngay khi người dùng gửi:
+Tạo một tempMessage với đầy đủ thông tin (ID, nội dung, người gửi, người nhận, thời gian)
+Sử dụng timestamp làm ID tạm thời
+Thêm thông tin người gửi và người nhận từ state hiện tại
+Cập nhật state ngay lập tức:
+Thêm tin nhắn vào messages state để hiển thị ngay
+Cập nhật chats state để hiển thị tin nhắn mới nhất trong danh sách chat
+Gửi tin nhắn qua WebSocket:
+Sau khi cập nhật UI, gửi tin nhắn qua WebSocket
+Nếu có lỗi, có thể thêm logic để xóa tin nhắn tạm thời
+Thêm kiểm tra user:
+Kiểm tra user tồn tại trước khi gửi tin nhắn
+Thêm user vào dependencies của useCallback
+Cách này sẽ giúp:
+Tin nhắn hiển thị ngay lập tức khi gửi
+Người dùng thấy được tin nhắn của mình ngay lập tức
+Vẫn đảm bảo tin nhắn được gửi qua WebSocket
+Có thể xử lý lỗi nếu gửi thất bại
