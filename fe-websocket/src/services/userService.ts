@@ -42,6 +42,25 @@ export interface User {
     isFollowing?: boolean;
     mutualFollowersCount?: number;
 }
-export const userService = {
 
+export const userService = {
+    getUserById: async (userId: string): Promise<User | null> => {
+        try {
+            const response = await api.get(`/users/${userId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching user:', error);
+            return null;
+        }
+    },
+    
+    searchUsers: async (query: string): Promise<User[]> => {
+        try {
+            const response = await api.get(`/users/search?q=${encodeURIComponent(query)}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error searching users:', error);
+            return [];
+        }
+    }
 };

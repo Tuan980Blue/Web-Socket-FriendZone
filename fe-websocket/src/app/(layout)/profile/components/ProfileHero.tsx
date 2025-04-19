@@ -7,6 +7,7 @@ import { RiUserFollowLine } from "react-icons/ri";
 import { IoMdMore } from "react-icons/io";
 import { AiOutlineMessage } from "react-icons/ai";
 import React from "react";
+import { useRouter } from 'next/navigation';
 
 interface ProfileHeroProps {
   user: User;
@@ -26,6 +27,13 @@ const renderBio = (bio: string | null | undefined) => {
 };
 
 export default function ProfileHero({ user, isCurrentUser }: ProfileHeroProps) {
+  const router = useRouter();
+
+  const handleMessageClick = () => {
+    // Navigate to messages page with the user ID as a query parameter
+    router.push(`/messages?userId=${user.id}`);
+  };
+
   return (
     <div className="relative">
       {/* Cover Image */}
@@ -103,6 +111,7 @@ export default function ProfileHero({ user, isCurrentUser }: ProfileHeroProps) {
                     radius="md"
                     className="border border-[#DBDBDB] dark:border-[#262626] text-[#262626] dark:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#121212] transition-all duration-200"
                     leftSection={<AiOutlineMessage size={14} />}
+                    onClick={handleMessageClick}
                 >
                   Message
                 </Button>

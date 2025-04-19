@@ -100,6 +100,42 @@ class UserService {
     });
   }
 
+  // Search users by fullName, email, or username
+  async searchUsers(query) {
+    const searchQuery = query.toLowerCase();
+    return prisma.user.findMany({
+      where: {
+        OR: [
+          { fullName: { contains: searchQuery, mode: 'insensitive' } },
+          { email: { contains: searchQuery, mode: 'insensitive' } },
+          { username: { contains: searchQuery, mode: 'insensitive' } }
+        ]
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        fullName: true,
+        avatar: true,
+        bio: true,
+        status: true,
+        lastSeen: true,
+        createdAt: true,
+        updatedAt: true,
+        isPrivate: true,
+        website: true,
+        location: true,
+        phoneNumber: true,
+        gender: true,
+        birthDate: true,
+        followersCount: true,
+        followingCount: true,
+        postsCount: true
+      },
+      take: 10 // Limit results to 10 users
+    });
+  }
+
   // Update user
   async updateUser(id, data) {
     if (data.password) {

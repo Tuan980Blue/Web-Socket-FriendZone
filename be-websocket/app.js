@@ -1,13 +1,20 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
 const authRoutes = require('./routes/auth');
 const followRoutes = require('./routes/follow');
 const notificationRoutes = require('./routes/notification');
 const usersRoutes = require('./routes/users');
+const chatRoutes = require('./routes/chat');
+const SocketService = require('./services/socketService');
 const prisma = require('./prisma/client');
 
 const app = express();
+const server = http.createServer(app);
+
+// Initialize Socket.IO
+const socketService = new SocketService(server);
 
 // Middleware
 app.use(cors());
@@ -19,6 +26,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/follows', followRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
@@ -37,4 +45,5 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-module.exports = app;
+// Export both app and server
+module.exports = { app, server };
