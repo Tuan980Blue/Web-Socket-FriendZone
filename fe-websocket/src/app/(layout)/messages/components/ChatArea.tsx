@@ -163,7 +163,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                     <div className="flex-1 flex items-center bg-[#FAFAFA] dark:bg-[#262626] rounded-full border border-[#DBDBDB] dark:border-[#262626] ">
                         <Button 
                             variant="subtle" 
-                            size="sm" 
+                            size="xs"
                             radius="xl" 
                             className="text-[#8E8E8E] hover:bg-transparent"
                         >
@@ -187,10 +187,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 }
                             }}
                         />
-                        <Group>
+                        <div>
                             <Button
                                 variant="subtle"
-                                size="sm"
+                                size="xs"
                                 radius="xl"
                                 className="text-[#8E8E8E] hover:bg-transparent"
                             >
@@ -198,17 +198,17 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                             </Button>
                             <Button
                                 variant="subtle"
-                                size="sm"
+                                size="xs"
                                 radius="xl"
                                 className="text-[#8E8E8E] hover:bg-transparent"
                             >
                                 <IconPaperclip size={20} />
                             </Button>
-                        </Group>
+                        </div>
                     </div>
                     <Button
                         variant="filled"
-                        radius="xl"
+                        radius="md"
                         onClick={handleSendMessage}
                         disabled={!message.trim()}
                         className="bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90"
