@@ -31,12 +31,12 @@ export default function Layout({
                         <LeftSidebar/>
                         <AuthGuard>
                             <main
-                                className={`flex-1 md:ml-64 ${isProfilePage ? '' : 'lg:mr-80'} mt-16 pb-16 md:pb-0`}>
-                                <div className="px-4 md:px-6 lg:px-8 p-2">
+                                className={`flex-1 md:ml-64 ${isProfilePage ? '' : 'xl:mr-80'} mt-16 pb-16 md:pb-0`}>
+                                <div className="px-4 md:px-6 p-2">
                                     {children}
                                 </div>
                             </main>
-                            {!isProfilePage && <div className="hidden lg:block"><RightSidebar/></div>}
+                            {!isProfilePage && <div className="hidden xl:block"><RightSidebar/></div>}
                         </AuthGuard>
                     </div>
                     <MobileNav/>
