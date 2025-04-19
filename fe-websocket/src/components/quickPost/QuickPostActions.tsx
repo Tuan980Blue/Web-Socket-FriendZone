@@ -39,7 +39,9 @@ export default function QuickPostActions({
             ? 'hover:bg-[#262626] text-[#FAFAFA]'
             : 'hover:bg-[#FAFAFA] text-[#262626]'}`}
       >
-        <Image className="text-[#3897F0]" size={20}/>
+        <span aria-label="Upload image icon">
+          <Image className="text-[#3897F0]" size={20}/>
+        </span>
         <span className="text-sm font-medium">Ảnh/video</span>
       </button>
       <button

@@ -115,7 +115,7 @@ const Page = () => {
     };
 
     return (
-        <div className="flex h-[calc(100vh-4rem)] bg-[#FAFAFA] dark:bg-[#121212]">
+        <div className="flex h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] bg-[#FAFAFA] dark:bg-[#121212]">
             <div className={`${selectedChat ? 'hidden md:block' : 'block'} w-full md:w-80`}>
                 <ChatSidebar 
                     chats={chats}

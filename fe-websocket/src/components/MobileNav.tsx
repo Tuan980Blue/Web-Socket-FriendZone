@@ -26,7 +26,7 @@ const MobileNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-[#121212]/80 backdrop-blur-md border-t border-[#DBDBDB] dark:border-[#262626] md:hidden z-50 shadow-lg">
-      <div className="flex justify-around items-center h-16 px-2">
+      <div className="flex justify-around items-center h-14 px-2">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -46,7 +46,7 @@ const MobileNav = () => {
               >
                 <div className="relative">
                   <Icon
-                    size={24}
+                    size={20}
                     className={`${isActive ? 'icon-primery' : 'text-[#666666] dark:text-[#A0A0A0]'} 
                     transition-all duration-200 group-hover:scale-110`}
                   />

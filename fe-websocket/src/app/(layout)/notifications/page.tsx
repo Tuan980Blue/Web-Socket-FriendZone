@@ -69,7 +69,7 @@ const NotificationsPage = () => {
     }
 
     return (
-        <Container size="md" py="xl">
+        <Container size="md" py="lg">
             <Group justify="space-between" mb="xl">
                 <Title order={2}>Thông báo</Title>
                 <Group>

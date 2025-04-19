@@ -77,7 +77,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     return (
         <div className={`flex-1 flex flex-col bg-[#FAFAFA] dark:bg-[#121212] ${className}`}>
             {/* Chat Header - Fixed at top */}
-            <div className="flex items-center p-4 border-b border-[#DBDBDB] dark:border-[#262626] sticky top-0 z-10 bg-[#FAFAFA] dark:bg-[#121212]">
+            <div className="flex items-center md:p-4 py-1 border-b border-[#DBDBDB] dark:border-[#262626] sticky top-0 z-10 bg-[#FAFAFA] dark:bg-[#121212]">
                 <Button
                     variant="subtle"
                     size="sm"
@@ -158,9 +158,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             )}
 
             {/* Message Input - Fixed at bottom */}
-            <div className="p-4 border-t border-[#DBDBDB] dark:border-[#262626] sticky bottom-0 z-10 bg-[#FAFAFA] dark:bg-[#121212]">
+            <div className="py-2 md:py-4 border-t border-[#DBDBDB] dark:border-[#262626] sticky bottom-0 z-10 bg-[#FAFAFA] dark:bg-[#121212]">
                 <Group>
-                    <div className="flex-1 flex items-center bg-[#FAFAFA] dark:bg-[#262626] rounded-full border border-[#DBDBDB] dark:border-[#262626] px-3">
+                    <div className="flex-1 flex items-center bg-[#FAFAFA] dark:bg-[#262626] rounded-full border border-[#DBDBDB] dark:border-[#262626] ">
                         <Button 
                             variant="subtle" 
                             size="sm" 
@@ -187,22 +187,24 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 }
                             }}
                         />
-                        <Button 
-                            variant="subtle" 
-                            size="sm" 
-                            radius="xl" 
-                            className="text-[#8E8E8E] hover:bg-transparent"
-                        >
-                            <IconMoodSmile size={20} />
-                        </Button>
-                        <Button 
-                            variant="subtle" 
-                            size="sm" 
-                            radius="xl" 
-                            className="text-[#8E8E8E] hover:bg-transparent"
-                        >
-                            <IconPaperclip size={20} />
-                        </Button>
+                        <Group>
+                            <Button
+                                variant="subtle"
+                                size="sm"
+                                radius="xl"
+                                className="text-[#8E8E8E] hover:bg-transparent"
+                            >
+                                <IconMoodSmile size={20} />
+                            </Button>
+                            <Button
+                                variant="subtle"
+                                size="sm"
+                                radius="xl"
+                                className="text-[#8E8E8E] hover:bg-transparent"
+                            >
+                                <IconPaperclip size={20} />
+                            </Button>
+                        </Group>
                     </div>
                     <Button
                         variant="filled"

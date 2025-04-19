@@ -1,8 +1,9 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { Reel, ReelContextType } from '@/types/reel';
 import { useUserData } from './useUserData';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // Create context with default values
 const ReelContext = createContext<ReelContextType>({
@@ -106,124 +107,135 @@ const mockReels: Reel[] = [
   },
 ];
 
+// API functions
+const fetchReelsApi = async (): Promise<Reel[]> => {
+  // Simulate API call
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockReels);
+    }, 1000);
+  });
+};
+
+const likeReelApi = async (reelId: string): Promise<void> => {
+  // Simulate API call
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Liked reel ${reelId}`);
+      resolve();
+    }, 500);
+  });
+};
+
+const saveReelApi = async (reelId: string): Promise<void> => {
+  // Simulate API call
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Saved reel ${reelId}`);
+      resolve();
+    }, 500);
+  });
+};
+
+const shareReelApi = async (reelId: string): Promise<void> => {
+  // Simulate API call
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Shared reel ${reelId}`);
+      resolve();
+    }, 500);
+  });
+};
+
+const addCommentApi = async (reelId: string, content: string): Promise<void> => {
+  // Simulate API call
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Added comment "${content}" to reel ${reelId}`);
+      resolve();
+    }, 500);
+  });
+};
+
 export function ReelProvider({ children }: { children: ReactNode }) {
-  const [reels, setReels] = useState<Reel[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { user } = useUserData();
+  const queryClient = useQueryClient();
 
-  // Fetch reels from API
-  const fetchReels = async () => {
-    try {
-      setIsLoading(true);
-      // In a real app, this would be an API call
-      // const response = await fetch('/api/reels');
-      // const data = await response.json();
-      
-      // For now, use mock data
-      setTimeout(() => {
-        setReels(mockReels);
-        setIsLoading(false);
-      }, 1000);
-    } catch (err) {
-      setError('Failed to fetch reels');
-      setIsLoading(false);
-      console.error(err);
-    }
-  };
+  // Fetch reels query
+  const { data: reels = [], isLoading, error } = useQuery({
+    queryKey: ['reels'],
+    queryFn: fetchReelsApi,
+    enabled: !!user,
+  });
 
-  // Like a reel
-  const likeReel = async (reelId: string) => {
-    try {
-      // In a real app, this would be an API call
-      // await fetch(`/api/reels/${reelId}/like`, { method: 'POST' });
-      
-      // Update local state
-      setReels(prevReels => 
-        prevReels.map(reel => 
-          reel.id === reelId 
-            ? { 
-                ...reel, 
+  // Like reel mutation
+  const likeReelMutation = useMutation({
+    mutationFn: likeReelApi,
+    onSuccess: (_, reelId) => {
+      queryClient.setQueryData(['reels'], (oldData: Reel[] | undefined) => {
+        if (!oldData) return [];
+        return oldData.map(reel =>
+          reel.id === reelId
+            ? {
+                ...reel,
                 isLiked: !reel.isLiked,
-                likes: reel.isLiked ? reel.likes - 1 : reel.likes + 1
-              } 
+                likes: reel.isLiked ? reel.likes - 1 : reel.likes + 1,
+              }
             : reel
-        )
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
+        );
+      });
+    },
+  });
 
-  // Save a reel
-  const saveReel = async (reelId: string) => {
-    try {
-      // In a real app, this would be an API call
-      // await fetch(`/api/reels/${reelId}/save`, { method: 'POST' });
-      
-      // Update local state
-      setReels(prevReels => 
-        prevReels.map(reel => 
-          reel.id === reelId 
-            ? { ...reel, isSaved: !reel.isSaved } 
+  // Save reel mutation
+  const saveReelMutation = useMutation({
+    mutationFn: saveReelApi,
+    onSuccess: (_, reelId) => {
+      queryClient.setQueryData(['reels'], (oldData: Reel[] | undefined) => {
+        if (!oldData) return [];
+        return oldData.map(reel =>
+          reel.id === reelId
+            ? { ...reel, isSaved: !reel.isSaved }
             : reel
-        )
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
+        );
+      });
+    },
+  });
 
-  // Share a reel
-  const shareReel = async (reelId: string) => {
-    try {
-      // In a real app, this would be an API call
-      // await fetch(`/api/reels/${reelId}/share`, { method: 'POST' });
-      
-      // Update local state
-      setReels(prevReels => 
-        prevReels.map(reel => 
-          reel.id === reelId 
-            ? { ...reel, shares: reel.shares + 1 } 
+  // Share reel mutation
+  const shareReelMutation = useMutation({
+    mutationFn: shareReelApi,
+    onSuccess: (_, reelId) => {
+      queryClient.setQueryData(['reels'], (oldData: Reel[] | undefined) => {
+        if (!oldData) return [];
+        return oldData.map(reel =>
+          reel.id === reelId
+            ? { ...reel, shares: reel.shares + 1 }
             : reel
-        )
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
+        );
+      });
+    },
+  });
 
-  // Add a comment to a reel
-  const addComment = async (reelId: string, content: string) => {
-    try {
-      // In a real app, this would be an API call
-      // await fetch(`/api/reels/${reelId}/comments`, { 
-      //   method: 'POST',
-      //   body: JSON.stringify({ content })
-      // });
-      
-      // Log the comment for mock data
-      console.log(`Adding comment to reel ${reelId}: ${content}`);
-      
-      // Update local state
-      setReels(prevReels => 
-        prevReels.map(reel => 
-          reel.id === reelId 
-            ? { ...reel, comments: reel.comments + 1 } 
+  // Add comment mutation
+  const addCommentMutation = useMutation({
+    mutationFn: ({ reelId, content }: { reelId: string; content: string }) =>
+      addCommentApi(reelId, content),
+    onSuccess: (_, { reelId }) => {
+      queryClient.setQueryData(['reels'], (oldData: Reel[] | undefined) => {
+        if (!oldData) return [];
+        return oldData.map(reel =>
+          reel.id === reelId
+            ? { ...reel, comments: reel.comments + 1 }
             : reel
-        )
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
+        );
+      });
+    },
+  });
 
-  // Fetch reels on mount
-  useEffect(() => {
-    if (user) {
-      fetchReels();
-    }
-  }, [user]);
+  const setReels = (newReels: Reel[]) => {
+    queryClient.setQueryData(['reels'], newReels);
+  };
 
   return (
     <ReelContext.Provider
@@ -231,12 +243,20 @@ export function ReelProvider({ children }: { children: ReactNode }) {
         reels,
         setReels,
         isLoading,
-        error,
-        fetchReels,
-        likeReel,
-        saveReel,
-        shareReel,
-        addComment,
+        error: error ? 'Failed to fetch reels' : null,
+        fetchReels: () => queryClient.invalidateQueries({ queryKey: ['reels'] }),
+        likeReel: async (reelId: string) => {
+          await likeReelMutation.mutateAsync(reelId);
+        },
+        saveReel: async (reelId: string) => {
+          await saveReelMutation.mutateAsync(reelId);
+        },
+        shareReel: async (reelId: string) => {
+          await shareReelMutation.mutateAsync(reelId);
+        },
+        addComment: async (reelId: string, content: string) => {
+          await addCommentMutation.mutateAsync({ reelId, content });
+        },
       }}
     >
       {children}
