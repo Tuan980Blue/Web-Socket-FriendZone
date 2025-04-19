@@ -9,6 +9,21 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
+// Search users
+router.get('/search', auth, async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q) {
+      return res.status(400).json({ error: 'Search query is required' });
+    }
+
+    const users = await userService.searchUsers(q);
+    res.json(users);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 // Get user by ID
 router.get('/:id', auth, async (req, res) => {
   try {
