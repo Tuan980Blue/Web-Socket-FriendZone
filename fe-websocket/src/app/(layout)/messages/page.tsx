@@ -242,34 +242,38 @@ const Page = () => {
     };
 
     return (
-        <div className="flex h-[calc(100vh-6rem)] bg-gray-50 dark:bg-gray-900">
-            <ChatSidebar 
-                chats={chats}
-                selectedChat={selectedChat}
-                isLoading={isLoading}
-                currentUserId={user?.id || null}
-                onSelectChat={handleSelectChat}
-                onNewChat={() => setNewChatModalOpen(true)}
-            />
-
-            {selectedChat ? (
-                <ChatArea
-                    messages={messages}
-                    chatName={selectedChat.fullName}
-                    isOnline={selectedChat.status === 'ONLINE'}
-                    onSendMessage={handleSendMessage}
-                    onTypingStart={handleTypingStart}
-                    onTypingStop={handleTypingStop}
-                    isTyping={isTyping}
-                    onBack={() => setSelectedChat(null)}
-                    className={!selectedChat ? 'hidden md:flex' : 'flex'}
+        <div className="flex h-[calc(100vh-4rem)] bg-[#FAFAFA] dark:bg-[#121212]">
+            <div className={`${selectedChat ? 'hidden md:block' : 'block'} w-full md:w-80`}>
+                <ChatSidebar 
+                    chats={chats}
+                    selectedChat={selectedChat}
                     isLoading={isLoading}
-                    currentUserId={user?.id || ''}
-                    chatAvatar={selectedChat.avatar}
+                    currentUserId={user?.id || null}
+                    onSelectChat={handleSelectChat}
+                    onNewChat={() => setNewChatModalOpen(true)}
                 />
-            ) : (
-                <EmptyChatState onNewChat={() => setNewChatModalOpen(true)} />
-            )}
+            </div>
+
+            <div className={`${selectedChat ? 'block' : 'hidden md:block'} flex-1 flex flex-col`}>
+                {selectedChat ? (
+                    <ChatArea
+                        messages={messages}
+                        chatName={selectedChat.fullName}
+                        isOnline={selectedChat.status === 'ONLINE'}
+                        onSendMessage={handleSendMessage}
+                        onTypingStart={handleTypingStart}
+                        onTypingStop={handleTypingStop}
+                        isTyping={isTyping}
+                        onBack={() => setSelectedChat(null)}
+                        className="flex flex-col h-full"
+                        isLoading={isLoading}
+                        currentUserId={user?.id || ''}
+                        chatAvatar={selectedChat.avatar}
+                    />
+                ) : (
+                    <EmptyChatState onNewChat={() => setNewChatModalOpen(true)} />
+                )}
+            </div>
 
             <NewChatModal 
                 opened={newChatModalOpen}
