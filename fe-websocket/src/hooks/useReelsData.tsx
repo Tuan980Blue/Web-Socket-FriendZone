@@ -121,6 +121,7 @@ const likeReelApi = async (reelId: string): Promise<void> => {
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
+      console.log(`Liked reel ${reelId}`);
       resolve();
     }, 500);
   });
@@ -130,6 +131,7 @@ const saveReelApi = async (reelId: string): Promise<void> => {
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
+      console.log(`Saved reel ${reelId}`);
       resolve();
     }, 500);
   });
@@ -139,6 +141,7 @@ const shareReelApi = async (reelId: string): Promise<void> => {
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
+      console.log(`Shared reel ${reelId}`);
       resolve();
     }, 500);
   });
@@ -148,6 +151,7 @@ const addCommentApi = async (reelId: string, content: string): Promise<void> => 
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
+      console.log(`Added comment "${content}" to reel ${reelId}`);
       resolve();
     }, 500);
   });
