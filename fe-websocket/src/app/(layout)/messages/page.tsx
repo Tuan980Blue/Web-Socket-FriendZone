@@ -1,14 +1,14 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import ChatArea from '@/app/(layout)/messages/components/ChatArea';
 import ChatSidebar from '@/app/(layout)/messages/components/ChatSidebar';
 import NewChatModal from '@/app/(layout)/messages/components/NewChatModal';
 import EmptyChatState from '@/app/(layout)/messages/components/EmptyChatState';
-import { chatService, Message as ChatServiceMessage } from '@/services/chatService';
 import { useUserData } from '@/hooks/useUserData';
 import { useSearchParams } from 'next/navigation';
 import { userService, User } from '@/services/userService';
+import { useChat } from '@/hooks/useChat';
 
 interface ChatRoom {
     id: string;
@@ -18,18 +18,23 @@ interface ChatRoom {
     status?: string;
 }
 
-type Message = ChatServiceMessage;
-
 const Page = () => {
     const { user } = useUserData();
     const searchParams = useSearchParams();
     const userIdFromUrl = searchParams.get('userId');
     
-    const [selectedChat, setSelectedChat] = useState<ChatRoom | null>(null);
-    const [chats, setChats] = useState<Message[]>([]);
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isTyping, setIsTyping] = useState(false);
+    // Sử dụng hook useChat
+    const {
+        chats,
+        messages,
+        selectedChat,
+        setSelectedChat,
+        isLoadingChats,
+        isLoadingMessages,
+        sendMessage,
+        sendTypingStatus,
+        isTyping
+    } = useChat();
     
     // New chat modal state
     const [newChatModalOpen, setNewChatModalOpen] = useState(false);
@@ -61,147 +66,7 @@ const Page = () => {
         };
 
         loadUserFromUrl();
-    }, [userIdFromUrl, selectedChat]);
-
-    // Load recent chats
-    useEffect(() => {
-        const loadChats = async () => {
-            try {
-                const recentChats = await chatService.getRecentChats();
-                setChats(recentChats);
-            } catch (error) {
-                console.error('Error loading chats:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        loadChats();
-    }, []);
-
-    // Load messages when chat is selected
-    useEffect(() => {
-        const loadMessages = async () => {
-            if (!selectedChat) return;
-
-            try {
-                setIsLoading(true);
-                const response = await chatService.getDirectMessages(selectedChat.id);
-                setMessages(response.messages);
-            } catch (error) {
-                console.error('Error loading messages:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        loadMessages();
-    }, [selectedChat]);
-
-    // Handle WebSocket messages
-    useEffect(() => {
-        const handleNewMessage = (message: ChatServiceMessage) => {
-            // If message is from selected chat, add to messages
-            if (selectedChat && 
-                (message.senderId === selectedChat.id || message.receiverId === selectedChat.id)) {
-                setMessages(prev => [...prev, message]);
-            }
-
-            // Update chat list with new message
-            setChats(prev => {
-                const otherUserId = message.senderId === user?.id ? message.receiverId : message.senderId;
-                const chatIndex = prev.findIndex(chat => 
-                    chat.senderId === otherUserId || chat.receiverId === otherUserId
-                );
-
-                if (chatIndex === -1) {
-                    return [message, ...prev];
-                }
-
-                const newChats = [...prev];
-                newChats[chatIndex] = message;
-                return newChats;
-            });
-        };
-
-        const handleTyping = (data: { userId: string; isTyping: boolean }) => {
-            if (data.userId === selectedChat?.id) {
-                setIsTyping(data.isTyping);
-            }
-        };
-
-        const messageUnsubscribe = chatService.onMessage(handleNewMessage);
-        const typingUnsubscribe = chatService.onTyping(handleTyping);
-
-        return () => {
-            messageUnsubscribe();
-            typingUnsubscribe();
-        };
-    }, [selectedChat, user?.id]);
-
-    const handleSendMessage = useCallback(async (content: string) => {
-        if (!selectedChat || !content || !user) return;
-
-        try {
-            // Tạo tin nhắn tạm thời để hiển thị ngay lập tức
-            const tempMessage: Message = {
-                id: Date.now().toString(), // Tạm thời dùng timestamp làm ID
-                content,
-                senderId: user.id,
-                receiverId: selectedChat.id,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                sender: {
-                    id: user.id,
-                    username: user.username,
-                    avatar: user.avatar || '',
-                    fullName: user.fullName || user.username
-                },
-                receiver: {
-                    id: selectedChat.id,
-                    username: selectedChat.username,
-                    avatar: selectedChat.avatar,
-                    fullName: selectedChat.fullName
-                }
-            };
-
-            // Thêm tin nhắn vào state ngay lập tức
-            setMessages(prev => [...prev, tempMessage]);
-
-            // Cập nhật chat list
-            setChats(prev => {
-                const chatIndex = prev.findIndex(chat => 
-                    chat.senderId === selectedChat.id || chat.receiverId === selectedChat.id
-                );
-
-                if (chatIndex === -1) {
-                    return [tempMessage, ...prev];
-                }
-
-                const newChats = [...prev];
-                newChats[chatIndex] = tempMessage;
-                return newChats;
-            });
-
-            // Gửi tin nhắn qua WebSocket
-            chatService.sendMessage(selectedChat.id, content);
-        } catch (error) {
-            console.error('Error sending message:', error);
-            // Có thể thêm xử lý lỗi ở đây, ví dụ: xóa tin nhắn tạm thời nếu gửi thất bại
-        }
-    }, [selectedChat, user]);
-
-    const handleTypingStart = useCallback(() => {
-        if (selectedChat) {
-            chatService.sendTypingStatus(selectedChat.id, true);
-        }
-    }, [selectedChat]);
-
-    const handleTypingStop = useCallback(() => {
-        if (selectedChat) {
-            chatService.sendTypingStatus(selectedChat.id, false);
-        }
-    }, [selectedChat]);
+    }, [userIdFromUrl, selectedChat, setSelectedChat]);
 
     const handleSelectChat = (chat: ChatRoom) => {
         setSelectedChat(chat);
@@ -241,13 +106,21 @@ const Page = () => {
         setSearchResults([]);
     };
 
+    const handleTypingStart = () => {
+        sendTypingStatus(true);
+    };
+
+    const handleTypingStop = () => {
+        sendTypingStatus(false);
+    };
+
     return (
         <div className="flex h-[calc(100vh-4rem)] bg-[#FAFAFA] dark:bg-[#121212]">
             <div className={`${selectedChat ? 'hidden md:block' : 'block'} w-full md:w-80`}>
                 <ChatSidebar 
                     chats={chats}
                     selectedChat={selectedChat}
-                    isLoading={isLoading}
+                    isLoading={isLoadingChats}
                     currentUserId={user?.id || null}
                     onSelectChat={handleSelectChat}
                     onNewChat={() => setNewChatModalOpen(true)}
@@ -260,13 +133,13 @@ const Page = () => {
                         messages={messages}
                         chatName={selectedChat.fullName}
                         isOnline={selectedChat.status === 'ONLINE'}
-                        onSendMessage={handleSendMessage}
+                        onSendMessage={sendMessage}
                         onTypingStart={handleTypingStart}
                         onTypingStop={handleTypingStop}
                         isTyping={isTyping}
                         onBack={() => setSelectedChat(null)}
                         className="flex flex-col h-full"
-                        isLoading={isLoading}
+                        isLoading={isLoadingMessages}
                         currentUserId={user?.id || ''}
                         chatAvatar={selectedChat.avatar}
                     />
