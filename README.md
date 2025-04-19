@@ -26,7 +26,7 @@
 ### 🚀 📝 State Message Chat Online
 ![workfollow-Chat](https://github.com/user-attachments/assets/c97715b3-7fc4-4d6e-a249-cc71f7a6d852)
 
-setup cho dự án :
+## setup cho dự án :
 Frontend: Deploy trên Vercel
 Tích hợp tốt với Next.js
 Dễ dàng setup và maintain
@@ -42,7 +42,7 @@ Có monitoring tools
 WebSocket: Có 2 lựa chọn:
 Sử dụng WebSocket trực tiếp từ backend (nếu deploy trên Render)
 
-##Cơ chế
+## Cơ chế
 Tạo tin nhắn tạm thời ngay khi người dùng gửi:
 Tạo một tempMessage với đầy đủ thông tin (ID, nội dung, người gửi, người nhận, thời gian)
 Sử dụng timestamp làm ID tạm thời
@@ -61,3 +61,10 @@ Tin nhắn hiển thị ngay lập tức khi gửi
 Người dùng thấy được tin nhắn của mình ngay lập tức
 Vẫn đảm bảo tin nhắn được gửi qua WebSocket
 Có thể xử lý lỗi nếu gửi thất bại
+
+## 
+WebSocket: Giao thức kết nối hai chiều, cho phép server gửi dữ liệu đến client mà không cần client yêu cầu.
+Quản lý kết nối: Server biết người dùng nào đang online và có thể gửi tin nhắn đến họ ngay lập tức.
+Optimistic UI: Client hiển thị tin nhắn ngay lập tức, không cần đợi phản hồi từ server.
+Xử lý sự kiện: Client đăng ký handler cho sự kiện receive_message để cập nhật UI khi nhận được tin nhắn mới.
+Đây là một thiết kế tốt cho hệ thống chat real-time, cho phép tin nhắn được gửi và nhận ngay lập tức, đồng thời đảm bảo độ tin cậy và khả năng mở rộng.
