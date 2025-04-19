@@ -64,7 +64,7 @@ const PostsPage = () => {
   return (
     <div className="max-w-7xl mx-auto md:px-4 px-0 mb-6">
       {/* Quick Post Section */}
-      <div className="mb-8">
+      <div>
         <QuickPost isCurrentUser={true} />
       </div>
       

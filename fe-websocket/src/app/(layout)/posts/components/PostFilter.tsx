@@ -21,7 +21,7 @@ const PostFilter: React.FC<PostFilterProps> = ({ onFilterChange, activeFilter })
   ];
 
   return (
-    <div className="mb-6">
+    <div className="mb-2 md:mb-6 md:p-4 px-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-800 dark:text-white">Posts</h2>
         <div className="relative">
@@ -62,7 +62,7 @@ const PostFilter: React.FC<PostFilterProps> = ({ onFilterChange, activeFilter })
       </div>
 
       {/* Filter Pills */}
-      <div className="flex flex-wrap gap-2 mt-4">
+      <div className="flex flex-wrap gap-2 mt-2 hidden md:flex">
         {filters.map((filter) => (
           <button
             key={filter.id}
