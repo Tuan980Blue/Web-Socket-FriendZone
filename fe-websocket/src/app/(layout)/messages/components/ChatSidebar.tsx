@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, Avatar } from '@mantine/core';
 import { IconUserPlus, IconMessage } from '@tabler/icons-react';
 import { Message as ChatServiceMessage } from '@/services/chatService';
-import { useTheme } from 'next-themes';
 
 interface ChatRoom {
     id: string;
@@ -31,7 +30,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     onSelectChat,
     onNewChat
 }) => {
-    const { theme } = useTheme();
     
     if (isLoading) {
         return (

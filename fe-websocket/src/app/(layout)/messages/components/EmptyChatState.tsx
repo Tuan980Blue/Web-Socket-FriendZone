@@ -1,14 +1,12 @@
 import React from 'react';
 import { Button } from '@mantine/core';
 import { IconUserPlus, IconMessage } from '@tabler/icons-react';
-import { useTheme } from 'next-themes';
 
 interface EmptyChatStateProps {
     onNewChat: () => void;
 }
 
 const EmptyChatState: React.FC<EmptyChatStateProps> = ({ onNewChat }) => {
-    const { theme } = useTheme();
     
     return (
         <div className="flex-1 flex items-center justify-center bg-[#FAFAFA] dark:bg-[#121212]">

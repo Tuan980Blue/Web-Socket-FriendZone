@@ -9,7 +9,6 @@ import { chatService, Message as ChatServiceMessage } from '@/services/chatServi
 import { useUserData } from '@/hooks/useUserData';
 import { useSearchParams } from 'next/navigation';
 import { userService, User } from '@/services/userService';
-import { useTheme } from 'next-themes';
 
 interface ChatRoom {
     id: string;
@@ -25,7 +24,6 @@ const Page = () => {
     const { user } = useUserData();
     const searchParams = useSearchParams();
     const userIdFromUrl = searchParams.get('userId');
-    const { theme } = useTheme();
     
     const [selectedChat, setSelectedChat] = useState<ChatRoom | null>(null);
     const [chats, setChats] = useState<Message[]>([]);

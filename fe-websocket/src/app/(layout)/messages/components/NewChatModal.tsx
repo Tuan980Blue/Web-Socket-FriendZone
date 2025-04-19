@@ -2,7 +2,6 @@ import React from 'react';
 import { Modal, Input, Button, Text, Avatar, Loader } from '@mantine/core';
 import { IconSearch, IconUserPlus } from '@tabler/icons-react';
 import { User } from '@/services/userService';
-import { useTheme } from 'next-themes';
 
 interface NewChatModalProps {
     opened: boolean;
@@ -25,7 +24,6 @@ const NewChatModal: React.FC<NewChatModalProps> = ({
     onSearch,
     onStartNewChat
 }) => {
-    const { theme } = useTheme();
     
     return (
         <Modal
