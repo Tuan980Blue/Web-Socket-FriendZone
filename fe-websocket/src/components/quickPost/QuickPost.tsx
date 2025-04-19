@@ -46,7 +46,7 @@ export default function QuickPost({ isCurrentUser }: QuickPostProps) {
   if (!isCurrentUser) return null;
 
   return (
-    <div className="w-auto max-w-6xl mx-auto mb-4">
+    <div className="w-auto max-w-6xl mx-auto mb-2">
       <div 
         className={`rounded-2xl p-4 shadow-lg transition-all duration-300 cursor-pointer
           ${theme === 'dark' 
