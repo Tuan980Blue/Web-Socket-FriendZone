@@ -8,7 +8,7 @@
 - 👥 **Phòng chat riêng và nhóm** – Giao tiếp 1-1 hoặc theo nhóm cực kỳ mượt mà.
 - 📡 **Trạng thái người dùng** – Ai đang online/offline? Biết liền.
 - 📝 **Cập nhật trạng thái** – Chia sẻ cảm xúc, hình ảnh, hay bất cứ điều gì bạn muốn.
-- 🔒 **Xác thực người dùng** – Bảo mật bằng JWT hoặc OAuth.
+- 🔒 **Xác thực người dùng** – Bảo mật bằng JWT.
 - 📱 **Responsive UI** – Giao diện đẹp, mượt mà trên mọi thiết bị.
 
 ## 🧱 Công nghệ sử dụng
