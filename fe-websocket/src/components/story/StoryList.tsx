@@ -27,8 +27,8 @@ const StoryList: React.FC<StoryListProps> = ({
           <Image
             src={user?.avatar || '/image-person.png'}
             alt="Your story"
-            width={40}
-            height={40}
+            width={56}
+            height={56}
             className="rounded-full"
           />
           <div className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-1">
@@ -63,7 +63,7 @@ const StoryList: React.FC<StoryListProps> = ({
               : 'border-2 border-gray-300'
           }`}>
             <Image
-              src={group.avatarUrl || "/default-avatar.png"}
+              src={group.avatarUrl || '/image-person.png'}
               alt={group.username}
               width={56}
               height={56}
