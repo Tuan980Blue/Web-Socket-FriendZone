@@ -45,7 +45,12 @@ const Story: React.FC<StoryProps> = ({
     markStoryAsViewed(story.id);
     
     // Add viewer
-    addViewer(story.id, currentUserId, currentUsername, currentUserAvatar);
+    addViewer({
+      storyId: story.id,
+      userId: currentUserId,
+      username: currentUsername,
+      avatarUrl: currentUserAvatar
+    });
   };
   
   // Handle close modal
@@ -68,7 +73,12 @@ const Story: React.FC<StoryProps> = ({
       // Mark as viewed
       const nextStory = selectedGroup.stories[selectedStoryIndex + 1];
       markStoryAsViewed(nextStory.id);
-      addViewer(nextStory.id, currentUserId, currentUsername, currentUserAvatar);
+      addViewer({
+        storyId: nextStory.id,
+        userId: currentUserId,
+        username: currentUsername,
+        avatarUrl: currentUserAvatar
+      });
     } 
     // If there are more groups
     else if (selectedGroupIndex < groupedStories.length - 1) {
@@ -79,7 +89,12 @@ const Story: React.FC<StoryProps> = ({
       const nextGroup = groupedStories[selectedGroupIndex + 1];
       const nextStory = nextGroup.stories[0];
       markStoryAsViewed(nextStory.id);
-      addViewer(nextStory.id, currentUserId, currentUsername, currentUserAvatar);
+      addViewer({
+        storyId: nextStory.id,
+        userId: currentUserId,
+        username: currentUsername,
+        avatarUrl: currentUserAvatar
+      });
     } 
     // End of all stories
     else {
@@ -105,12 +120,22 @@ const Story: React.FC<StoryProps> = ({
   
   // Handle add reaction
   const handleAddReaction = (storyId: string, emoji: string) => {
-    addReaction(storyId, currentUserId, emoji);
+    addReaction({
+      storyId,
+      userId: currentUserId,
+      emoji
+    });
   };
   
   // Handle add reply
   const handleAddReply = (storyId: string, content: string) => {
-    addReply(storyId, currentUserId, currentUsername, currentUserAvatar, content);
+    addReply({
+      storyId,
+      userId: currentUserId,
+      username: currentUsername,
+      avatarUrl: currentUserAvatar,
+      content
+    });
   };
   
   // Handle open add story modal
@@ -137,7 +162,7 @@ const Story: React.FC<StoryProps> = ({
     return (
       <div className="w-full bg-white rounded-lg shadow-sm p-4 mb-4">
         <div className="text-center text-red-500">
-          {error}
+          {error instanceof Error ? error.message : 'An error occurred'}
         </div>
       </div>
     );
