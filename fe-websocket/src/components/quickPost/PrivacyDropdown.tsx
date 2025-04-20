@@ -62,21 +62,21 @@ export default function PrivacyDropdown({
           e.stopPropagation();
           setShowPrivacyDropdown(!showPrivacyDropdown);
         }}
-        className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all duration-300
+        className={`flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-1 md:py-1.5 rounded-lg transition-all duration-300
           ${theme === 'dark'
             ? 'bg-[#262626] text-[#FAFAFA] hover:bg-[#262626]'
             : 'bg-[#FAFAFA] text-[#262626] hover:bg-[#FAFAFA]'}`}
       >
         {selectedOption?.icon}
-        <span className="text-sm font-medium">
+        <span className="text-xs md:text-sm font-medium">
           {selectedOption?.label}
         </span>
-        <ChevronDown size={16} className={`transition-transform duration-200 ${showPrivacyDropdown ? 'rotate-180' : ''}`} />
+        <ChevronDown size={14} className={`transition-transform duration-200 ${showPrivacyDropdown ? 'rotate-180' : ''}`} />
       </button>
 
       {showPrivacyDropdown && (
         <div 
-          className={`absolute right-0 mt-2 w-64 rounded-xl shadow-lg transition-all duration-300 z-10
+          className={`fixed md:absolute left-0 right-0 md:right-0 md:left-auto mt-2 w-56 md:w-68 rounded-xl shadow-lg transition-all duration-300 z-10
             ${theme === 'dark' 
               ? 'bg-[#121212] border border-[#262626]' 
               : 'bg-white border border-[#DBDBDB]'}`}
@@ -89,21 +89,21 @@ export default function PrivacyDropdown({
                 setSelectedPrivacy(option.value);
                 setShowPrivacyDropdown(false);
               }}
-              className={`w-full flex items-start space-x-3 p-3 transition-colors duration-200
+              className={`w-full flex items-start space-x-2 md:space-x-3 p-2 md:p-3 transition-colors duration-200
                 ${theme === 'dark'
                   ? 'hover:bg-[#262626] text-[#FAFAFA]'
                   : 'hover:bg-[#FAFAFA] text-[#262626]'}
                 ${selectedPrivacy === option.value ? option.bgColor : ''}`}
             >
-              <div className={`p-2 rounded-lg ${option.bgColor}`}>
+              <div className={`p-1.5 md:p-2 rounded-lg ${option.bgColor}`}>
                 {option.icon}
               </div>
               <div className="flex-1 text-left">
-                <div className={`font-medium ${option.color}`}>{option.label}</div>
-                <div className="text-xs text-[#8E8E8E]">{option.description}</div>
+                <div className={`text-xs md:text-sm font-medium ${option.color}`}>{option.label}</div>
+                <div className="text-[10px] md:text-xs text-[#8E8E8E]">{option.description}</div>
               </div>
               {selectedPrivacy === option.value && (
-                <Check size={16} className="text-[#20C997]" />
+                <Check size={14} className="text-[#20C997]" />
               )}
             </button>
           ))}

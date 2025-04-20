@@ -9,7 +9,7 @@ import {
     Badge,
     Stack,
 } from '@mantine/core';
-import { IconUserPlus, IconClock, IconUsers } from '@tabler/icons-react';
+import { IconUserPlus, IconClock } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { User } from '@/types/user';
@@ -31,8 +31,7 @@ const UserCard = ({
     user, 
     onFollow, 
     onUnfollow, 
-    isLoading, 
-    showMutualFollowers = false,
+    isLoading,
     variant = 'default'
 }: UserCardProps) => {
     const isSuggestion = variant === 'suggestion';
@@ -81,7 +80,7 @@ const UserCard = ({
                             <Group gap="xs" wrap="wrap">
                                 <Badge
                                     variant="light"
-                                    color={user.status === 'ONLINE' ? 'green' : 'gray'}
+                                    color={user.status === 'ONLINE' ? 'green' : 'red'}
                                     className="bg-opacity-20"
                                     size="xs"
                                 >
@@ -96,17 +95,6 @@ const UserCard = ({
                                         })}
                                     </Text>
                                 </Group>
-                                {showMutualFollowers && user.mutualFollowersCount && user.mutualFollowersCount > 0 && (
-                                    <Group gap={2}>
-                                        <IconUsers size={12} className="text-[#8E8E8E]" />
-                                        <Text size="xs" className="text-[#8E8E8E]">
-                                            {user.mutualFollowersCount} bạn chung
-                                        </Text>
-                                    </Group>
-                                )}
-                                <Text size="xs" color={"pink"}>
-                                    {user.followersCount} người theo dõi
-                                </Text>
                             </Group>
                         </Stack>
                 </Group>

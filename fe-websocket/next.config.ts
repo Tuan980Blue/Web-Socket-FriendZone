@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
     domains: [
       'randomuser.me',
       'images.unsplash.com',
-      'picsum.photos'
+      'picsum.photos',
+      'i.pravatar.cc',
     ],
     remotePatterns: [
       {

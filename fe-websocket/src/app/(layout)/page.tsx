@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata, Viewport } from "next";
-import PostsPage from "@/app/(layout)/posts/page";
+import Home from "@/app/(layout)/home/page";
 
 export const metadata: Metadata = {
     title: "FriendZone - Mạng xã hội kết nối bạn bè",
@@ -51,7 +51,7 @@ export const viewport: Viewport = {
 function Page() {
     return (
         <div>
-            <PostsPage />
+            <Home />
         </div>
     );
 }
