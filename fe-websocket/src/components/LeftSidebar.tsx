@@ -44,8 +44,8 @@ const LeftSidebar = () => {
                             radius="xl"
                         />
                         <div>
-                            <h3 className="font-medium text-[#262626] dark:text-[#FAFAFA]">{user?.username || "Guest"}</h3>
-                            <p className="text-sm text-[#666666] dark:text-[#A0A0A0]">View Profile</p>
+                            <h3 className="font-semibold tracking-wide text-sm uppercase text-[#262626] dark:text-[#FAFAFA]">{user?.fullName || "Guest"}</h3>
+                            <p className="text-xs text-[#666666] dark:text-[#A0A0A0]">View Profile</p>
                         </div>
                     </Link>
                 </UserHoverCard>
@@ -62,7 +62,7 @@ const LeftSidebar = () => {
                                 className={`flex items-center space-x-3 p-2 rounded-lg mb-1 ${
                                     isActive
                                         ? 'bg-gradient-to-r from-[#F58529]/10 via-[#DD2A7B]/10 to-[#515BD4]/10'
-                                        : 'hover:bg-[#FAFAFA] dark:hover:bg-[#121212]'
+                                        : 'hover:bg-gray-200 dark:hover:bg-[#121212]'
                                 }`}
                             >
                                 <Icon
@@ -70,7 +70,7 @@ const LeftSidebar = () => {
                                     className={isActive ? 'icon-primery' : 'text-[#666666] dark:text-[#A0A0A0]'}
                                 />
                                 <span
-                                    className={isActive ? 'text-primery font-medium' : 'text-[#666666] dark:text-[#A0A0A0]'}>
+                                    className={isActive ? 'text-primery font-medium font-sans text-base font-semibold' : 'text-[#666666] dark:text-[#A0A0A0]'}>
                   {item.label}
                 </span>
                             </Link>
@@ -79,10 +79,12 @@ const LeftSidebar = () => {
                 </nav>
 
                 {/* Create Post Button */}
-                <Link href={"/posts"}
-                      className="w-full mt-4 p-2 bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white rounded-lg hover:opacity-90 flex items-center justify-center space-x-2">
-                    <CircleFadingPlus size={20}/>
-                    <span>Create Post</span>
+                <Link
+                    href="/posts"
+                    className="w-full mt-4 p-2 bg-gradient-to-r from-teal-300 via-sky-400 to-blue-500 text-white rounded-lg hover:opacity-90 flex items-center justify-center space-x-2 shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                    <CircleFadingPlus size={20} />
+                    <span className="font-semibold tracking-wide text-sm uppercase">Create Post</span>
                 </Link>
 
                 <div className="mt-6">
@@ -95,7 +97,7 @@ const LeftSidebar = () => {
                 {/* Dark Mode Toggle */}
                 <button
                     onClick={() => setIsDarkMode(!isDarkMode)}
-                    className="mt-6 w-full p-2 flex items-center space-x-3 text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#121212] rounded-lg"
+                    className="mt-6 w-full p-2 flex items-center space-x-3 text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA] hover:bg-gray-200 dark:hover:bg-[#121212] rounded-lg"
                 >
                     {isDarkMode ? <Sun size={20}/> : <Moon size={20}/>}
                     <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>

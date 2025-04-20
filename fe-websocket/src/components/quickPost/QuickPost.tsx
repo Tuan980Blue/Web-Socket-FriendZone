@@ -46,9 +46,9 @@ export default function QuickPost({ isCurrentUser }: QuickPostProps) {
   if (!isCurrentUser) return null;
 
   return (
-    <div className="w-auto max-w-6xl mx-auto mb-2">
+    <div className="w-auto max-w-6xl mx-auto mb-2 px-2 md:px-0">
       <div 
-        className={`rounded-2xl p-4 shadow-lg transition-all duration-300 cursor-pointer
+        className={`rounded-2xl p-3 md:p-4 shadow-lg transition-all duration-300 cursor-pointer
           ${theme === 'dark' 
             ? 'bg-[#121212] border border-[#262626] hover:border-[#DD2A7B]/30' 
             : 'bg-white border border-[#DBDBDB] hover:border-[#DD2A7B]/30'}`}
@@ -56,19 +56,19 @@ export default function QuickPost({ isCurrentUser }: QuickPostProps) {
       >
         {/* Collapsed View */}
         {!isExpanded && (
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 md:space-x-3">
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] flex items-center justify-center shadow-lg">
-                <UserCircle2 className="text-white" size={24} />
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] flex items-center justify-center shadow-lg">
+                <UserCircle2 className="text-white" size={20} />
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="font-medium text-[#262626] dark:text-[#FAFAFA]">{user?.fullName || undefined}</h3>
-              <p className={`text-sm italic ${theme === 'dark' ? 'text-[#8E8E8E]' : 'text-[#8E8E8E]'}`}>
+              <h3 className="font-medium text-sm md:text-base text-[#262626] dark:text-[#FAFAFA]">{user?.fullName || undefined}</h3>
+              <p className={`text-xs md:text-sm italic ${theme === 'dark' ? 'text-[#8E8E8E]' : 'text-[#8E8E8E]'}`}>
                 Bạn đang nghĩ gì thế?
               </p>
             </div>
-            <ChevronDown className={`${theme === 'dark' ? 'text-[#8E8E8E]' : 'text-[#8E8E8E]'} transition-transform duration-300`} size={20} />
+            <ChevronDown className={`${theme === 'dark' ? 'text-[#8E8E8E]' : 'text-[#8E8E8E]'} transition-transform duration-300`} size={18} />
           </div>
         )}
 
@@ -77,19 +77,19 @@ export default function QuickPost({ isCurrentUser }: QuickPostProps) {
           <>
             <QuickPostHeader isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
             
-            <div className="mt-4">
+            <div className="mt-3 md:mt-4">
               <QuickPostContent postContent={postContent} setPostContent={setPostContent} />
             </div>
 
             {/* Quick Action Buttons */}
-            <div className="flex items-center justify-between mt-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mt-3 md:mt-4 space-y-3 md:space-y-0">
               <QuickPostActions 
                 handleImageUpload={handleImageUpload}
                 showOptions={showOptions}
                 setShowOptions={setShowOptions}
               />
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 md:space-x-3">
                 <PrivacyDropdown
                   selectedPrivacy={selectedPrivacy}
                   setSelectedPrivacy={setSelectedPrivacy}
@@ -99,20 +99,20 @@ export default function QuickPost({ isCurrentUser }: QuickPostProps) {
                 <Button
                   onClick={(e) => { e.stopPropagation(); handlePostSubmit(); }}
                   disabled={!postContent.trim() || isLoading}
-                  className={`px-6 py-2 rounded-full font-medium transition-all duration-300 flex items-center space-x-2
+                  className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 flex items-center space-x-2
                     ${!postContent.trim() || isLoading
                       ? 'bg-[#DBDBDB] text-[#8E8E8E] cursor-not-allowed'
                       : 'bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90 hover:shadow-lg'}`}
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="animate-spin" size={18} />
+                      <Loader2 className="animate-spin" size={16} />
                       <span>Đang đăng...</span>
                     </>
                   ) : (
                     <>
-                      <Check size={18}/>
-                      <span className="ml-2">Đăng</span>
+                      <Check size={16}/>
+                      <span className="ml-1 md:ml-2">Đăng</span>
                     </>
                   )}
                 </Button>
