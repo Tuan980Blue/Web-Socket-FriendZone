@@ -5,39 +5,43 @@ import Story from "@/components/story/Story";
 import AddStoryModal from "@/components/story/AddStoryModal";
 import PostsPage from "@/app/(layout)/posts/page";
 import { useStories } from '@/hooks/useStories';
+import {useUserData} from "@/hooks/useUserData";
 
 const Home = () => {
     const [isAddStoryModalOpen, setIsAddStoryModalOpen] = useState(false);
     const { addStory } = useStories();
     
-    // Mock current user data (replace with real user data from your auth system)
-    const currentUser = {
-        id: 'current-user-id',
-        username: 'Current User',
-        avatar: '/default-avatar.png'
-    };
+    // Get user data from the hook
+    const {user} = useUserData();
 
     const handleAddStory = () => {
         setIsAddStoryModalOpen(true);
     };
 
     const handleStorySubmit = async (file: File) => {
-        // Add story using the hook
-        addStory(
-            file, 
-            currentUser.id, 
-            currentUser.username, 
-            currentUser.avatar
-        );
+        // Only add story if user data is available
+        if (user?.id && user?.username && user?.avatar) {
+            addStory({
+                file,
+                userId: user.id,
+                username: user.username,
+                avatarUrl: user.avatar
+            });
+        }
     };
+
+    // Default values for when user data is not available
+    const userId = user?.id || 'guest';
+    const username = user?.username || 'Guest User';
+    const avatar = user?.avatar || '/image-person.png';
 
     return (
         <div className="max-w-7xl mx-auto">
             {/* Story Section */}
             <Story 
-                currentUserId={currentUser.id}
-                currentUsername={currentUser.username}
-                currentUserAvatar={currentUser.avatar}
+                currentUserId={userId}
+                currentUsername={username}
+                currentUserAvatar={avatar}
                 onAddStory={handleAddStory}
             />
 
