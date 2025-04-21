@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react';
+import Image from 'next/image';
 import {
   Search,
   MoreVertical,
@@ -129,10 +130,12 @@ export default function PostsPage() {
             className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden"
           >
             <div className="relative aspect-square">
-              <img
+              <Image
                 src={post.image}
                 alt={post.caption}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
               {post.type === 'video' && (
                 <div className="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1">
@@ -141,10 +144,12 @@ export default function PostsPage() {
               )}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
                 <div className="flex items-center text-white">
-                  <img
+                  <Image
                     src={post.author.avatar}
                     alt={post.author.username}
-                    className="w-8 h-8 rounded-full"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
                   />
                   <span className="ml-2 text-sm font-medium">
                     {post.author.username}
@@ -209,10 +214,12 @@ export default function PostsPage() {
             </div>
             <div className="space-y-4">
               <div className="relative aspect-video">
-                <img
+                <Image
                   src={selectedPost.image}
                   alt={selectedPost.caption}
-                  className="w-full h-full object-cover rounded-lg"
+                  fill
+                  className="object-cover rounded-lg"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 {selectedPost.type === 'video' && (
                   <div className="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1">
@@ -221,10 +228,12 @@ export default function PostsPage() {
                 )}
               </div>
               <div className="flex items-center">
-                <img
+                <Image
                   src={selectedPost.author.avatar}
                   alt={selectedPost.author.username}
-                  className="w-10 h-10 rounded-full"
+                  width={40}
+                  height={40}
+                  className="rounded-full"
                 />
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white">

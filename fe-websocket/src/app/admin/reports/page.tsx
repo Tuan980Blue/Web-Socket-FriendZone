@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react';
+import Image from 'next/image';
 import {
   Search,
   MoreVertical,
@@ -180,10 +181,12 @@ export default function ReportsPage() {
                 <tr key={report.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <img
-                        className="h-8 w-8 rounded-full"
+                      <Image
+                        className="rounded-full"
                         src={report.reporter.avatar}
                         alt={report.reporter.username}
+                        width={32}
+                        height={32}
                       />
                       <div className="ml-3">
                         <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -194,10 +197,12 @@ export default function ReportsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <img
-                        className="h-8 w-8 rounded-full"
+                      <Image
+                        className="rounded-full"
                         src={report.reported.avatar}
                         alt={report.reported.username}
+                        width={32}
+                        height={32}
                       />
                       <div className="ml-3">
                         <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -284,10 +289,12 @@ export default function ReportsPage() {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <img
+                  <Image
+                    className="rounded-full"
                     src={selectedReport.reporter.avatar}
                     alt={selectedReport.reporter.username}
-                    className="h-10 w-10 rounded-full"
+                    width={40}
+                    height={40}
                   />
                   <div className="ml-4">
                     <h3 className="text-sm font-medium text-gray-900 dark:text-white">
@@ -299,10 +306,12 @@ export default function ReportsPage() {
                   </div>
                 </div>
                 <div className="flex items-center">
-                  <img
+                  <Image
+                    className="rounded-full"
                     src={selectedReport.reported.avatar}
                     alt={selectedReport.reported.username}
-                    className="h-10 w-10 rounded-full"
+                    width={40}
+                    height={40}
                   />
                   <div className="ml-4">
                     <h3 className="text-sm font-medium text-gray-900 dark:text-white">

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react';
+import Image from 'next/image';
 import {
   Search,
   Filter,
@@ -128,10 +129,12 @@ export default function MediaPage() {
             className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden group"
           >
             <div className="relative aspect-square">
-              <img
+              <Image
                 src={item.url}
                 alt={item.caption}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
               {item.type === 'video' && (
                 <div className="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1">
@@ -166,10 +169,12 @@ export default function MediaPage() {
             </div>
             <div className="p-4">
               <div className="flex items-center">
-                <img
+                <Image
                   src={item.author.avatar}
                   alt={item.author.username}
-                  className="w-8 h-8 rounded-full"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
                 />
                 <div className="ml-3">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -198,10 +203,12 @@ export default function MediaPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full">
             <div className="space-y-6">
               <div className="relative aspect-video">
-                <img
+                <Image
                   src={selectedMedia.url}
                   alt={selectedMedia.caption}
-                  className="w-full h-full object-cover rounded-lg"
+                  fill
+                  className="object-cover rounded-lg"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 {selectedMedia.type === 'video' && (
                   <div className="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1">
@@ -210,10 +217,12 @@ export default function MediaPage() {
                 )}
               </div>
               <div className="flex items-center">
-                <img
+                <Image
                   src={selectedMedia.author.avatar}
                   alt={selectedMedia.author.username}
-                  className="h-10 w-10 rounded-full"
+                  width={40}
+                  height={40}
+                  className="rounded-full"
                 />
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white">

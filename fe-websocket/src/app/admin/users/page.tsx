@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import {
   Search,
   MoreVertical,
@@ -121,10 +122,12 @@ export default function UsersPage() {
               <tr key={user.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
-                    <img
-                      className="h-10 w-10 rounded-full"
+                    <Image
+                      className="rounded-full"
                       src={user.avatar}
                       alt={user.username}
+                      width={40}
+                      height={40}
                     />
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -197,10 +200,12 @@ export default function UsersPage() {
             </div>
             <div className="space-y-4">
               <div className="flex items-center">
-                <img
+                <Image
                   src={selectedUser.avatar}
                   alt={selectedUser.username}
-                  className="h-16 w-16 rounded-full"
+                  width={64}
+                  height={64}
+                  className="rounded-full"
                 />
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white">
