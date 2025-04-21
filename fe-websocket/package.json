@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -17,6 +17,7 @@
     "@mantine/form": "^7.17.4",
     "@mantine/hooks": "^7.17.4",
     "@mantine/notifications": "^7.17.4",
+    "@next/swc-win32-x64-msvc": "^15.2.4",
     "@reduxjs/toolkit": "^2.6.1",
     "@tabler/icons-react": "^3.31.0",
     "@tanstack/react-query": "^5.72.2",
@@ -35,21 +36,22 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@headlessui/react": "^2.2.1",
-    "@tailwindcss/postcss": "^4",
     "@tanstack/react-query-devtools": "^5.72.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "antd": "^5.24.7",
+    "autoprefixer": "^10.4.17",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "framer-motion": "^12.7.3",
     "next-themes": "^0.4.6",
+    "postcss": "^8.4.35",
     "react-redux": "^9.2.0",
     "react-spinners": "^0.16.1",
     "recharts": "^2.15.3",
     "socket.io-client": "^4.8.1",
-    "tailwindcss": "^4",
+    "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
 }
