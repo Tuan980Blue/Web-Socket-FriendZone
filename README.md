@@ -1,6 +1,6 @@
 # 🌐 [Link-PreView-Web](https://anhtuandev.id.vn/)
 
-**Web-Socket-Social** là một nền tảng mạng xã hội thời gian thực được xây dựng với WebSocket, nơi người dùng có thể nhắn tin, tương tác và cập nhật trạng thái ngay lập tức – không cần F5!
+**FriendZone** là một nền tảng mạng xã hội lấy cảm hứng từ **Instagram**, phần mềm thời gian thực được xây dựng với WebSocket, nơi người dùng có thể nhắn tin, tương tác và cập nhật trạng thái ngay lập tức – không cần F5!
 
 ## 🚀 Tính năng nổi bật
 
@@ -8,7 +8,7 @@
 - 👥 **Phòng chat riêng và nhóm** – Giao tiếp 1-1 hoặc theo nhóm cực kỳ mượt mà.
 - 📡 **Trạng thái người dùng** – Ai đang online/offline? Biết liền.
 - 📝 **Cập nhật trạng thái** – Chia sẻ cảm xúc, hình ảnh, hay bất cứ điều gì bạn muốn.
-- 🔒 **Xác thực người dùng** – Bảo mật bằng JWT hoặc OAuth.
+- 🔒 **Xác thực người dùng** – Bảo mật bằng JWT.
 - 📱 **Responsive UI** – Giao diện đẹp, mượt mà trên mọi thiết bị.
 
 ## 🧱 Công nghệ sử dụng
