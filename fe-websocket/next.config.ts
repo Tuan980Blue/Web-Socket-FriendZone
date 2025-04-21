@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const config: NextConfig = {
+  swcMinify: true,
+  experimental: {
+    // Remove turbo option as it's causing issues
+    // Use the correct experimental options for Next.js 15
+  },
   images: {
     domains: [
       'randomuser.me',
@@ -24,4 +29,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default config;
