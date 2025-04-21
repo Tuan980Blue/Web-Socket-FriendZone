@@ -31,6 +31,7 @@ model User {
   followersCount Int        @default(0)
   followingCount Int        @default(0)
   postsCount     Int        @default(0)
+  role           UserRole   @default(USER)
 
   // Relations
   sentMessages     Message[]        @relation("SentMessages")
@@ -273,4 +274,10 @@ enum NotificationType {
   TAG
   STORY_VIEW
   STORY_REACTION
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
 }

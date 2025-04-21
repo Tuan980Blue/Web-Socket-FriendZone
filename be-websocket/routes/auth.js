@@ -54,7 +54,8 @@ router.post('/register', async (req, res) => {
         avatar: user.avatar,
         status: user.status,
         lastSeen: user.lastSeen,
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
+        role: user.role
       },
       token
     });
@@ -110,7 +111,8 @@ router.post('/login', async (req, res) => {
         bio: user.bio,
         followersCount: user.followersCount,
         followingCount: user.followingCount,
-        postsCount: user.postsCount
+        postsCount: user.postsCount,
+        role: user.role
       },
       token
     });
@@ -166,7 +168,8 @@ router.get('/me', auth, async (req, res) => {
         bio: user.bio,
         followersCount: user.followersCount,
         followingCount: user.followingCount,
-        postsCount: user.postsCount
+        postsCount: user.postsCount,
+        role: user.role
       }
     });
   } catch (error) {

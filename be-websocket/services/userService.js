@@ -38,7 +38,8 @@ class UserService {
         birthDate: true,
         followersCount: true,
         followingCount: true,
-        postsCount: true
+        postsCount: true,
+        role: true
       }
     });
   }
@@ -95,7 +96,8 @@ class UserService {
         birthDate: true,
         followersCount: true,
         followingCount: true,
-        postsCount: true
+        postsCount: true,
+        role: true
       }
     });
   }
@@ -194,7 +196,8 @@ class UserService {
         birthDate: true,
         followersCount: true,
         followingCount: true,
-        postsCount: true
+        postsCount: true,
+        role: true
       }
     });
   }

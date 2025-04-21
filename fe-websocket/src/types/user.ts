@@ -1,5 +1,6 @@
 export type UserStatus = 'ONLINE' | 'OFFLINE' | 'AWAY' | 'BUSY';
 export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
+export type UserRole = 'USER' | 'ADMIN' | 'MODERATOR';
 
 export interface User {
   id: string;
@@ -24,6 +25,7 @@ export interface User {
   postsCount: number;
   isFollowing?: boolean;
   mutualFollowersCount?: number;
+  role: UserRole;
 }
 
 export interface UserContextType {
