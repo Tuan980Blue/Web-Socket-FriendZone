@@ -144,12 +144,10 @@ export default function PostsPage() {
               )}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
                 <div className="flex items-center text-white">
-                  <Image
+                  <img
                     src={post.author.avatar}
                     alt={post.author.username}
-                    width={32}
-                    height={32}
-                    className="rounded-full"
+                    className="rounded-full w-8 h-8"
                   />
                   <span className="ml-2 text-sm font-medium">
                     {post.author.username}
@@ -228,12 +226,10 @@ export default function PostsPage() {
                 )}
               </div>
               <div className="flex items-center">
-                <Image
+                <img
                   src={selectedPost.author.avatar}
                   alt={selectedPost.author.username}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
+                  className="rounded-full w-16 h-16"
                 />
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white">

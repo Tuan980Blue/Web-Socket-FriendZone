@@ -169,7 +169,7 @@ export default function MediaPage() {
             </div>
             <div className="p-4">
               <div className="flex items-center">
-                <Image
+                <img
                   src={item.author.avatar}
                   alt={item.author.username}
                   width={32}
@@ -217,7 +217,7 @@ export default function MediaPage() {
                 )}
               </div>
               <div className="flex items-center">
-                <Image
+                <img
                   src={selectedMedia.author.avatar}
                   alt={selectedMedia.author.username}
                   width={40}
