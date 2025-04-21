@@ -36,19 +36,8 @@ export default function ProfileHero({ user, isCurrentUser }: ProfileHeroProps) {
 
   return (
     <div className="relative">
-      {/* Cover Image */}
-      <div className="h-65 w-full relative overflow-hidden">
-        <Image
-          src={'/backgroundprofile.png'}
-          alt="Cover"
-          fill
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/70" />
-      </div>
-
       {/* Profile Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:p-6 lg:p-8 relative z-10">
         <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
           {/* Avatar */}
           <motion.div
