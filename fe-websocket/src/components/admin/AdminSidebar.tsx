@@ -83,7 +83,7 @@ const menuItems: MenuItem[] = [
     {
         title: 'Media',
         icon: Image,
-        href: '/admin/media',
+        href: '/admin/medias',
     },
     {
         title: 'Settings',
