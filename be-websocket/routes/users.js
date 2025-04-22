@@ -56,7 +56,8 @@ router.get('/:id', auth, async (req, res) => {
         followersCount: user.followersCount,
         followingCount: user.followingCount,
         postsCount: user.postsCount,
-        isFollowing
+        isFollowing,
+        role: user.role
       }
     });
   } catch (error) {

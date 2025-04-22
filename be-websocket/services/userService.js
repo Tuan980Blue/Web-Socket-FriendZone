@@ -5,7 +5,7 @@ class UserService {
   // Create new user
   async createUser(userData) {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    
+
     return prisma.user.create({
       data: {
         ...userData,
@@ -38,7 +38,8 @@ class UserService {
         birthDate: true,
         followersCount: true,
         followingCount: true,
-        postsCount: true
+        postsCount: true,
+        role: true
       }
     });
   }
@@ -95,7 +96,8 @@ class UserService {
         birthDate: true,
         followersCount: true,
         followingCount: true,
-        postsCount: true
+        postsCount: true,
+        role: true
       }
     });
   }
@@ -141,7 +143,7 @@ class UserService {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);
     }
-    
+
     return prisma.user.update({
       where: { id },
       data
@@ -164,7 +166,7 @@ class UserService {
   async updateStatus(id, status) {
     return prisma.user.update({
       where: { id },
-      data: { 
+      data: {
         status,
         lastSeen: new Date()
       }
@@ -194,7 +196,8 @@ class UserService {
         birthDate: true,
         followersCount: true,
         followingCount: true,
-        postsCount: true
+        postsCount: true,
+        role: true
       }
     });
   }
