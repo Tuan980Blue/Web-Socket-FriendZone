@@ -31,7 +31,7 @@ export default function Layout({
                         <LeftSidebar/>
                         <AuthGuard>
                             <main
-                                className={`flex-1 md:ml-64 ${isProfilePage ? '' : 'xl:mr-80'} mt-16 pb-16 md:pb-0`}>
+                                className={`flex-1 md:ml-64 ${isProfilePage ? '' : 'xl:mr-72'} mt-16 pb-16 md:pb-0`}>
                                 <div className="px-2 md:px-6 p-2">
                                     {children}
                                 </div>
