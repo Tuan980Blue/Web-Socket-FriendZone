@@ -31,6 +31,7 @@ model User {
   followersCount Int        @default(0)
   followingCount Int        @default(0)
   postsCount     Int        @default(0)
+  role           UserRole   @default(USER)
 
   // Relations
   sentMessages     Message[]        @relation("SentMessages")
@@ -205,15 +206,15 @@ model SavedPost {
 }
 
 model Notification {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String           @db.ObjectId
   type      NotificationType
   content   String?
   data      Json?
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  user      User             @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -273,4 +274,10 @@ enum NotificationType {
   TAG
   STORY_VIEW
   STORY_REACTION
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
 }

@@ -7,9 +7,9 @@ const auth = require('../middleware/auth');
 // Register
 router.post('/register', async (req, res) => {
   try {
-    const { 
-      username, 
-      email, 
+    const {
+      username,
+      email,
       password,
       fullName,
       gender,
@@ -17,19 +17,19 @@ router.post('/register', async (req, res) => {
     } = req.body;
 
     // Check if user already exists
-    const existingUser = await userService.findByEmail(email) || 
-                        await userService.findByUsername(username);
+    const existingUser = await userService.findByEmail(email) ||
+        await userService.findByUsername(username);
 
     if (existingUser) {
-      return res.status(400).json({ 
-        error: 'User with this email or username already exists' 
+      return res.status(400).json({
+        error: 'User with this email or username already exists'
       });
     }
 
     // Create new user with additional fields
-    const user = await userService.createUser({ 
-      username, 
-      email, 
+    const user = await userService.createUser({
+      username,
+      email,
       password,
       fullName,
       gender,
@@ -38,9 +38,9 @@ router.post('/register', async (req, res) => {
 
     // Generate token
     const token = jwt.sign(
-      { userId: user.id }, 
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+        { userId: user.id },
+        process.env.JWT_SECRET,
+        { expiresIn: '1d' }
     );
 
     res.status(201).json({
@@ -54,7 +54,8 @@ router.post('/register', async (req, res) => {
         avatar: user.avatar,
         status: user.status,
         lastSeen: user.lastSeen,
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
+        role: user.role
       },
       token
     });
@@ -85,9 +86,9 @@ router.post('/login', async (req, res) => {
 
     // Generate token
     const token = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+        { userId: user.id },
+        process.env.JWT_SECRET,
+        { expiresIn: '1d' }
     );
 
     res.json({
@@ -110,7 +111,8 @@ router.post('/login', async (req, res) => {
         bio: user.bio,
         followersCount: user.followersCount,
         followingCount: user.followingCount,
-        postsCount: user.postsCount
+        postsCount: user.postsCount,
+        role: user.role
       },
       token
     });
@@ -166,7 +168,8 @@ router.get('/me', auth, async (req, res) => {
         bio: user.bio,
         followersCount: user.followersCount,
         followingCount: user.followingCount,
-        postsCount: user.postsCount
+        postsCount: user.postsCount,
+        role: user.role
       }
     });
   } catch (error) {
