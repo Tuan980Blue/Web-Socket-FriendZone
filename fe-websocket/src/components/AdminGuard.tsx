@@ -11,17 +11,10 @@ interface AdminGuardProps {
 }
 
 const AdminGuard: React.FC<AdminGuardProps> = ({ children }) => {
-    const { user, isLoading } = useUserData();
+    const { user } = useUserData();
     const router = useRouter();
 
-    if (isLoading) {
-        return null;
-    }
-
-    //sau nay bo sung them role cho User.
-    // || user.role !== 'ADMIN'
-
-    if (!user || user.username !== 'tuananhjr21') {
+    if (!user) {
         return (
             <Container size="sm" py={80}>
                 <Box
@@ -45,7 +38,68 @@ const AdminGuard: React.FC<AdminGuardProps> = ({ children }) => {
                     </Title>
 
                     <Text c="dimmed" size="lg" mb="xl" maw={580}>
-                        Bạn không có quyền truy cập vào trang quản trị. Chỉ người dùng có vai trò Admin mới được phép truy cập.
+                        Bạn chưa đăng nhập. Chỉ người dùng có vai trò Admin mới được phép truy cập.
+                    </Text>
+
+                    <Stack gap="md" w="100%" maw={400}>
+                        <Button
+                            size="lg"
+                            radius="md"
+                            variant="outline"
+                            leftSection={<IconArrowLeft size={20} />}
+                            onClick={() => router.back()}
+                            style={{
+                                borderColor: 'var(--border)',
+                                color: 'var(--foreground)',
+                            }}
+                        >
+                            Quay lại trang trước
+                        </Button>
+
+                        <Button
+                            size="lg"
+                            radius="md"
+                            leftSection={<IconLock size={20} />}
+                            onClick={() => router.push('/auth')}
+                            style={{
+                                background: 'linear-gradient(45deg, #F58529, #DD2A7B, #515BD4)',
+                                border: 'none',
+                            }}
+                        >
+                            Đăng Nhập
+                        </Button>
+                    </Stack>
+                </Box>
+            </Container>
+        );
+    }
+
+    // Check if user has admin role
+    if (user.role !== 'ADMIN') {
+        return (
+            <Container size="sm" py={80}>
+                <Box
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: '60vh',
+                        textAlign: 'center',
+                    }}
+                >
+                    <Center mb="xl">
+                        <div className="w-20 h-20 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] flex items-center justify-center">
+                            <IconLock size={40} className="text-white" />
+                        </div>
+                    </Center>
+
+                    <Title order={2} mb="md">
+                        Quyền truy cập không đủ
+                    </Title>
+
+                    <Text c="dimmed" size="lg" mb="xl" maw={580}>
+                        Tài khoản của bạn không có quyền Admin. Vui lòng liên hệ quản trị viên nếu bạn cần quyền truy cập.
                     </Text>
 
                     <Stack gap="md" w="100%" maw={400}>
