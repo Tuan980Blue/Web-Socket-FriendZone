@@ -139,6 +139,11 @@ const Navbar = () => {
                   </div>
 
                   {/* Menu Items */}
+                  {user?.role === 'ADMIN' && (
+                      <Link href="/admin"
+                            onClick={handleOptionClick}
+                            className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Trang quản trị</Link>
+                  )}
                   <Link href="/profile"
                         onClick={handleOptionClick}
                         className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Profile</Link>
