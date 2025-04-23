@@ -28,14 +28,12 @@
 
 ## setup cho dự án :
 Frontend: Deploy trên Vercel
-Tích hợp tốt với Next.js
-Dễ dàng setup và maintain
 Có CI/CD tự động
 Backend: Deploy trên Render
 Hỗ trợ WebSocket tốt
 Dễ dàng kết nối với MongoDB
 Có SSL miễn phí
-Database: Sử dụng MongoDB Atlas
+Database: Sử dụng MongoDB
 Ổn định và đáng tin cậy
 Dễ dàng backup và restore
 Có monitoring tools
