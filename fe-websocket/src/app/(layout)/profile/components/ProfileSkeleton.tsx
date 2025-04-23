@@ -10,8 +10,20 @@ export default function ProfileSkeleton() {
         </div>
       </div>
 
-      {/* Stories Skeleton */}
+      {/* Stats Skeleton */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+        <div className="grid grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="text-center">
+              <div className="h-8 w-20 mx-auto bg-[#DBDBDB] dark:bg-[#262626] rounded animate-pulse"></div>
+              <div className="h-4 w-16 mx-auto mt-2 bg-[#DBDBDB] dark:bg-[#262626] rounded animate-pulse"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Stories Skeleton */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <div className="flex space-x-4 overflow-x-auto pb-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex-shrink-0">
@@ -21,15 +33,13 @@ export default function ProfileSkeleton() {
         </div>
       </div>
 
-      {/* Stats Skeleton */}
+      {/* Quick Post Skeleton */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-        <div className="grid grid-cols-3 gap-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="text-center">
-              <div className="h-8 w-20 mx-auto bg-[#DBDBDB] dark:bg-[#262626] rounded animate-pulse"></div>
-              <div className="h-4 w-16 mx-auto mt-2 bg-[#DBDBDB] dark:bg-[#262626] rounded animate-pulse"></div>
-            </div>
-          ))}
+        <div className="bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm p-4">
+          <div className="flex items-center space-x-4">
+            <div className="w-10 h-10 rounded-full bg-[#DBDBDB] dark:bg-[#262626] animate-pulse"></div>
+            <div className="flex-1 h-10 bg-[#DBDBDB] dark:bg-[#262626] rounded-lg animate-pulse"></div>
+          </div>
         </div>
       </div>
 
@@ -43,7 +53,7 @@ export default function ProfileSkeleton() {
       </div>
 
       {/* Content Skeleton */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <div className="bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm p-4">
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (

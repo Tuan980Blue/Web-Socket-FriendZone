@@ -130,7 +130,7 @@ const PostList: React.FC<PostListProps> = ({
           <button
             onClick={loadMore}
             disabled={loadingMore}
-            className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            className="px-2 py-1 border-2 border-blue-500 text-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
           >
             Load More
           </button>
