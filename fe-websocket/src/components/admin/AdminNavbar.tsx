@@ -2,7 +2,7 @@
 
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {Bell, Moon, Sun, UserCircle, Settings, LogOut} from 'lucide-react';
+import {Bell, Moon, Sun, UserCircle, Settings, LogOut, HomeIcon} from 'lucide-react';
 import {useTheme} from 'next-themes';
 import {useUserData} from "@/hooks/useUserData";
 import {Avatar} from "@mantine/core";
@@ -143,6 +143,12 @@ export default function AdminNavbar() {
                                     </div>
 
                                     {/* Menu Items */}
+                                    <Link href="/"
+                                          onClick={handleOptionClick}
+                                          className="flex items-center space-x-2 px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">
+                                        <HomeIcon className="h-5 w-5"/>
+                                        <span>Trang chính</span>
+                                    </Link>
                                     <Link href="/profile"
                                           onClick={handleOptionClick}
                                           className="flex items-center space-x-2 px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">

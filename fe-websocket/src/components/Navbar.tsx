@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import {Bell, CircleFadingPlus, Home, MessageSquare, Search} from 'lucide-react';
+import {Bell, CircleFadingPlus, Home, MessageSquare, Search, User, Settings, LogOut, Shield} from 'lucide-react';
 import {Avatar} from '@mantine/core';
 import Image from "next/image";
 import { useUserData } from '@/hooks/useUserData';
@@ -142,21 +142,31 @@ const Navbar = () => {
                   {user?.role === 'ADMIN' && (
                       <Link href="/admin"
                             onClick={handleOptionClick}
-                            className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Trang quản trị</Link>
+                            className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA] flex items-center gap-2">
+                        <Shield size={18} />
+                        Trang quản trị
+                      </Link>
                   )}
                   <Link href="/profile"
                         onClick={handleOptionClick}
-                        className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Profile</Link>
+                        className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA] flex items-center gap-2">
+                    <User size={18} />
+                    Profile
+                  </Link>
                   <Link href="/settings"
                         onClick={handleOptionClick}
-                        className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]">Settings</Link>
+                        className="block px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA] flex items-center gap-2">
+                    <Settings size={18} />
+                    Settings
+                  </Link>
                   <button
                       onClick={() => {
                         handleLogout();
                         handleOptionClick();
                       }}
-                      className="w-full text-left px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA]"
+                      className="w-full text-left px-4 py-2 hover:bg-[#FAFAFA] dark:hover:bg-[#121212] text-[#262626] dark:text-[#FAFAFA] flex items-center gap-2"
                   >
+                    <LogOut size={18} />
                     Logout
                   </button>
                 </div>
