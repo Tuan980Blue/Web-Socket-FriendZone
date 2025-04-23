@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { useTheme } from 'next-themes';
-import { UserCircle2, ChevronDown, Check, Loader2 } from 'lucide-react';
+import { ChevronDown, Check, Loader2 } from 'lucide-react';
 import {Avatar, Button} from "@mantine/core";
 import QuickPostHeader from './QuickPostHeader';
 import QuickPostContent from './QuickPostContent';

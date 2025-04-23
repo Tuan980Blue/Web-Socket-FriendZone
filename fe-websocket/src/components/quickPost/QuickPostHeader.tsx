@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserCircle2, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import {useUserData} from "@/hooks/useUserData";
 import {Avatar} from "@mantine/core";
