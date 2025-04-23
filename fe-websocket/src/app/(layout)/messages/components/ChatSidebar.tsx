@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, Avatar } from '@mantine/core';
-import { IconUserPlus, IconMessage } from '@tabler/icons-react';
+import { Button, Avatar, Badge, Tooltip } from '@mantine/core';
+import { IconUserPlus, IconMessage, IconCircleCheck, IconClock } from '@tabler/icons-react';
 import { Message as ChatServiceMessage } from '@/services/chatService';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChatRoom {
     id: string;
@@ -51,16 +52,33 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         );
     }
 
+    const formatTime = (date: string) => {
+        const messageDate = new Date(date);
+        const now = new Date();
+        const diff = now.getTime() - messageDate.getTime();
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+        if (days === 0) {
+            return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else if (days === 1) {
+            return 'Yesterday';
+        } else if (days < 7) {
+            return messageDate.toLocaleDateString([], { weekday: 'long' });
+        } else {
+            return messageDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        }
+    };
+
     return (
         <div className="w-full md:w-80 bg-[#FAFAFA] dark:bg-[#121212] border-r border-[#DBDBDB] dark:border-[#262626]">
             <div className="p-4">
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-semibold text-[#262626] dark:text-[#FAFAFA]">Messages</h2>
                     <Button
                         variant="light"
                         size="sm"
-                        radius="md"
-                        className="bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90"
+                        radius="xl"
+                        className="bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90 transition-all duration-300"
                         leftSection={<IconUserPlus size={16} />}
                         onClick={onNewChat}
                     >
@@ -69,90 +87,118 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 </div>
                 
                 {chats.length > 0 ? (
-                    <div className="space-y-2">
-                        {chats.map((chat) => {
-                            const otherUserId = chat.senderId === currentUserId ? chat.receiverId : chat.senderId;
-                            const otherUser = {
-                                id: otherUserId,
-                                username: otherUserId === chat.senderId 
-                                    ? chat.sender?.username 
-                                    : chat.receiver?.username || '',
-                                avatar: otherUserId === chat.senderId 
-                                    ? chat.sender?.avatar 
-                                    : chat.receiver?.avatar || '',
-                                fullName: otherUserId === chat.senderId 
-                                    ? (chat.sender?.fullName || chat.sender?.username) 
-                                    : (chat.receiver?.fullName || chat.receiver?.username) || '',
-                            };
-                            
-                            return (
-                                <div
-                                    key={chat.id}
-                                    className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
-                                        selectedChat?.id === otherUser.id
-                                            ? 'bg-gradient-to-r from-[#F58529]/10 via-[#DD2A7B]/10 to-[#515BD4]/10'
-                                            : 'hover:bg-[#FAFAFA] dark:hover:bg-[#262626]'
-                                    }`}
-                                    onClick={() => onSelectChat(otherUser)}
-                                >
-                                    <div className="relative">
-                                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
-                                        <Avatar
-                                            src={otherUser.avatar}
-                                            alt={`${otherUser.fullName}'s avatar`}
-                                            size="md"
-                                            radius="xl"
-                                            className="relative z-10 border-2 border-[#FAFAFA] dark:border-[#121212]"
-                                        >
-                                            {otherUser.fullName.charAt(0).toUpperCase()}
-                                        </Avatar>
-                                        {selectedChat?.id === otherUser.id && (
-                                            <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#20C997] rounded-full border-2 border-[#FAFAFA] dark:border-[#121212]"></div>
-                                        )}
-                                    </div>
-                                    <div className="ml-3 flex-1">
-                                        <div className="flex justify-between items-start">
-                                            <h3 className={`text-sm font-medium ${
-                                                selectedChat?.id === otherUser.id
-                                                    ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]'
-                                                    : 'text-[#262626] dark:text-[#FAFAFA]'
-                                            }`}>
-                                                {otherUser.fullName}
-                                            </h3>
-                                            <span className="text-xs text-[#8E8E8E]">
-                                                {new Date(chat.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
+                    <div className="space-y-3">
+                        <AnimatePresence>
+                            {chats.map((chat) => {
+                                const otherUserId = chat.senderId === currentUserId ? chat.receiverId : chat.senderId;
+                                const otherUser = {
+                                    id: otherUserId,
+                                    username: otherUserId === chat.senderId 
+                                        ? chat.sender?.username 
+                                        : chat.receiver?.username || '',
+                                    avatar: otherUserId === chat.senderId 
+                                        ? chat.sender?.avatar 
+                                        : chat.receiver?.avatar || '',
+                                    fullName: otherUserId === chat.senderId 
+                                        ? (chat.sender?.fullName || chat.sender?.username) 
+                                        : (chat.receiver?.fullName || chat.receiver?.username) || '',
+                                };
+                                
+                                return (
+                                    <motion.div
+                                        key={chat.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -20 }}
+                                        transition={{ duration: 0.2 }}
+                                        className={`group relative flex items-center p-3 rounded-xl cursor-pointer transition-all duration-300 ${
+                                            selectedChat?.id === otherUser.id
+                                                ? 'bg-gradient-to-r from-[#F58529]/10 via-[#DD2A7B]/10 to-[#515BD4]/10 shadow-lg'
+                                                : 'hover:bg-[#FAFAFA] dark:hover:bg-[#262626] hover:shadow-md'
+                                        }`}
+                                        onClick={() => onSelectChat(otherUser)}
+                                    >
+                                        <div className="relative">
+                                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
+                                            <Avatar
+                                                src={otherUser.avatar}
+                                                alt={`${otherUser.fullName}'s avatar`}
+                                                size="md"
+                                                radius="xl"
+                                                className="relative z-10 border-2 border-[#FAFAFA] dark:border-[#121212] transition-transform duration-300 group-hover:scale-110"
+                                            >
+                                                {otherUser.fullName.charAt(0).toUpperCase()}
+                                            </Avatar>
+                                            {selectedChat?.id === otherUser.id && (
+                                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#20C997] rounded-full border-2 border-[#FAFAFA] dark:border-[#121212]"></div>
+                                            )}
                                         </div>
-                                        <p className="text-sm text-[#8E8E8E] truncate">
-                                            {chat.content}
-                                        </p>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                                        <div className="ml-3 flex-1 min-w-0">
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex items-center space-x-2">
+                                                    <h3 className={`text-sm font-semibold truncate ${
+                                                        selectedChat?.id === otherUser.id
+                                                            ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]'
+                                                            : 'text-[#262626] dark:text-[#FAFAFA]'
+                                                    }`}>
+                                                        {otherUser.fullName}
+                                                    </h3>
+                                                    <Tooltip label="Online" position="top">
+                                                        <IconCircleCheck size={14} className="text-[#20C997]" />
+                                                    </Tooltip>
+                                                </div>
+                                                <div className="flex items-center space-x-1">
+                                                    <IconClock size={12} className="text-[#8E8E8E]" />
+                                                    <span className="text-xs text-[#8E8E8E]">
+                                                        {formatTime(chat.createdAt)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center justify-between mt-1">
+                                                <p className="text-sm text-[#8E8E8E] truncate flex-1">
+                                                    {chat.content}
+                                                </p>
+                                                <Badge 
+                                                    size="sm" 
+                                                    radius="xl"
+                                                    className="ml-2 bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4]"
+                                                >
+                                                    New
+                                                </Badge>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </AnimatePresence>
                     </div>
                 ) : (
-                    <div className="text-center py-8">
-                        <div className="flex justify-center mb-4">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-center py-12"
+                    >
+                        <div className="flex justify-center mb-6">
                             <div className="relative">
                                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
-                                <div className="relative z-10 p-4 rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
-                                    <IconMessage size={32} className="text-[#DD2A7B]" />
+                                <div className="relative z-10 p-6 rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
+                                    <IconMessage size={40} className="text-[#DD2A7B]" />
                                 </div>
                             </div>
                         </div>
-                        <p className="text-[#8E8E8E]">No messages yet</p>
+                        <h3 className="text-lg font-semibold text-[#262626] dark:text-[#FAFAFA] mb-2">No messages yet</h3>
+                        <p className="text-[#8E8E8E] mb-6">Start connecting with others</p>
                         <Button
                             variant="light"
-                            size="sm"
-                            radius="md"
-                            className="mt-4 bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90"
-                            leftSection={<IconUserPlus size={16} />}
+                            size="md"
+                            radius="xl"
+                            className="bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90 transition-all duration-300 hover:scale-105"
+                            leftSection={<IconUserPlus size={18} />}
                             onClick={onNewChat}
                         >
                             Start a conversation
                         </Button>
-                    </div>
+                    </motion.div>
                 )}
             </div>
         </div>
