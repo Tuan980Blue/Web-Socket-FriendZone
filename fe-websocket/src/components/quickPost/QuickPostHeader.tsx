@@ -1,6 +1,8 @@
 import React from 'react';
 import { UserCircle2, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import {useUserData} from "@/hooks/useUserData";
+import {Avatar} from "@mantine/core";
 
 interface QuickPostHeaderProps {
   isExpanded: boolean;
@@ -9,12 +11,13 @@ interface QuickPostHeaderProps {
 
 export default function QuickPostHeader({ isExpanded, setIsExpanded }: QuickPostHeaderProps) {
   const { theme } = useTheme();
+  const {user} = useUserData();
 
   return (
     <div className="flex items-start space-x-2 md:space-x-3">
       <div className="flex-shrink-0">
         <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] flex items-center justify-center shadow-lg">
-          <UserCircle2 className="text-white" size={20} />
+          <Avatar src={user?.avatar || '/image-person.png'}/>
         </div>
       </div>
       
