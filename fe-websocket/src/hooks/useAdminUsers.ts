@@ -142,8 +142,12 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
       return result;
     },
     deleteUser: async (userId: string) => {
-      const result = await deleteUserMutation.mutateAsync(userId);
-      return result;
+      try {
+        await deleteUserMutation.mutateAsync(userId);
+        return true;
+      } catch {
+        return false;
+      }
     },
     openEditModal,
     closeEditModal,
