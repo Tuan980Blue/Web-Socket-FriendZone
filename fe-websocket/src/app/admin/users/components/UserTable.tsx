@@ -7,7 +7,10 @@ import {
   Avatar, 
   Badge, 
   ActionIcon, 
-  Menu
+  Menu,
+  Tooltip,
+  Box,
+  ScrollArea
 } from '@mantine/core';
 import { 
   IconDots, 
@@ -15,7 +18,10 @@ import {
   IconTrash, 
   IconBan, 
   IconUserCheck,
-  IconEye
+  IconEye,
+  IconMail,
+  IconCalendar,
+  IconUser
 } from '@tabler/icons-react';
 import { format } from 'date-fns';
 
@@ -35,36 +41,65 @@ const UserTable: React.FC<UserTableProps> = ({
   onViewDetails 
 }) => {
   const rows = users.map((user) => (
-    <tr key={user.id}>
-      <td>
+    <Table.Tr key={user.id} className="hover:bg-gray-50 transition-colors">
+      <Table.Td>
         <Group gap="sm">
-          <Avatar size={40} src={user.avatar} radius={40} />
-          <div>
-            <Text fz="sm" fw={500}>
+          <Avatar 
+            src={user.avatar} 
+            size={40} 
+            radius={40}
+            color={user.isBanned ? 'red' : 'blue'}
+          >
+            {user.fullName?.charAt(0) || user.username.charAt(0)}
+          </Avatar>
+          <Box>
+            <Text fw={500} fz="sm">
               {user.fullName || user.username}
             </Text>
-            <Text fz="xs" c="dimmed">
-              {user.email}
-            </Text>
-          </div>
+            <Group gap={4}>
+              <IconUser size={12} />
+              <Text fz="xs" c="dimmed">
+                @{user.username}
+              </Text>
+            </Group>
+          </Box>
         </Group>
-      </td>
-      <td>
-        <Badge color={user.isBanned ? "red" : "green"}>
+      </Table.Td>
+      <Table.Td>
+        <Group gap={4}>
+          <IconMail size={12} />
+          <Text fz="sm">{user.email}</Text>
+        </Group>
+      </Table.Td>
+      <Table.Td>
+        <Badge 
+          color={user.isBanned ? "red" : "green"} 
+          variant="light"
+          size="sm"
+        >
           {user.isBanned ? "Banned" : "Active"}
         </Badge>
-      </td>
-      <td>
-        <Text fz="sm">{format(new Date(user.createdAt), 'PPP')}</Text>
-      </td>
-      <td>
+      </Table.Td>
+      <Table.Td>
+        <Group gap={4}>
+          <IconCalendar size={12} />
+          <Text fz="sm">{format(new Date(user.createdAt), 'MMM d, yyyy')}</Text>
+        </Group>
+      </Table.Td>
+      <Table.Td>
         <Group gap={0} justify="flex-end">
-          <ActionIcon onClick={() => onViewDetails(user)}>
-            <IconEye size="1rem" stroke={1.5} />
-          </ActionIcon>
+          <Tooltip label="View Details">
+            <ActionIcon 
+              variant="subtle" 
+              color="blue" 
+              onClick={() => onViewDetails(user)}
+            >
+              <IconEye size="1rem" stroke={1.5} />
+            </ActionIcon>
+          </Tooltip>
           <Menu withArrow position="bottom-end">
             <Menu.Target>
-              <ActionIcon>
+              <ActionIcon variant="subtle" color="gray">
                 <IconDots size="1rem" stroke={1.5} />
               </ActionIcon>
             </Menu.Target>
@@ -73,40 +108,48 @@ const UserTable: React.FC<UserTableProps> = ({
                 leftSection={<IconEdit size="1rem" stroke={1.5} />}
                 onClick={() => onEdit(user)}
               >
-                Edit
+                Edit User
               </Menu.Item>
               <Menu.Item
-                leftSection={user.isBanned ? <IconUserCheck size="1rem" stroke={1.5} /> : <IconBan size="1rem" stroke={1.5} />}
+                leftSection={user.isBanned ? 
+                  <IconUserCheck size="1rem" stroke={1.5} /> : 
+                  <IconBan size="1rem" stroke={1.5} />
+                }
+                color={user.isBanned ? "green" : "red"}
                 onClick={() => onToggleBan(user, !user.isBanned)}
               >
-                {user.isBanned ? 'Unban' : 'Ban'}
+                {user.isBanned ? 'Unban User' : 'Ban User'}
               </Menu.Item>
+              <Menu.Divider />
               <Menu.Item
                 leftSection={<IconTrash size="1rem" stroke={1.5} />}
                 color="red"
                 onClick={() => onDelete(user)}
               >
-                Delete
+                Delete User
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
         </Group>
-      </td>
-    </tr>
+      </Table.Td>
+    </Table.Tr>
   ));
 
   return (
-    <Table verticalSpacing="sm">
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Status</th>
-          <th>Created At</th>
-          <th />
-        </tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </Table>
+    <ScrollArea>
+      <Table highlightOnHover>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>User</Table.Th>
+            <Table.Th>Email</Table.Th>
+            <Table.Th>Status</Table.Th>
+            <Table.Th>Created At</Table.Th>
+            <Table.Th />
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>{rows}</Table.Tbody>
+      </Table>
+    </ScrollArea>
   );
 };
 
