@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import adminService, { User, PaginatedUsers } from '@/services/adminService';
 import { toast } from 'react-hot-toast';
 import { AxiosError } from 'axios';
@@ -21,9 +21,10 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
 
   // Fetch users with pagination
-  const fetchUsers = async (page = pagination.page, limit = pagination.limit) => {
+  const fetchUsers = useCallback(async (page = pagination.page, limit = pagination.limit) => {
     setLoading(true);
     setError(null);
     try {
@@ -38,7 +39,7 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit]);
 
   // Fetch a single user by ID
   const fetchUserById = async (userId: string) => {
@@ -164,10 +165,33 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
     setSelectedUser(null);
   };
 
+  // Open detail modal
+  const openDetailModal = async (user: User) => {
+    setLoading(true);
+    try {
+      const detailedUser = await adminService.getUserById(user.id);
+      setSelectedUser(detailedUser);
+      setIsDetailModalOpen(true);
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      setError('Failed to fetch user details');
+      toast.error('Failed to fetch user details');
+      console.error('Error fetching user details:', axiosError.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Close detail modal
+  const closeDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedUser(null);
+  };
+
   // Initial fetch
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   return {
     users,
@@ -177,6 +201,7 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
     selectedUser,
     isEditModalOpen,
     isDeleteModalOpen,
+    isDetailModalOpen,
     fetchUsers,
     fetchUserById,
     updateUser,
@@ -187,6 +212,8 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
     openEditModal,
     closeEditModal,
     openDeleteModal,
-    closeDeleteModal
+    closeDeleteModal,
+    openDetailModal,
+    closeDetailModal
   };
 }; 

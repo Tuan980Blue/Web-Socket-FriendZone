@@ -5,6 +5,7 @@ import { useAdminUsers } from '@/hooks/useAdminUsers';
 import UserTable from '@/app/admin/users/components/UserTable';
 import UserEditModal from '@/app/admin/users/components/UserEditModal';
 import UserDeleteModal from '@/app/admin/users/components/UserDeleteModal';
+import UserDetailModal from '@/app/admin/users/components/UserDetailModal';
 import { Search, RefreshCw } from 'lucide-react';
 import Pagination from "@/app/admin/users/components/pagination";
 import { Button, Input, Select, Text } from "@mantine/core";
@@ -22,6 +23,7 @@ const AdminUsersPage = () => {
     selectedUser,
     isEditModalOpen,
     isDeleteModalOpen,
+    isDetailModalOpen,
     fetchUsers,
     updateUser,
     toggleUserBan,
@@ -31,7 +33,9 @@ const AdminUsersPage = () => {
     openEditModal,
     closeEditModal,
     openDeleteModal,
-    closeDeleteModal
+    closeDeleteModal,
+    openDetailModal,
+    closeDetailModal
   } = useAdminUsers({ initialLimit: limit });
 
   // Filter users based on search term
@@ -122,6 +126,7 @@ const AdminUsersPage = () => {
             onEdit={openEditModal}
             onDelete={openDeleteModal}
             onToggleBan={handleToggleBan}
+            onViewDetails={openDetailModal}
           />
           
           {pagination.totalPages > 1 && (
@@ -148,6 +153,13 @@ const AdminUsersPage = () => {
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         onDelete={deleteUser}
+      />
+
+      {/* Detail Modal */}
+      <UserDetailModal
+        user={selectedUser}
+        isOpen={isDetailModalOpen}
+        onClose={closeDetailModal}
       />
     </div>
   );
