@@ -6,6 +6,7 @@ import UserTable from '@/app/admin/users/components/UserTable';
 import UserEditModal from '@/app/admin/users/components/UserEditModal';
 import UserDeleteModal from '@/app/admin/users/components/UserDeleteModal';
 import UserDetailModal from '@/app/admin/users/components/UserDetailModal';
+import UserSkeleton from '@/app/admin/users/components/UserSkeleton';
 import { Search, RefreshCw, Filter } from 'lucide-react';
 import Pagination from "@/app/admin/users/components/pagination";
 import { Button, Input, Select, Text, Card, Group, Stack, Paper } from "@mantine/core";
@@ -170,9 +171,7 @@ const AdminUsersPage = () => {
 
             {/* Loading State */}
             {loading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-              </div>
+              <UserSkeleton />
             ) : (
               <>
                 <UserTable
