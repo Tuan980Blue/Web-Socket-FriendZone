@@ -135,9 +135,11 @@ const UserTable: React.FC<UserTableProps> = ({
           </Tooltip>
           <Menu withArrow position="bottom-end">
             <Menu.Target>
+              <Tooltip label="More">
               <ActionIcon variant="subtle" color="gray">
                 <IconDots size="1rem" stroke={1.5} />
               </ActionIcon>
+              </Tooltip>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item

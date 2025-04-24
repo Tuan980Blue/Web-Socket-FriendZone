@@ -6,7 +6,7 @@ import UserTable from '@/app/admin/users/components/UserTable';
 import UserEditModal from '@/app/admin/users/components/UserEditModal';
 import UserDeleteModal from '@/app/admin/users/components/UserDeleteModal';
 import UserDetailModal from '@/app/admin/users/components/UserDetailModal';
-import { Search, RefreshCw, Plus, Filter } from 'lucide-react';
+import { Search, RefreshCw, Filter } from 'lucide-react';
 import Pagination from "@/app/admin/users/components/pagination";
 import { Button, Input, Select, Text, Card, Group, Stack, Paper } from "@mantine/core";
 import { User } from '@/services/adminService';

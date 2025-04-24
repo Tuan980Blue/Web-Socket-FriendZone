@@ -85,7 +85,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
       });
       previousUserRef.current = user;
     }
-  }, [user]);
+  }, [user, form]);
 
   const handleSubmit = async (values: typeof form.values) => {
     if (!user) return;
