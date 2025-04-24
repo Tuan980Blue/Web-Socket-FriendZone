@@ -6,7 +6,7 @@ import UserTable from '@/app/admin/users/components/UserTable';
 import UserEditModal from '@/app/admin/users/components/UserEditModal';
 import UserDeleteModal from '@/app/admin/users/components/UserDeleteModal';
 import UserDetailModal from '@/app/admin/users/components/UserDetailModal';
-import { Search, RefreshCw, Plus, Filter } from 'lucide-react';
+import { Search, RefreshCw, Filter } from 'lucide-react';
 import Pagination from "@/app/admin/users/components/pagination";
 import { Button, Input, Select, Text, Card, Group, Stack, Paper } from "@mantine/core";
 import { User } from '@/services/adminService';
@@ -77,7 +77,7 @@ const AdminUsersPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
         <Card shadow="sm" padding="lg" radius="md" withBorder>
           <Stack gap="xl">
             {/* Header Section */}
@@ -96,13 +96,6 @@ const AdminUsersPage = () => {
                   disabled={loading}
                 >
                   Refresh
-                </Button>
-                <Button 
-                  variant="filled" 
-                  leftSection={<Plus size={16} />}
-                  onClick={() => {/* Add new user functionality */}}
-                >
-                  Add User
                 </Button>
               </Group>
             </Group>

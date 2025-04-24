@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { User } from '@/services/adminService';
 import { 
   Table, 
@@ -10,7 +10,8 @@ import {
   Menu,
   Tooltip,
   Box,
-  ScrollArea
+  ScrollArea,
+  ThemeIcon
 } from '@mantine/core';
 import { 
   IconDots, 
@@ -21,9 +22,13 @@ import {
   IconEye,
   IconMail,
   IconCalendar,
-  IconUser
+  IconUser,
+  IconCircleCheck,
+  IconCircleX,
+  IconCopy
 } from '@tabler/icons-react';
 import { format } from 'date-fns';
+import { notifications } from '@mantine/notifications';
 
 interface UserTableProps {
   users: User[];
@@ -40,6 +45,19 @@ const UserTable: React.FC<UserTableProps> = ({
   onToggleBan,
   onViewDetails 
 }) => {
+  const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
+
+  const handleCopyEmail = (email: string) => {
+    navigator.clipboard.writeText(email);
+    setCopiedEmail(email);
+    notifications.show({
+      title: 'Success',
+      message: 'Email copied to clipboard',
+      color: 'green',
+    });
+    setTimeout(() => setCopiedEmail(null), 2000);
+  };
+
   const rows = users.map((user) => (
     <Table.Tr key={user.id} className="hover:bg-gray-50 transition-colors">
       <Table.Td>
@@ -69,6 +87,19 @@ const UserTable: React.FC<UserTableProps> = ({
         <Group gap={4}>
           <IconMail size={12} />
           <Text fz="sm">{user.email}</Text>
+          <Tooltip 
+            label={copiedEmail === user.email ? "Copied!" : "Copy email"}
+            color={copiedEmail === user.email ? "green" : "gray"}
+          >
+            <ActionIcon 
+              variant="subtle" 
+              color={copiedEmail === user.email ? "green" : "gray"} 
+              size="sm"
+              onClick={() => handleCopyEmail(user.email)}
+            >
+              <IconCopy size={14} />
+            </ActionIcon>
+          </Tooltip>
         </Group>
       </Table.Td>
       <Table.Td>
@@ -76,6 +107,11 @@ const UserTable: React.FC<UserTableProps> = ({
           color={user.isBanned ? "red" : "green"} 
           variant="light"
           size="sm"
+          leftSection={
+            <ThemeIcon size="xs" color={user.isBanned ? "red" : "green"} variant="transparent">
+              {user.isBanned ? <IconCircleX size={12} /> : <IconCircleCheck size={12} />}
+            </ThemeIcon>
+          }
         >
           {user.isBanned ? "Banned" : "Active"}
         </Badge>
@@ -83,7 +119,7 @@ const UserTable: React.FC<UserTableProps> = ({
       <Table.Td>
         <Group gap={4}>
           <IconCalendar size={12} />
-          <Text fz="sm">{format(new Date(user.createdAt), 'MMM d, yyyy')}</Text>
+          <Text fz="sm">{format(new Date(user.createdAt), 'dd/MM/yyyy')}</Text>
         </Group>
       </Table.Td>
       <Table.Td>
@@ -99,9 +135,11 @@ const UserTable: React.FC<UserTableProps> = ({
           </Tooltip>
           <Menu withArrow position="bottom-end">
             <Menu.Target>
+              <Tooltip label="More">
               <ActionIcon variant="subtle" color="gray">
                 <IconDots size="1rem" stroke={1.5} />
               </ActionIcon>
+              </Tooltip>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item

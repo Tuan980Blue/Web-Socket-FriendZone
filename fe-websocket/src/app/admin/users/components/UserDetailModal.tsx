@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { User } from '@/services/adminService';
 import { 
   Modal, 
@@ -13,7 +13,12 @@ import {
   Paper,
   Box,
   Tabs,
-  ThemeIcon
+  ThemeIcon,
+  ActionIcon,
+  Tooltip,
+  Image,
+  Overlay,
+  Center
 } from '@mantine/core';
 import { format, isValid } from 'date-fns';
 import { 
@@ -28,8 +33,12 @@ import {
   IconPhoto, 
   IconClock, 
   IconCircleCheck, 
-  IconCircleX 
+  IconCircleX,
+  IconShield,
+  IconCopy,
+  IconX
 } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
 
 interface UserDetailModalProps {
   user: User | null;
@@ -40,251 +49,343 @@ interface UserDetailModalProps {
 const formatDate = (dateString: string | undefined | null): string => {
   if (!dateString) return "Not provided";
   const date = new Date(dateString);
-  return isValid(date) ? format(date, 'PPP') : "Invalid date";
+  return isValid(date) ? format(date, 'dd/MM/yyyy') : "Invalid date";
 };
 
 const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, isOpen, onClose }) => {
+  const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+
+  const handleCopyEmail = (email: string) => {
+    navigator.clipboard.writeText(email);
+    setCopiedEmail(email);
+    notifications.show({
+      title: 'Success',
+      message: 'Email copied to clipboard',
+      color: 'green',
+    });
+    setTimeout(() => setCopiedEmail(null), 2000);
+  };
+
   if (!user) return null;
 
   return (
-    <Modal
-      opened={isOpen}
-      onClose={onClose}
-      title={
-        <Group gap="sm">
-          <Avatar src={user.avatar} size="md" radius="xl" />
-          <div>
-            <Title order={3}>{user.fullName || user.username}</Title>
-            <Text size="sm" c="dimmed">@{user.username}</Text>
-          </div>
-        </Group>
-      }
-      size="lg"
-      centered
-      radius="md"
-    >
-      <Tabs defaultValue="profile">
-        <Tabs.List>
-          <Tabs.Tab value="profile" leftSection={<IconUser size={14} />}>
-            Profile
-          </Tabs.Tab>
-          <Tabs.Tab value="activity" leftSection={<IconClock size={14} />}>
-            Activity
-          </Tabs.Tab>
-        </Tabs.List>
+    <>
+      <Modal
+        opened={isOpen}
+        onClose={onClose}
+        title={
+          <Group gap="sm">
+            <Tooltip label="Click to view full size">
+              <Box onClick={() => setIsAvatarModalOpen(true)} style={{ cursor: 'pointer' }}>
+                <Avatar src={user.avatar} size="md" radius="xl" />
+              </Box>
+            </Tooltip>
+            <div>
+              <Title order={3}>{user.fullName || user.username}</Title>
+              <Text size="sm" c="dimmed">@{user.username}</Text>
+            </div>
+          </Group>
+        }
+        size="lg"
+        centered
+        radius="md"
+      >
+        <Tabs defaultValue="profile">
+          <Tabs.List>
+            <Tabs.Tab value="profile" leftSection={<IconUser size={14} />}>
+              Profile
+            </Tabs.Tab>
+            <Tabs.Tab value="activity" leftSection={<IconClock size={14} />}>
+              Activity
+            </Tabs.Tab>
+          </Tabs.List>
 
-        <Tabs.Panel value="profile" pt="md">
-          <Stack gap="md">
-            {/* Status Badges */}
-            <Group>
-              <Badge 
-                size="lg" 
-                color={user.isBanned ? "red" : "green"}
-                variant="light"
-                leftSection={
-                  <ThemeIcon size="xs" color={user.isBanned ? "red" : "green"} variant="transparent">
-                    {user.isBanned ? <IconCircleX size={12} /> : <IconCircleCheck size={12} />}
-                  </ThemeIcon>
-                }
-              >
-                {user.isBanned ? "Banned" : "Active"}
-              </Badge>
-              <Badge 
-                size="lg" 
-                color="blue"
-                variant="light"
-              >
-                {user.role}
-              </Badge>
-            </Group>
+          <Tabs.Panel value="profile" pt="md">
+            <Stack gap="md">
+              {/* Status Badges */}
+              <Group>
+                <Badge 
+                  size="lg" 
+                  color={user.isBanned ? "red" : "green"}
+                  variant="light"
+                  leftSection={
+                    <ThemeIcon size="xs" color={user.isBanned ? "red" : "green"} variant="transparent">
+                      {user.isBanned ? <IconCircleX size={12} /> : <IconCircleCheck size={12} />}
+                    </ThemeIcon>
+                  }
+                >
+                  {user.isBanned ? "Banned" : "Active"}
+                </Badge>
+                <Badge 
+                  size="lg" 
+                  color="blue"
+                  variant="light"
+                  leftSection={
+                    <ThemeIcon size="xs" color="blue" variant="transparent">
+                      <IconShield size={12} />
+                    </ThemeIcon>
+                  }
+                >
+                  {user.role}
+                </Badge>
+              </Group>
 
-            <Divider />
+              <Divider />
 
-            {/* Contact Information */}
-            <Paper p="md" withBorder>
-              <Title order={4} mb="md">Contact Information</Title>
-              <Grid>
-                <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <Group gap="sm" mb="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconMail size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Email</Text>
-                      <Text>{user.email}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <Group gap="sm" mb="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconPhone size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Phone</Text>
-                      <Text>{user.phoneNumber || "Not provided"}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <Group gap="sm" mb="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconMapPin size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Location</Text>
-                      <Text>{user.location || "Not provided"}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <Group gap="sm" mb="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconGenderMale size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Gender</Text>
-                      <Text>{user.gender || "Not provided"}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-              </Grid>
-            </Paper>
-
-            {/* Additional Information */}
-            <Paper p="md" withBorder>
-              <Title order={4} mb="md">Additional Information</Title>
-              <Grid>
-                <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <Group gap="sm" mb="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconCalendar size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Birth Date</Text>
-                      <Text>{formatDate(user.birthDate)}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <Group gap="sm" mb="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconWorld size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Website</Text>
-                      <Text>{user.website || "Not provided"}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-              </Grid>
-            </Paper>
-
-            {/* Stats */}
-            <Paper p="md" withBorder>
-              <Title order={4} mb="md">Statistics</Title>
-              <Grid>
-                <Grid.Col span={4}>
-                  <Group gap="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconUsers size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Followers</Text>
-                      <Text fw={500}>{user.followersCount}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-                <Grid.Col span={4}>
-                  <Group gap="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconUsers size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Following</Text>
-                      <Text fw={500}>{user.followingCount}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-                <Grid.Col span={4}>
-                  <Group gap="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconPhoto size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Posts</Text>
-                      <Text fw={500}>{user.postsCount}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-              </Grid>
-            </Paper>
-
-            {/* Bio */}
-            {user.bio && (
+              {/* Contact Information */}
               <Paper p="md" withBorder>
-                <Title order={4} mb="md">Bio</Title>
-                <Text>{user.bio}</Text>
+                <Title order={4} mb="md">Contact Information</Title>
+                <Grid>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
+                    <Group gap="sm" mb="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconMail size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Email</Text>
+                        <Group gap={4}>
+                          <Text>{user.email}</Text>
+                          <Tooltip 
+                            label={copiedEmail === user.email ? "Copied!" : "Copy email"}
+                            color={copiedEmail === user.email ? "green" : "gray"}
+                          >
+                            <ActionIcon 
+                              variant="subtle" 
+                              color={copiedEmail === user.email ? "green" : "gray"} 
+                              size="sm"
+                              onClick={() => handleCopyEmail(user.email)}
+                            >
+                              <IconCopy size={14} />
+                            </ActionIcon>
+                          </Tooltip>
+                        </Group>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
+                    <Group gap="sm" mb="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconPhone size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Phone</Text>
+                        <Text>{user.phoneNumber || "Not provided"}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
+                    <Group gap="sm" mb="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconMapPin size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Location</Text>
+                        <Text>{user.location || "Not provided"}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
+                    <Group gap="sm" mb="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconGenderMale size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Gender</Text>
+                        <Text>{user.gender || "Not provided"}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                </Grid>
               </Paper>
-            )}
-          </Stack>
-        </Tabs.Panel>
 
-        <Tabs.Panel value="activity" pt="md">
-          <Stack gap="md">
-            <Paper p="md" withBorder>
-              <Title order={4} mb="md">Account Activity</Title>
-              <Grid>
-                <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <Group gap="sm" mb="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconCalendar size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Created At</Text>
-                      <Text>{formatDate(user.createdAt)}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <Group gap="sm" mb="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconClock size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Last Updated</Text>
-                      <Text>{formatDate(user.updatedAt)}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <Group gap="sm" mb="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconClock size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Last Seen</Text>
-                      <Text>{formatDate(user.lastSeen)}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <Group gap="sm" mb="sm">
-                    <ThemeIcon size="lg" variant="light" color="blue">
-                      <IconCircleCheck size={16} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text size="sm" c="dimmed">Status</Text>
-                      <Text>{user.status || "Offline"}</Text>
-                    </Box>
-                  </Group>
-                </Grid.Col>
-              </Grid>
-            </Paper>
-          </Stack>
-        </Tabs.Panel>
-      </Tabs>
-    </Modal>
+              {/* Additional Information */}
+              <Paper p="md" withBorder>
+                <Title order={4} mb="md">Additional Information</Title>
+                <Grid>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
+                    <Group gap="sm" mb="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconCalendar size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Birth Date</Text>
+                        <Text>{formatDate(user.birthDate)}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
+                    <Group gap="sm" mb="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconWorld size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Website</Text>
+                        <Text>{user.website || "Not provided"}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                </Grid>
+              </Paper>
+
+              {/* Stats */}
+              <Paper p="md" withBorder>
+                <Title order={4} mb="md">Statistics</Title>
+                <Grid>
+                  <Grid.Col span={4}>
+                    <Group gap="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconUsers size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Followers</Text>
+                        <Text fw={500}>{user.followersCount}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                  <Grid.Col span={4}>
+                    <Group gap="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconUsers size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Following</Text>
+                        <Text fw={500}>{user.followingCount}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                  <Grid.Col span={4}>
+                    <Group gap="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconPhoto size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Posts</Text>
+                        <Text fw={500}>{user.postsCount}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                </Grid>
+              </Paper>
+
+              {/* Bio */}
+              {user.bio && (
+                <Paper p="md" withBorder>
+                  <Title order={4} mb="md">Bio</Title>
+                  <Text>{user.bio}</Text>
+                </Paper>
+              )}
+            </Stack>
+          </Tabs.Panel>
+
+          <Tabs.Panel value="activity" pt="md">
+            <Stack gap="md">
+              <Paper p="md" withBorder>
+                <Title order={4} mb="md">Account Activity</Title>
+                <Grid>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
+                    <Group gap="sm" mb="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconCalendar size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Created At</Text>
+                        <Text>{formatDate(user.createdAt)}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
+                    <Group gap="sm" mb="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconClock size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Last Updated</Text>
+                        <Text>{formatDate(user.updatedAt)}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
+                    <Group gap="sm" mb="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconClock size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Last Seen</Text>
+                        <Text>{formatDate(user.lastSeen)}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
+                    <Group gap="sm" mb="sm">
+                      <ThemeIcon size="lg" variant="light" color="blue">
+                        <IconCircleCheck size={16} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text size="sm" c="dimmed">Status</Text>
+                        <Text>{user.status || "Offline"}</Text>
+                      </Box>
+                    </Group>
+                  </Grid.Col>
+                </Grid>
+              </Paper>
+            </Stack>
+          </Tabs.Panel>
+        </Tabs>
+      </Modal>
+
+      {/* Avatar Preview Modal */}
+      <Modal
+        opened={isAvatarModalOpen}
+        onClose={() => setIsAvatarModalOpen(false)}
+        size="auto"
+        centered
+        withCloseButton={false}
+        padding={0}
+        radius="md"
+        closeOnClickOutside={true}
+        closeOnEscape={true}
+      >
+        <Box pos="relative">
+          <Image
+            src={user.avatar}
+            alt={`${user.fullName || user.username}'s avatar`}
+            fit="contain"
+            style={{ maxHeight: '80vh', maxWidth: '80vw' }}
+          />
+          <Overlay
+            gradient="linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.1) 100%)"
+            opacity={0.1}
+          />
+          <Group 
+            pos="absolute" 
+            top={10} 
+            right={10} 
+            gap="xs"
+          >
+            <Tooltip label="Close">
+              <ActionIcon
+                variant="filled"
+                color="dark"
+                radius="xl"
+                size="lg"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsAvatarModalOpen(false);
+                }}
+              >
+                <IconX size={20} />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
+          <Center pos="absolute" bottom={20} left={0} right={0}>
+            <Text c="white" fw={500} size="lg">
+              {user.fullName || user.username}
+            </Text>
+          </Center>
+        </Box>
+      </Modal>
+    </>
   );
 };
 
