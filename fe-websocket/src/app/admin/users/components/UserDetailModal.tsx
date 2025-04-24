@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { User } from '@/services/adminService';
 import { 
   Modal, 
@@ -13,7 +13,9 @@ import {
   Paper,
   Box,
   Tabs,
-  ThemeIcon
+  ThemeIcon,
+  ActionIcon,
+  Tooltip
 } from '@mantine/core';
 import { format, isValid } from 'date-fns';
 import { 
@@ -28,8 +30,11 @@ import {
   IconPhoto, 
   IconClock, 
   IconCircleCheck, 
-  IconCircleX 
+  IconCircleX,
+  IconShield,
+  IconCopy
 } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
 
 interface UserDetailModalProps {
   user: User | null;
@@ -40,10 +45,23 @@ interface UserDetailModalProps {
 const formatDate = (dateString: string | undefined | null): string => {
   if (!dateString) return "Not provided";
   const date = new Date(dateString);
-  return isValid(date) ? format(date, 'PPP') : "Invalid date";
+  return isValid(date) ? format(date, 'dd/MM/yyyy') : "Invalid date";
 };
 
 const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, isOpen, onClose }) => {
+  const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
+
+  const handleCopyEmail = (email: string) => {
+    navigator.clipboard.writeText(email);
+    setCopiedEmail(email);
+    notifications.show({
+      title: 'Success',
+      message: 'Email copied to clipboard',
+      color: 'green',
+    });
+    setTimeout(() => setCopiedEmail(null), 2000);
+  };
+
   if (!user) return null;
 
   return (
@@ -93,6 +111,11 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, isOpen, onClose
                 size="lg" 
                 color="blue"
                 variant="light"
+                leftSection={
+                  <ThemeIcon size="xs" color="blue" variant="transparent">
+                    <IconShield size={12} />
+                  </ThemeIcon>
+                }
               >
                 {user.role}
               </Badge>
@@ -111,7 +134,22 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, isOpen, onClose
                     </ThemeIcon>
                     <Box>
                       <Text size="sm" c="dimmed">Email</Text>
-                      <Text>{user.email}</Text>
+                      <Group gap={4}>
+                        <Text>{user.email}</Text>
+                        <Tooltip 
+                          label={copiedEmail === user.email ? "Copied!" : "Copy email"}
+                          color={copiedEmail === user.email ? "green" : "gray"}
+                        >
+                          <ActionIcon 
+                            variant="subtle" 
+                            color={copiedEmail === user.email ? "green" : "gray"} 
+                            size="sm"
+                            onClick={() => handleCopyEmail(user.email)}
+                          >
+                            <IconCopy size={14} />
+                          </ActionIcon>
+                        </Tooltip>
+                      </Group>
                     </Box>
                   </Group>
                 </Grid.Col>
