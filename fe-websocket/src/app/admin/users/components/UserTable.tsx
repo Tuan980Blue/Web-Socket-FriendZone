@@ -7,8 +7,7 @@ import {
   Avatar, 
   Badge, 
   ActionIcon, 
-  Menu, 
-  rem 
+  Menu
 } from '@mantine/core';
 import { 
   IconDots, 

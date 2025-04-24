@@ -191,7 +191,7 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
   // Initial fetch
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   return {
     users,

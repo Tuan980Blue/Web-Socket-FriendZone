@@ -52,23 +52,21 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 
   useEffect(() => {
     if (user) {
-      const userData = {
+      form.setValues({
         username: user.username,
         email: user.email,
-        fullName: user.fullName || '',
-        bio: user.bio || '',
-        website: user.website || '',
-        location: user.location || '',
-        phoneNumber: user.phoneNumber || '',
-        gender: user.gender || '',
-        birthDate: user.birthDate || '',
-        isPrivate: user.isPrivate || false,
-        role: user.role || 'user',
-        isBanned: user.isBanned || false
-      };
-      form.setValues(userData);
+        fullName: user.fullName,
+        bio: user.bio,
+        website: user.website,
+        location: user.location,
+        phoneNumber: user.phoneNumber,
+        gender: user.gender,
+        birthDate: user.birthDate,
+        isPrivate: user.isPrivate,
+        role: user.role
+      });
     }
-  }, [user?.id]);
+  }, [form, user]);
 
   const handleSubmit = async (values: typeof form.values) => {
     if (!user) return;
