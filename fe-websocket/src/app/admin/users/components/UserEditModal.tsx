@@ -10,8 +10,7 @@ import {
   Group, 
   Stack, 
   Grid,
-  Title,
-  Text
+  Title
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
