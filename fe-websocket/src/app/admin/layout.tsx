@@ -27,7 +27,7 @@ export default function AdminLayout({
               <div className="fixed left-0 top-16 bottom-0 z-10">
                 <AdminSidebar onCollapseChange={setIsSidebarCollapsed} />
               </div>
-              <main className={`flex-1 p-6 overflow-auto transition-all duration-300 ${isSidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+              <main className={`flex-1 overflow-auto transition-all duration-300 ${isSidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
                 {children}
               </main>
             </div>

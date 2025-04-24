@@ -9,9 +9,10 @@ import {
   ActionIcon, 
   Menu,
   Tooltip,
-  Box,
   ScrollArea,
-  ThemeIcon
+  ThemeIcon,
+  Paper,
+  Stack
 } from '@mantine/core';
 import { 
   IconDots, 
@@ -21,7 +22,6 @@ import {
   IconUserCheck,
   IconEye,
   IconMail,
-  IconCalendar,
   IconUser,
   IconCircleCheck,
   IconCircleX,
@@ -67,35 +67,38 @@ const UserTable: React.FC<UserTableProps> = ({
             size={40} 
             radius={40}
             color={user.isBanned ? 'red' : 'blue'}
+            className="border-2 border-gray-100"
           >
             {user.fullName?.charAt(0) || user.username.charAt(0)}
           </Avatar>
-          <Box>
-            <Text fw={500} fz="sm">
+          <Stack gap={4}>
+            <Text fw={600} fz="sm" className="text-gray-800">
               {user.fullName || user.username}
             </Text>
             <Group gap={4}>
-              <IconUser size={12} />
-              <Text fz="xs" c="dimmed">
+              <IconUser size={12} className="text-gray-500" />
+              <Text fz="xs" c="dimmed" className="text-gray-500">
                 @{user.username}
               </Text>
             </Group>
-          </Box>
+          </Stack>
         </Group>
       </Table.Td>
       <Table.Td>
         <Group gap={4}>
-          <IconMail size={12} />
-          <Text fz="sm">{user.email}</Text>
+          <IconMail size={12} className="text-gray-500" />
+          <Text fz="sm" className="text-gray-700">{user.email}</Text>
           <Tooltip 
             label={copiedEmail === user.email ? "Copied!" : "Copy email"}
             color={copiedEmail === user.email ? "green" : "gray"}
+            withArrow
           >
             <ActionIcon 
               variant="subtle" 
               color={copiedEmail === user.email ? "green" : "gray"} 
               size="sm"
               onClick={() => handleCopyEmail(user.email)}
+              className="hover:bg-gray-100"
             >
               <IconCopy size={14} />
             </ActionIcon>
@@ -103,51 +106,70 @@ const UserTable: React.FC<UserTableProps> = ({
         </Group>
       </Table.Td>
       <Table.Td>
+        <Badge
+          variant="filled"
+          size="sm"
+          className="capitalize font-medium"
+          color={
+            user.role === 'USER' ? 'blue' :
+              user.role === 'ADMIN' ? 'violet' :
+            'gray'
+          }
+        >
+          {user.role}
+        </Badge>
+      </Table.Td>
+      <Table.Td>
         <Badge 
           color={user.isBanned ? "red" : "green"} 
-          variant="light"
+          variant="filled"
           size="sm"
           leftSection={
-            <ThemeIcon size="xs" color={user.isBanned ? "red" : "green"} variant="transparent">
+            <ThemeIcon size="xs" color="white" variant="transparent">
               {user.isBanned ? <IconCircleX size={12} /> : <IconCircleCheck size={12} />}
             </ThemeIcon>
           }
+          className="font-medium"
         >
           {user.isBanned ? "Banned" : "Active"}
         </Badge>
       </Table.Td>
       <Table.Td>
-        <Group gap={4}>
-          <IconCalendar size={12} />
-          <Text fz="sm">{format(new Date(user.createdAt), 'dd/MM/yyyy')}</Text>
-        </Group>
+          <Text fz="sm" className="text-gray-700">
+            {format(new Date(user.createdAt), 'dd/MM/yyyy')}
+          </Text>
       </Table.Td>
       <Table.Td>
-        <Group gap={0} justify="flex-end">
-          <Tooltip label="View Details">
+        <Group gap={6} justify="flex-center">
+          <Tooltip label="View Details" withArrow>
             <ActionIcon 
-              variant="subtle" 
+              variant="filled" 
               color="blue" 
               onClick={() => onViewDetails(user)}
+              className="hover:bg-blue-600"
             >
               <IconEye size="1rem" stroke={1.5} />
             </ActionIcon>
           </Tooltip>
-          <Menu withArrow position="bottom-end">
+          <Tooltip label="Edit User" withArrow>
+            <ActionIcon
+                variant="filled"
+                color="red"
+                onClick={() => onEdit(user)}
+                className="hover:bg-red-600"
+            >
+              <IconEdit size="1rem" stroke={1.5} />
+            </ActionIcon>
+          </Tooltip>
+          <Menu withArrow position="bottom-end" shadow="md" width={200}>
             <Menu.Target>
-              <Tooltip label="More">
-              <ActionIcon variant="subtle" color="gray">
-                <IconDots size="1rem" stroke={1.5} />
-              </ActionIcon>
+              <Tooltip label="More" withArrow>
+                <ActionIcon variant="default">
+                  <IconDots size={18} />
+                </ActionIcon>
               </Tooltip>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item
-                leftSection={<IconEdit size="1rem" stroke={1.5} />}
-                onClick={() => onEdit(user)}
-              >
-                Edit User
-              </Menu.Item>
               <Menu.Item
                 leftSection={user.isBanned ? 
                   <IconUserCheck size="1rem" stroke={1.5} /> : 
@@ -155,6 +177,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 }
                 color={user.isBanned ? "green" : "red"}
                 onClick={() => onToggleBan(user, !user.isBanned)}
+                className="hover:bg-red-50"
               >
                 {user.isBanned ? 'Unban User' : 'Ban User'}
               </Menu.Item>
@@ -163,6 +186,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 leftSection={<IconTrash size="1rem" stroke={1.5} />}
                 color="red"
                 onClick={() => onDelete(user)}
+                className="hover:bg-red-50"
               >
                 Delete User
               </Menu.Item>
@@ -174,20 +198,23 @@ const UserTable: React.FC<UserTableProps> = ({
   ));
 
   return (
-    <ScrollArea>
-      <Table highlightOnHover>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>User</Table.Th>
-            <Table.Th>Email</Table.Th>
-            <Table.Th>Status</Table.Th>
-            <Table.Th>Created At</Table.Th>
-            <Table.Th />
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>{rows}</Table.Tbody>
-      </Table>
-    </ScrollArea>
+    <Paper shadow="sm" p="md" >
+      <ScrollArea>
+        <Table highlightOnHover>
+          <Table.Thead>
+            <Table.Tr className={"text-center"}>
+              <Table.Th className="text-gray-700 font-semibold text-center">User</Table.Th>
+              <Table.Th className="text-gray-700 font-semibold text-center">Email</Table.Th>
+              <Table.Th className="text-gray-700 font-semibold text-center">Role</Table.Th>
+              <Table.Th className="text-gray-700 font-semibold text-center">Status</Table.Th>
+              <Table.Th className="text-gray-700 font-semibold text-center">Created At</Table.Th>
+              <Table.Th className="text-gray-700 font-semibold text-center">Actions</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>{rows}</Table.Tbody>
+        </Table>
+      </ScrollArea>
+    </Paper>
   );
 };
 

@@ -7,7 +7,7 @@ import UserEditModal from '@/app/admin/users/components/UserEditModal';
 import UserDeleteModal from '@/app/admin/users/components/UserDeleteModal';
 import UserDetailModal from '@/app/admin/users/components/UserDetailModal';
 import UserSkeleton from '@/app/admin/users/components/UserSkeleton';
-import { Search, RefreshCw, Filter } from 'lucide-react';
+import {Search, RefreshCw, Filter, Shield, Users, UserCheck, UserX, UserCog} from 'lucide-react';
 import Pagination from "@/app/admin/users/components/pagination";
 import { Button, Input, Select, Text, Card, Group, Stack, Paper } from "@mantine/core";
 import { User } from '@/services/adminService';
@@ -17,6 +17,7 @@ const AdminUsersPage = () => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [roleFilter, setRoleFilter] = useState<string | null>(null);
   
   const {
     users,
@@ -49,7 +50,9 @@ const AdminUsersPage = () => {
       (statusFilter === 'active' && !user.isBanned) ||
       (statusFilter === 'banned' && user.isBanned);
     
-    return matchesSearch && matchesStatus;
+    const matchesRole = !roleFilter || user.role === roleFilter.toUpperCase();
+    
+    return matchesSearch && matchesStatus && matchesRole;
   });
 
   // Handle limit change
@@ -103,21 +106,75 @@ const AdminUsersPage = () => {
 
             {/* Stats Section */}
             <Group grow>
-              <Paper p="md" radius="md" withBorder>
-                <Text fz="sm" c="dimmed">Total Users</Text>
-                <Text fz="xl" fw={700}>{pagination.total}</Text>
+              <Paper 
+                p="md" 
+                radius="md" 
+                withBorder 
+                className="bg-gradient-to-br from-blue-50 to-blue-100"
+              >
+                <Group gap="sm">
+                  <div className="p-2 bg-blue-100 rounded-full">
+                    <Users className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <Stack gap={0}>
+                    <Text fz="sm" c="dimmed">Total Users</Text>
+                    <Text fz="xl" fw={700} className="text-blue-700">{pagination.total}</Text>
+                  </Stack>
+                </Group>
               </Paper>
-              <Paper p="md" radius="md" withBorder>
-                <Text fz="sm" c="dimmed">Active Users</Text>
-                <Text fz="xl" fw={700} c="green">
-                  {users.filter(u => !u.isBanned).length}
-                </Text>
+              <Paper 
+                p="md" 
+                radius="md" 
+                withBorder 
+                className="bg-gradient-to-br from-green-50 to-green-100"
+              >
+                <Group gap="sm">
+                  <div className="p-2 bg-green-100 rounded-full">
+                    <UserCheck className="h-6 w-6 text-green-600" />
+                  </div>
+                  <Stack gap={0}>
+                    <Text fz="sm" c="dimmed">Active Users</Text>
+                    <Text fz="xl" fw={700} className="text-green-700">
+                      {users.filter(u => !u.isBanned).length}
+                    </Text>
+                  </Stack>
+                </Group>
               </Paper>
-              <Paper p="md" radius="md" withBorder>
-                <Text fz="sm" c="dimmed">Banned Users</Text>
-                <Text fz="xl" fw={700} c="red">
-                  {users.filter(u => u.isBanned).length}
-                </Text>
+              <Paper 
+                p="md" 
+                radius="md" 
+                withBorder 
+                className="bg-gradient-to-br from-red-50 to-red-100"
+              >
+                <Group gap="sm">
+                  <div className="p-2 bg-red-100 rounded-full">
+                    <UserX className="h-6 w-6 text-red-600" />
+                  </div>
+                  <Stack gap={0}>
+                    <Text fz="sm" c="dimmed">Banned Users</Text>
+                    <Text fz="xl" fw={700} className="text-red-700">
+                      {users.filter(u => u.isBanned).length}
+                    </Text>
+                  </Stack>
+                </Group>
+              </Paper>
+              <Paper 
+                p="md" 
+                radius="md" 
+                withBorder 
+                className="bg-gradient-to-br from-purple-50 to-purple-100"
+              >
+                <Group gap="sm">
+                  <div className="p-2 bg-purple-100 rounded-full">
+                    <UserCog className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <Stack gap={0}>
+                    <Text fz="sm" c="dimmed">Admin Users</Text>
+                    <Text fz="xl" fw={700} className="text-purple-700">
+                      {users.filter(u => u.role === 'ADMIN').length}
+                    </Text>
+                  </Stack>
+                </Group>
               </Paper>
             </Group>
 
@@ -143,6 +200,17 @@ const AdminUsersPage = () => {
                   ]}
                   clearable
                   leftSection={<Filter size={14} />}
+                />
+                <Select
+                  placeholder="Role"
+                  value={roleFilter}
+                  onChange={setRoleFilter}
+                  data={[
+                    { value: 'admin', label: 'Admin' },
+                    { value: 'user', label: 'User' }
+                  ]}
+                  clearable
+                  leftSection={<Shield size={14} />}
                 />
               </Group>
               <Group>
