@@ -11,13 +11,19 @@ import {
   Grid,
   Divider
 } from '@mantine/core';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 
 interface UserDetailModalProps {
   user: User | null;
   isOpen: boolean;
   onClose: () => void;
 }
+
+const formatDate = (dateString: string | undefined | null): string => {
+  if (!dateString) return "Not provided";
+  const date = new Date(dateString);
+  return isValid(date) ? format(date, 'PPP') : "Invalid date";
+};
 
 const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, isOpen, onClose }) => {
   if (!user) return null;
@@ -68,7 +74,7 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, isOpen, onClose
           </Grid.Col>
           <Grid.Col span={6}>
             <Text size="sm" c="dimmed">Birth Date</Text>
-            <Text>{user.birthDate ? format(new Date(user.birthDate), 'PPP') : "Not provided"}</Text>
+            <Text>{formatDate(user.birthDate)}</Text>
           </Grid.Col>
           <Grid.Col span={6}>
             <Text size="sm" c="dimmed">Website</Text>
@@ -105,15 +111,15 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, isOpen, onClose
         <Grid>
           <Grid.Col span={6}>
             <Text size="sm" c="dimmed">Created At</Text>
-            <Text>{format(new Date(user.createdAt), 'PPP')}</Text>
+            <Text>{formatDate(user.createdAt)}</Text>
           </Grid.Col>
           <Grid.Col span={6}>
             <Text size="sm" c="dimmed">Last Updated</Text>
-            <Text>{format(new Date(user.updatedAt), 'PPP')}</Text>
+            <Text>{formatDate(user.updatedAt)}</Text>
           </Grid.Col>
           <Grid.Col span={6}>
             <Text size="sm" c="dimmed">Last Seen</Text>
-            <Text>{format(new Date(user.lastSeen), 'PPP')}</Text>
+            <Text>{formatDate(user.lastSeen)}</Text>
           </Grid.Col>
           <Grid.Col span={6}>
             <Text size="sm" c="dimmed">Status</Text>

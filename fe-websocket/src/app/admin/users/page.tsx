@@ -14,6 +14,7 @@ import { User } from '@/services/adminService';
 const AdminUsersPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
   
   const {
     users,
@@ -24,22 +25,19 @@ const AdminUsersPage = () => {
     isEditModalOpen,
     isDeleteModalOpen,
     isDetailModalOpen,
-    fetchUsers,
     updateUser,
     toggleUserBan,
     deleteUser,
-    changePage,
-    changeLimit,
     openEditModal,
     closeEditModal,
     openDeleteModal,
     closeDeleteModal,
     openDetailModal,
     closeDetailModal
-  } = useAdminUsers({ initialLimit: limit });
+  } = useAdminUsers({ initialPage: page, initialLimit: limit });
 
   // Filter users based on search term
-  const filteredUsers = users.filter(user => 
+  const filteredUsers = users.filter((user: User) => 
     user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (user.fullName && user.fullName.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -50,7 +48,7 @@ const AdminUsersPage = () => {
     if (value) {
       const newLimit = parseInt(value);
       setLimit(newLimit);
-      changeLimit(newLimit);
+      setPage(1); // Reset to first page when changing limit
     }
   };
 
@@ -59,14 +57,14 @@ const AdminUsersPage = () => {
     setSearchTerm(e.target.value);
   };
 
-  // Handle refresh
-  const handleRefresh = () => {
-    fetchUsers(pagination.page, limit);
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
   };
 
   // Handle toggle ban
-  const handleToggleBan = (user: User, ban: boolean) => {
-    toggleUserBan(user.id, ban);
+  const handleToggleBan = async (user: User, ban: boolean) => {
+    await toggleUserBan(user.id, ban);
   };
 
   return (
@@ -74,7 +72,7 @@ const AdminUsersPage = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">User Management</h1>
         <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={handleRefresh} disabled={loading}>
+          <Button variant="outline" onClick={() => setPage(1)} disabled={loading}>
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
@@ -111,7 +109,7 @@ const AdminUsersPage = () => {
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+          {error.message}
         </div>
       )}
 
@@ -133,7 +131,7 @@ const AdminUsersPage = () => {
             <Pagination
               currentPage={pagination.page}
               totalPages={pagination.totalPages}
-              onPageChange={changePage}
+              onPageChange={handlePageChange}
             />
           )}
         </>
