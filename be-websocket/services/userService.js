@@ -138,25 +138,6 @@ class UserService {
     });
   }
 
-  // Update user
-  async updateUser(id, data) {
-    if (data.password) {
-      data.password = await bcrypt.hash(data.password, 10);
-    }
-
-    return prisma.user.update({
-      where: { id },
-      data
-    });
-  }
-
-  // Delete user
-  async deleteUser(id) {
-    return prisma.user.delete({
-      where: { id }
-    });
-  }
-
   // Compare password
   async comparePassword(plainPassword, hashedPassword) {
     return bcrypt.compare(plainPassword, hashedPassword);
@@ -173,34 +154,18 @@ class UserService {
     });
   }
 
-  // Get all users
-  async getAllUsers() {
-    return prisma.user.findMany({
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        password: true,
-        fullName: true,
-        avatar: true,
-        bio: true,
-        status: true,
-        lastSeen: true,
-        createdAt: true,
-        updatedAt: true,
-        isPrivate: true,
-        website: true,
-        location: true,
-        phoneNumber: true,
-        gender: true,
-        birthDate: true,
-        followersCount: true,
-        followingCount: true,
-        postsCount: true,
-        role: true
-      }
+  // Update user
+  async updateUser(id, data) {
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
+    }
+
+    return prisma.user.update({
+      where: { id },
+      data
     });
   }
+
 }
 
 module.exports = new UserService(); 
