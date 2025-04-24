@@ -11,7 +11,6 @@ import {
     MessageSquare,
     Image,
     Settings,
-    Shield,
     ChevronLeft,
     ChevronRight,
     FolderTree,
@@ -32,11 +31,6 @@ const menuItems: MenuItem[] = [
         title: 'Dashboard',
         icon: LayoutDashboard,
         href: '/admin',
-    },
-    {
-        title: 'Admins',
-        icon: Shield,
-        href: '/admin/admins',
     },
     {
         title: 'Users',
