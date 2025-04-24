@@ -106,7 +106,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
       size="lg"
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack spacing="md">
+        <Stack gap="md">
           <Grid>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
