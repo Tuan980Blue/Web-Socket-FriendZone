@@ -9,8 +9,7 @@ import {
   Button, 
   Group, 
   Stack, 
-  Grid,
-  Title
+  Grid
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -53,7 +52,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 
   useEffect(() => {
     if (user) {
-      form.setValues({
+      const userData = {
         username: user.username,
         email: user.email,
         fullName: user.fullName || '',
@@ -66,9 +65,10 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
         isPrivate: user.isPrivate || false,
         role: user.role || 'user',
         isBanned: user.isBanned || false
-      });
+      };
+      form.setValues(userData);
     }
-  }, [user, form]);
+  }, [user?.id]);
 
   const handleSubmit = async (values: typeof form.values) => {
     if (!user) return;
@@ -102,7 +102,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
     <Modal 
       opened={isOpen} 
       onClose={onClose} 
-      title={<Title order={3}>Edit User: {user.username}</Title>}
+      title={`Edit User: ${user.username}`}
       size="lg"
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>

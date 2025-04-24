@@ -9,14 +9,14 @@ router.use(adminAuth);
 // Get all users with pagination
 router.get('/users', async (req, res) => {
     try {
-        console.log('Request query:', req.query);
+
         const { page = 1, limit = 10 } = req.query;
-        console.log('Parsed params:', { page, limit });
+
         const parsedPage = parseInt(page);
         const parsedLimit = parseInt(limit);
-        console.log('Parsed integers:', { parsedPage, parsedLimit });
+
         const users = await adminService.getAllUsers(parsedPage, parsedLimit);
-        console.log('Service response:', users);
+
         res.json(users);
     } catch (error) {
         console.error('Error in /users route:', error);
