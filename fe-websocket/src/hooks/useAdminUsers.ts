@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import adminService, { User, PaginatedUsers } from '@/services/adminService';
 import { toast } from 'react-hot-toast';
 import { AxiosError } from 'axios';
@@ -24,7 +24,7 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
   const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
 
   // Fetch users with pagination
-  const fetchUsers = async (page = pagination.page, limit = pagination.limit) => {
+  const fetchUsers = useCallback(async (page = pagination.page, limit = pagination.limit) => {
     setLoading(true);
     setError(null);
     try {
@@ -39,7 +39,7 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit]);
 
   // Fetch a single user by ID
   const fetchUserById = async (userId: string) => {

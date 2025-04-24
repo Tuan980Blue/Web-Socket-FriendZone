@@ -37,7 +37,7 @@ const UserTable: React.FC<UserTableProps> = ({
   const rows = users.map((user) => (
     <tr key={user.id}>
       <td>
-        <Group spacing="sm">
+        <Group gap="sm">
           <Avatar size={40} src={user.avatar} radius={40} />
           <div>
             <Text fz="sm" fw={500}>
@@ -58,11 +58,11 @@ const UserTable: React.FC<UserTableProps> = ({
         <Text fz="sm">{format(new Date(user.createdAt), 'PPP')}</Text>
       </td>
       <td>
-        <Group spacing={0} position="right">
+        <Group gap={0} justify="flex-end">
           <ActionIcon onClick={() => onViewDetails(user)}>
             <IconEye size="1rem" stroke={1.5} />
           </ActionIcon>
-          <Menu transition="pop" withArrow position="bottom-end">
+          <Menu withArrow position="bottom-end">
             <Menu.Target>
               <ActionIcon>
                 <IconDots size="1rem" stroke={1.5} />
@@ -70,19 +70,19 @@ const UserTable: React.FC<UserTableProps> = ({
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item
-                icon={<IconEdit size="1rem" stroke={1.5} />}
+                leftSection={<IconEdit size="1rem" stroke={1.5} />}
                 onClick={() => onEdit(user)}
               >
                 Edit
               </Menu.Item>
               <Menu.Item
-                icon={user.isBanned ? <IconUserCheck size="1rem" stroke={1.5} /> : <IconBan size="1rem" stroke={1.5} />}
+                leftSection={user.isBanned ? <IconUserCheck size="1rem" stroke={1.5} /> : <IconBan size="1rem" stroke={1.5} />}
                 onClick={() => onToggleBan(user, !user.isBanned)}
               >
                 {user.isBanned ? 'Unban' : 'Ban'}
               </Menu.Item>
               <Menu.Item
-                icon={<IconTrash size="1rem" stroke={1.5} />}
+                leftSection={<IconTrash size="1rem" stroke={1.5} />}
                 color="red"
                 onClick={() => onDelete(user)}
               >
