@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import adminService, { User, PaginatedUsers } from '@/services/adminService';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import adminService, { User } from '@/services/adminService';
 import { toast } from 'react-hot-toast';
 import { AxiosError } from 'axios';
 
@@ -9,137 +10,83 @@ interface UseAdminUsersProps {
 }
 
 export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUsersProps = {}) => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState({
-    page: initialPage,
-    limit: initialLimit,
-    total: 0,
-    totalPages: 0
-  });
+  const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
 
   // Fetch users with pagination
-  const fetchUsers = useCallback(async (page = pagination.page, limit = pagination.limit) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data: PaginatedUsers = await adminService.getAllUsers(page, limit);
-      setUsers(data.users);
-      setPagination(data.pagination);
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      setError('Failed to fetch users');
-      toast.error('Failed to fetch users');
-      console.error('Error fetching users:', axiosError.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [pagination.page, pagination.limit]);
+  const { data: usersData, isLoading: isUsersLoading, error: usersError } = useQuery({
+    queryKey: ['users', initialPage, initialLimit],
+    queryFn: () => adminService.getAllUsers(initialPage, initialLimit),
+    staleTime: 30000 // Cache for 30 seconds
+  });
 
   // Fetch a single user by ID
-  const fetchUserById = async (userId: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const user = await adminService.getUserById(userId);
-      setSelectedUser(user);
-      return user;
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      setError('Failed to fetch user');
-      toast.error('Failed to fetch user');
-      console.error('Error fetching user:', axiosError.message);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: userDetail, isLoading: isUserDetailLoading } = useQuery({
+    queryKey: ['user', selectedUser?.id],
+    queryFn: () => selectedUser ? adminService.getUserById(selectedUser.id) : null,
+    enabled: !!selectedUser && isDetailModalOpen
+  });
 
-  // Update user information
-  const updateUser = async (userId: string, userData: Partial<User>) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const updatedUser = await adminService.updateUserInfo(userId, userData);
-      setUsers(users.map(user => user.id === userId ? updatedUser : user));
-      if (selectedUser?.id === userId) {
+  // Update user mutation
+  const updateUserMutation = useMutation({
+    mutationFn: ({ userId, userData }: { userId: string; userData: Partial<User> }) => 
+      adminService.updateUserInfo(userId, userData),
+    onSuccess: (updatedUser) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      if (selectedUser?.id === updatedUser.id) {
         setSelectedUser(updatedUser);
       }
       toast.success('User updated successfully');
+      closeEditModal();
       return updatedUser;
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      setError('Failed to update user');
+    },
+    onError: (error: AxiosError) => {
       toast.error('Failed to update user');
-      console.error('Error updating user:', axiosError.message);
+      console.error('Error updating user:', error.message);
       return null;
-    } finally {
-      setLoading(false);
     }
-  };
+  });
 
-  // Toggle user ban status
-  const toggleUserBan = async (userId: string, ban: boolean) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const updatedUser = await adminService.toggleUserBan(userId, ban);
-      setUsers(users.map(user => user.id === userId ? updatedUser : user));
-      if (selectedUser?.id === userId) {
+  // Toggle user ban mutation
+  const toggleBanMutation = useMutation({
+    mutationFn: ({ userId, ban }: { userId: string; ban: boolean }) => 
+      adminService.toggleUserBan(userId, ban),
+    onSuccess: (updatedUser) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      if (selectedUser?.id === updatedUser.id) {
         setSelectedUser(updatedUser);
       }
-      toast.success(`User ${ban ? 'banned' : 'unbanned'} successfully`);
+      toast.success(`User ${updatedUser.isBanned ? 'banned' : 'unbanned'} successfully`);
       return updatedUser;
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      setError(`Failed to ${ban ? 'ban' : 'unban'} user`);
-      toast.error(`Failed to ${ban ? 'ban' : 'unban'} user`);
-      console.error('Error toggling user ban:', axiosError.message);
+    },
+    onError: (error: AxiosError) => {
+      toast.error('Failed to toggle user ban status');
+      console.error('Error toggling user ban:', error.message);
       return null;
-    } finally {
-      setLoading(false);
     }
-  };
+  });
 
-  // Delete user
-  const deleteUser = async (userId: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await adminService.deleteUser(userId);
-      setUsers(users.filter(user => user.id !== userId));
+  // Delete user mutation
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: string) => adminService.deleteUser(userId),
+    onSuccess: (_, userId) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
       if (selectedUser?.id === userId) {
         setSelectedUser(null);
       }
       toast.success('User deleted successfully');
+      closeDeleteModal();
       return true;
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      setError('Failed to delete user');
+    },
+    onError: (error: AxiosError) => {
       toast.error('Failed to delete user');
-      console.error('Error deleting user:', axiosError.message);
+      console.error('Error deleting user:', error.message);
       return false;
-    } finally {
-      setLoading(false);
     }
-  };
-
-  // Change page
-  const changePage = (newPage: number) => {
-    setPagination(prev => ({ ...prev, page: newPage }));
-    fetchUsers(newPage, pagination.limit);
-  };
-
-  // Change limit
-  const changeLimit = (newLimit: number) => {
-    setPagination(prev => ({ ...prev, limit: newLimit, page: 1 }));
-    fetchUsers(1, newLimit);
-  };
+  });
 
   // Open edit modal
   const openEditModal = (user: User) => {
@@ -166,20 +113,9 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
   };
 
   // Open detail modal
-  const openDetailModal = async (user: User) => {
-    setLoading(true);
-    try {
-      const detailedUser = await adminService.getUserById(user.id);
-      setSelectedUser(detailedUser);
-      setIsDetailModalOpen(true);
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      setError('Failed to fetch user details');
-      toast.error('Failed to fetch user details');
-      console.error('Error fetching user details:', axiosError.message);
-    } finally {
-      setLoading(false);
-    }
+  const openDetailModal = (user: User) => {
+    setSelectedUser(user);
+    setIsDetailModalOpen(true);
   };
 
   // Close detail modal
@@ -188,27 +124,31 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
     setSelectedUser(null);
   };
 
-  // Initial fetch
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
-
   return {
-    users,
-    loading,
-    error,
-    pagination,
-    selectedUser,
+    users: usersData?.users || [],
+    pagination: usersData?.pagination || { page: initialPage, limit: initialLimit, total: 0, totalPages: 0 },
+    loading: isUsersLoading || isUserDetailLoading,
+    error: usersError,
+    selectedUser: userDetail || selectedUser,
     isEditModalOpen,
     isDeleteModalOpen,
     isDetailModalOpen,
-    fetchUsers,
-    fetchUserById,
-    updateUser,
-    toggleUserBan,
-    deleteUser,
-    changePage,
-    changeLimit,
+    updateUser: async (userId: string, userData: Partial<User>) => {
+      const result = await updateUserMutation.mutateAsync({ userId, userData });
+      return result;
+    },
+    toggleUserBan: async (userId: string, ban: boolean) => {
+      const result = await toggleBanMutation.mutateAsync({ userId, ban });
+      return result;
+    },
+    deleteUser: async (userId: string) => {
+      try {
+        await deleteUserMutation.mutateAsync(userId);
+        return true;
+      } catch {
+        return false;
+      }
+    },
     openEditModal,
     closeEditModal,
     openDeleteModal,

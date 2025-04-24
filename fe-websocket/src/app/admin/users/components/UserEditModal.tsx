@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { User } from '@/services/adminService';
 import { 
   Modal, 
@@ -28,6 +28,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
   onSave 
 }) => {
   const [loading, setLoading] = useState(false);
+  const previousUserRef = useRef<User | null>(null);
   
   const form = useForm({
     initialValues: {
@@ -51,22 +52,23 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
   });
 
   useEffect(() => {
-    if (user) {
+    if (user && user.id !== previousUserRef.current?.id) {
       form.setValues({
-        username: user.username,
-        email: user.email,
-        fullName: user.fullName,
-        bio: user.bio,
-        website: user.website,
-        location: user.location,
-        phoneNumber: user.phoneNumber,
-        gender: user.gender,
-        birthDate: user.birthDate,
-        isPrivate: user.isPrivate,
-        role: user.role
+        username: user.username || '',
+        email: user.email || '',
+        fullName: user.fullName || '',
+        bio: user.bio || '',
+        website: user.website || '',
+        location: user.location || '',
+        phoneNumber: user.phoneNumber || '',
+        gender: user.gender || '',
+        birthDate: user.birthDate || '',
+        isPrivate: user.isPrivate || false,
+        role: user.role || 'user'
       });
+      previousUserRef.current = user;
     }
-  }, [form, user]);
+  }, [user]);
 
   const handleSubmit = async (values: typeof form.values) => {
     if (!user) return;
