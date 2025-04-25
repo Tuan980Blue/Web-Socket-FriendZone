@@ -10,7 +10,8 @@ import {
     Bookmark,
     Compass,
     Moon,
-    Sun, CircleFadingPlus
+    Sun, CircleFadingPlus,
+    NotebookTabs
 } from 'lucide-react';
 import {Avatar} from '@mantine/core';
 import {useUserData} from '@/hooks/useUserData';
@@ -23,6 +24,7 @@ const LeftSidebar = () => {
 
     const menuItems = [
         {icon: Home, label: 'News Feed', href: '/'},
+        {icon: NotebookTabs, label: 'Post', href: '/post'},
         {icon: Users, label: 'Follows', href: '/follows'},
         {icon: Film, label: 'Reels', href: '/reels'},
         {icon: Bookmark, label: 'Saved', href: '/saved'},

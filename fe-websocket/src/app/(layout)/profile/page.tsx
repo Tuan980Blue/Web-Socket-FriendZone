@@ -31,6 +31,7 @@ import ProfileStories from './components/ProfileStories';
 import ProfileInfo from "@/app/(layout)/profile/components/ProfileInfo";
 import ProfileSkeleton from './components/ProfileSkeleton';
 import QuickPost from '../../../components/quickPost/QuickPost';
+import PostsMe from "@/app/(layout)/post/me/page";
 
 export default function Profile() {
     const [isDarkMode] = useState(false);
@@ -63,17 +64,17 @@ export default function Profile() {
             </div>
 
             {/* Main Content Area */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
                 <div className="">
-                    <div className="space-y-4">
+                    <div className="">
                         {/* Tabs Navigation */}
                         <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab}/>
 
                         {/* Tab Content */}
-                        <div className="bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm p-4">
+                        <div className="bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm px-4">
                             {activeTab === 'posts' && (
-                                <div className="space-y-6">
-                                    {/* Post Feed will be implemented here */}
+                                <div>
+                                    <PostsMe/>
                                 </div>
                             )}
                             {activeTab === 'introduces' && (

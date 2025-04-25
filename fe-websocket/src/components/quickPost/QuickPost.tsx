@@ -3,19 +3,22 @@
 import React, { useState, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { ChevronDown, Check, Loader2 } from 'lucide-react';
-import {Avatar, Button} from "@mantine/core";
+import { Avatar, Button } from "@mantine/core";
 import QuickPostHeader from './QuickPostHeader';
 import QuickPostContent from './QuickPostContent';
 import QuickPostActions from './QuickPostActions';
 import PrivacyDropdown from './PrivacyDropdown';
 import QuickOptionsPopup from './QuickOptionsPopup';
-import {useUserData} from "@/hooks/useUserData";
+import { useUserData } from "@/hooks/useUserData";
+import { postService } from '@/services/postService';
+import { CreatePostData } from '@/types/post';
 
 interface QuickPostProps {
   isCurrentUser: boolean;
+  onPostCreated?: () => void;
 }
 
-export default function QuickPost({ isCurrentUser }: QuickPostProps) {
+export default function QuickPost({ isCurrentUser, onPostCreated }: QuickPostProps) {
   const { theme } = useTheme();
   const [postContent, setPostContent] = useState('');
   const [showOptions, setShowOptions] = useState(false);
@@ -23,24 +26,54 @@ export default function QuickPost({ isCurrentUser }: QuickPostProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPrivacyDropdown, setShowPrivacyDropdown] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const {user} = useUserData();
+  const { user } = useUserData();
 
   const handlePostSubmit = async () => {
+    if (!postContent.trim()) return;
+
     setIsLoading(true);
     try {
-      // Handle post submission logic here
-      console.log('Posting:', postContent);
+      const postData: CreatePostData = {
+        content: postContent,
+        images: [], // Chưa lưu ảnh
+        isArchived: false,
+        isHighlighted: false,
+        tags: [],
+      };
+
+      await postService.createPost(postData);
       setPostContent('');
+      setImages([]);
       setIsExpanded(false);
+      onPostCreated?.();
+    } catch (error) {
+      console.error('Error creating post:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleImageUpload = () => {
-    fileInputRef.current?.click();
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const newImages: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          newImages.push(e.target.result as string);
+          if (newImages.length === files.length) {
+            setImages(prev => [...prev, ...newImages]);
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   if (!isCurrentUser) return null;
@@ -78,13 +111,18 @@ export default function QuickPost({ isCurrentUser }: QuickPostProps) {
             <QuickPostHeader isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
             
             <div className="mt-3 md:mt-4">
-              <QuickPostContent postContent={postContent} setPostContent={setPostContent} />
+              <QuickPostContent 
+                postContent={postContent} 
+                setPostContent={setPostContent}
+                images={images}
+                setImages={setImages}
+              />
             </div>
 
             {/* Quick Action Buttons */}
             <div className="flex flex-col md:flex-row md:items-center justify-between mt-3 md:mt-4 space-y-3 md:space-y-0">
               <QuickPostActions 
-                handleImageUpload={handleImageUpload}
+                handleImageUpload={() => fileInputRef.current?.click()}
                 showOptions={showOptions}
                 setShowOptions={setShowOptions}
               />
@@ -130,6 +168,7 @@ export default function QuickPost({ isCurrentUser }: QuickPostProps) {
           className="hidden"
           accept="image/*,video/*"
           multiple
+          onChange={handleImageUpload}
         />
       </div>
     </div>
