@@ -1,25 +1,51 @@
 import React from 'react';
-import { useTheme } from 'next-themes';
+import { Textarea } from '@mantine/core';
 
 interface QuickPostContentProps {
   postContent: string;
-  setPostContent: (value: string) => void;
+  setPostContent: (content: string) => void;
+  images: string[];
+  setImages: (images: string[]) => void;
 }
 
-export default function QuickPostContent({ postContent, setPostContent }: QuickPostContentProps) {
-  const { theme } = useTheme();
-
+const QuickPostContent: React.FC<QuickPostContentProps> = ({
+  postContent,
+  setPostContent,
+  images,
+  setImages
+}) => {
   return (
-    <textarea
-      className={`w-full p-2 md:p-3 text-sm md:text-base text-[#262626] dark:text-[#FAFAFA] rounded-xl resize-none focus:outline-none transition-colors duration-300
-        ${theme === 'dark' 
-          ? 'bg-[#121212] placeholder-[#8E8E8E] focus:ring-1 focus:ring-[#DD2A7B]/50 border border-[#262626]' 
-          : 'bg-[#FAFAFA] placeholder-[#8E8E8E] focus:ring-1 focus:ring-[#DD2A7B]/50 border border-[#DBDBDB]'}`}
-      placeholder="Bạn đang nghĩ gì?"
-      rows={3}
-      value={postContent}
-      onChange={(e) => setPostContent(e.target.value)}
-      onClick={(e) => e.stopPropagation()}
-    />
+    <div className="space-y-4">
+      <Textarea
+        value={postContent}
+        onChange={(e) => setPostContent(e.target.value)}
+        placeholder="Bạn đang nghĩ gì thế?"
+        minRows={3}
+        maxRows={6}
+        className="w-full"
+      />
+
+      {images.length > 0 && (
+        <div className="grid grid-cols-2 gap-2">
+          {images.map((image, index) => (
+            <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
+              <img
+                src={image}
+                alt={`Preview ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+              <button
+                onClick={() => setImages(images.filter((_, i) => i !== index))}
+                className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
-} 
+};
+
+export default QuickPostContent; 
