@@ -84,25 +84,23 @@ const Navbar = () => {
             {user ? (
                 <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="border border-gray-300 dark:border-[#121212] cursor-pointer rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-gray-200"
                 >
-                  <div className="relative">
-                      <div
-                          className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
-                      <div className="relative rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
-                        <Avatar
-                            src={user?.avatar || '/image-person.png'}
-                            alt={user?.username || "Profile"}
-                            size="md"
-                            radius="xl"
-                        />
-                      </div>
+                  <div className="flex-shrink-0">
+                  <div
+                      className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] flex items-center justify-center shadow-lg">
+                    <Avatar
+                        src={user?.avatar || '/image-person.png'}
+                        alt={user?.username || "Profile"}
+                        size="md"
+                        radius="xl"
+                    />
                   </div>
-                </button>
-            ) : (
-                <Link
-                    href="/auth"
-                    className="px-4 py-2 border border-[#DD2A7B] rounded-lg text-sm font-semibold text-black hover:bg-gray-200 transition duration-150"
+                </div>
+              </button>
+              ) : (
+              <Link
+              href="/auth"
+              className="px-4 py-2 border border-[#DD2A7B] rounded-lg text-sm font-semibold text-black hover:bg-gray-200 transition duration-150"
                 >
                   Đăng nhập
                 </Link>
