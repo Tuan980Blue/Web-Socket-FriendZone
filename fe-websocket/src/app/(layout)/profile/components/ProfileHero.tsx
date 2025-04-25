@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import {User} from '@/types/user';
-import {Button, Modal, Group, Stack, Image as MantineImage} from "@mantine/core";
+import {Button, Modal, Group, Stack, Image as MantineImage, Avatar} from "@mantine/core";
 import {IconCamera, IconUserPlus, IconEdit} from "@tabler/icons-react";
 import {RiUserFollowLine} from "react-icons/ri";
 import {IoMdMore} from "react-icons/io";
@@ -34,6 +34,7 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const {uploadAvatar} = useAvatarUpload({
         userId: user.id,
         onSuccess: onUpdateUser
@@ -51,6 +52,11 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Reset the input value to allow selecting the same file again
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+
         const previewUrl = URL.createObjectURL(file);
         setPreviewImage(previewUrl);
         setIsPreviewModalOpen(true);
@@ -61,14 +67,20 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
         if (!previewImage) return;
 
         try {
+            setIsUploading(true);
             const response = await fetch(previewImage);
             const blob = await response.blob();
             const file = new File([blob], 'avatar.jpg', {type: blob.type});
             await uploadAvatar(file);
-            setIsPreviewModalOpen(false);
-            setPreviewImage(null);
         } catch (error) {
             console.error('Error handling file upload:', error);
+        } finally {
+            setIsUploading(false);
+            setIsPreviewModalOpen(false);
+            setPreviewImage(null);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
         }
     };
 
@@ -77,40 +89,40 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
     };
 
     return (
-        <div className="relative">
+        <div className="">
             {/* Profile Content */}
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="flex flex-col md:flex-row items-center md:items-start gap-8 py-8">
-                    {/* Avatar */}
-                    <div className="relative group">
-                        <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-lg">
-                            <Image
-                                src={user.avatar || '/image-person.png'}
-                                alt={user.username}
-                                fill
-                                className="object-cover"
-                                onClick={handleAvatarClick}
-                            />
-                            {isCurrentUser && (
-                                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                    <button
-                                        onClick={handleCameraClick}
-                                        className="p-2 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all duration-200"
-                                    >
-                                        <IconCamera size={24} className="text-white"/>
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                            accept="image/*"
-                            className="hidden"
+                    {/* Avatar Section */}
+                    <div className="relative w-fit group">
+                        <Avatar
+                            src={user.avatar || '/image-person.png'}
+                            alt={user.username}
+                            className="object-cover rounded-full ring-2 ring-gray-300 dark:ring-gray-600 transition-all duration-300"
+                            size={120}
+                            onClick={handleAvatarClick}
                         />
-                    </div>
 
+                        {isCurrentUser && (
+                            <>
+                                <button
+                                    onClick={handleCameraClick}
+                                    className="absolute bottom-1 right-1 bg-white dark:bg-gray-800 p-1 rounded-full shadow-md transition-all duration-200 "
+                                >
+                                    <IconCamera size={22} className="text-gray-700 dark:text-gray-300" />
+                                </button>
+
+                                {/* Hidden File Input */}
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    accept="image/*"
+                                    className="hidden"
+                                />
+                            </>
+                        )}
+                    </div>
                     {/* User Info */}
                     <div className="flex-1 text-center md:text-left space-y-4">
                         <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -233,6 +245,7 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
                             }}
                             radius="md"
                             className="border border-gray-300 dark:border-gray-600"
+                            disabled={isUploading}
                         >
                             Cancel
                         </Button>
@@ -240,8 +253,10 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
                             onClick={handleConfirmUpload}
                             radius="md"
                             className="bg-blue-500 text-white hover:bg-blue-600"
+                            loading={isUploading}
+                            disabled={isUploading}
                         >
-                            Confirm
+                            {isUploading ? 'Uploading...' : 'Confirm'}
                         </Button>
                     </Group>
                 </Stack>
@@ -272,12 +287,22 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
                             className="object-contain"
                         />
                     </div>
-                    <button
-                        onClick={() => setIsAvatarModalOpen(false)}
-                        className="absolute top-4 right-4 p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 transition-colors duration-200"
-                    >
-                        <IconX size={24} className="text-white"/>
-                    </button>
+                    <div className="absolute top-4 right-4 flex gap-2">
+                        {isCurrentUser && (
+                            <button
+                                onClick={handleCameraClick}
+                                className="p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 transition-colors duration-200"
+                            >
+                                <IconCamera size={24} className="text-white"/>
+                            </button>
+                        )}
+                        <button
+                            onClick={() => setIsAvatarModalOpen(false)}
+                            className="p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 transition-colors duration-200"
+                        >
+                            <IconX size={24} className="text-white"/>
+                        </button>
+                    </div>
                 </div>
             </Modal>
         </div>
