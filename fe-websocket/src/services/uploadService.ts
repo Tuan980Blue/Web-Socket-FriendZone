@@ -1,17 +1,10 @@
 import axios, { AxiosError } from 'axios';
+import { User } from '../types/user';
 
 export interface UploadResponse {
   success: boolean;
   secure_url: string;
   public_id: string;
-}
-
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  avatar: string | null;
-  // Add other user properties as needed
 }
 
 export interface Post {
