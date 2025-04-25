@@ -3,7 +3,7 @@ import AdminDashboard from "@/app/admin/dashboard/page";
 
 const Page = () => {
     return (
-        <div>
+        <div className={"p-8"}>
           <AdminDashboard/>
         </div>
     );
