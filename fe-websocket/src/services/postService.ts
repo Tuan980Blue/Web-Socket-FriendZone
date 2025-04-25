@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Post, PostResponse, CreatePostData } from '@/types/post';
+import { notifications } from '@mantine/notifications';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
@@ -21,9 +22,24 @@ api.interceptors.request.use((config) => {
 
 export const postService = {
   createPost: async (data: CreatePostData): Promise<Post> => {
-    const response = await api.post(`${API_URL}/posts`, data);
-    return response.data;
+    try {
+      const response = await api.post(`${API_URL}/posts`, data);
+      notifications.show({
+        title: 'Tạo bài viết thành công',
+        message: 'Bài viết của bạn đã được đăng!',
+        color: 'green',
+      });
+      return response.data;
+    } catch (error) {
+      notifications.show({
+        title: 'Tạo bài viết thất bại',
+        message: 'Đã có lỗi xảy ra khi tạo bài viết.',
+        color: 'red',
+      });
+      throw error;
+    }
   },
+
 
   getPosts: async (page: number = 1, limit: number = 10): Promise<PostResponse> => {
     const response = await api.get(`${API_URL}/posts`, {
