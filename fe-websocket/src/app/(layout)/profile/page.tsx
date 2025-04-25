@@ -58,7 +58,9 @@ export default function Profile() {
             <ProfileStories user={profileUser}/>
 
             {/* Quick Post Section */}
-            <QuickPost isCurrentUser={true}/>
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <QuickPost isCurrentUser={true}/>
+            </div>
 
             {/* Main Content Area */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

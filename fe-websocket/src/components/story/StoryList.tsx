@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { StoryGroup } from '@/hooks/useStories';
 import { useUserData } from '@/hooks/useUserData';
+import {Avatar} from "@mantine/core";
 
 interface StoryListProps {
   groupedStories: StoryGroup[];
@@ -24,12 +25,11 @@ const StoryList: React.FC<StoryListProps> = ({
         onClick={onAddStory}
       >
         <div className="relative w-16 h-16 rounded-full border-2 border-blue-500 p-1">
-          <Image
+          <Avatar
             src={user?.avatar || '/image-person.png'}
             alt="Your story"
-            width={56}
-            height={56}
             className="rounded-full"
+            size={54}
           />
           <div className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-1">
             <svg
