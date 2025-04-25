@@ -36,7 +36,7 @@ const PostsMe = () => {
         ))}
 
         {/* Loading more indicator */}
-        {loading && (
+        {loading && posts.length > 0 && (
           <div className="space-y-4">
             {[...Array(2)].map((_, index) => (
               <PostSkeleton key={index} />
@@ -46,7 +46,7 @@ const PostsMe = () => {
 
         {error && (
           <div className="text-center text-red-500 py-4">
-            {error}
+            {error.message || 'Failed to fetch posts'}
           </div>
         )}
 
