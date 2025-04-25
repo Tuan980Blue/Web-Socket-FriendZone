@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Post, PostResponse } from '@/types/post';
+import { useState, useEffect, useCallback } from 'react';
+import { Post } from '@/types/post';
 import { postService } from '@/services/postService';
 
 export const usePosts = (userId?: string) => {
@@ -10,12 +10,12 @@ export const usePosts = (userId?: string) => {
   const [hasMore, setHasMore] = useState(true);
   const limit = 10;
 
-  const fetchPosts = async (pageNum: number = 1) => {
+  const fetchPosts = useCallback(async (pageNum: number = 1) => {
     try {
       setLoading(true);
       setError(null);
 
-      let response: PostResponse;
+      let response;
       if (userId) {
         response = await postService.getUserPosts(userId, pageNum, limit);
       } else {
@@ -35,7 +35,7 @@ export const usePosts = (userId?: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, limit]);
 
   const loadMore = () => {
     if (!loading && hasMore) {
@@ -51,7 +51,7 @@ export const usePosts = (userId?: string) => {
 
   useEffect(() => {
     fetchPosts(page);
-  }, [page, userId]);
+  }, [page, fetchPosts]);
 
   return {
     posts,

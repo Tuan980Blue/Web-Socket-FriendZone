@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Post, PostResponse } from '@/types/post';
+import { Post } from '@/types/post';
 import { postService } from '@/services/postService';
 
 export const useMyPosts = () => {

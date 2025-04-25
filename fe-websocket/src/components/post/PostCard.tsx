@@ -6,6 +6,7 @@ import {Heart, MessageCircle, Send, Bookmark, MoreHorizontal, MapPin} from 'luci
 import {Post} from '@/types/post';
 import {formatDistanceToNow} from 'date-fns';
 import {vi} from 'date-fns/locale';
+import Image from 'next/image';
 
 interface PostCardProps {
     post: Post;
@@ -79,10 +80,12 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
                     <div className="relative w-full max-h-[400px] overflow-hidden bg-gray-100 dark:bg-gray-900">
                         <div
                             className="aspect-square w-full max-w-xl mx-auto px-4 sm:px-6 md:px-8 flex items-center justify-center">
-                            <img
+                            <Image
                                 src={post.images[currentImageIndex]}
                                 alt="Post image"
-                                className="w-full h-full object-contain"
+                                width={500}
+                                height={300}
+                                className="w-full h-full object-contain rounded-lg"
                             />
                         </div>
 

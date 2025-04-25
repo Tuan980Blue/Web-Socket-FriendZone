@@ -1,5 +1,6 @@
 import React from 'react';
 import { Textarea } from '@mantine/core';
+import Image from 'next/image';
 
 interface QuickPostContentProps {
   postContent: string;
@@ -29,9 +30,11 @@ const QuickPostContent: React.FC<QuickPostContentProps> = ({
         <div className="grid grid-cols-2 gap-2">
           {images.map((image, index) => (
             <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
-              <img
+              <Image
                 src={image}
                 alt={`Preview ${index + 1}`}
+                width={200}
+                height={200}
                 className="w-full h-full object-cover"
               />
               <button
