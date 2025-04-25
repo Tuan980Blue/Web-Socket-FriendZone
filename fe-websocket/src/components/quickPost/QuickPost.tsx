@@ -48,10 +48,10 @@ export default function QuickPost({ isCurrentUser }: QuickPostProps) {
   return (
     <div className="w-auto max-w-6xl mx-auto mb-2 px-2 md:px-0">
       <div 
-        className={`rounded-2xl p-3 md:p-4 shadow-lg transition-all duration-300 cursor-pointer
+        className={`rounded-2xl p-3 md:p-4 transition-all duration-300 cursor-pointer
           ${theme === 'dark' 
             ? 'bg-[#121212] border border-[#262626] hover:border-[#DD2A7B]/30' 
-            : 'bg-white border border-[#DBDBDB] hover:border-[#DD2A7B]/30'}`}
+            : 'bg-white border border-[#DBDBDB]'}`}
         onClick={() => !isExpanded && setIsExpanded(true)}
       >
         {/* Collapsed View */}

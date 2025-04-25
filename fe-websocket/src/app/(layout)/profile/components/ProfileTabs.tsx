@@ -25,32 +25,37 @@ const tabs = [
 
 export default function ProfileTabs({ activeTab, setActiveTab }: ProfileTabsProps) {
   return (
-      <div className="bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm overflow-hidden">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="border-b border-gray-200 dark:border-gray-700">
         <div className="flex overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => {
             const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
             return (
-                <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center px-4 py-3 text-sm font-medium relative ${
-                        activeTab === tab.id
-                            ? 'text-blue-600 dark:text-blue-400'
-                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`}
-                >
-                  <Icon className="w-5 h-5 mr-2" />
-                  {tab.label}
-                  {activeTab === tab.id && (
-                      <motion.div
-                          layoutId="activeTab"
-                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400"
-                      />
-                  )}
-                </button>
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center px-4 py-3 text-sm font-medium relative ${
+                  isActive
+                    ? 'text-gray-900 dark:text-white'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
+              >
+                <Icon 
+                  className={`w-5 h-5 ${isActive ? 'opacity-100' : 'opacity-60'} md:mr-2`} 
+                />
+                <span className="hidden md:inline">{tab.label}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900 dark:bg-white"
+                  />
+                )}
+              </button>
             );
           })}
         </div>
       </div>
+    </div>
   );
 }
