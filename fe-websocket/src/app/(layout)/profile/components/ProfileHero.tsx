@@ -6,12 +6,15 @@ import {IconUserPlus} from "@tabler/icons-react";
 import { RiUserFollowLine } from "react-icons/ri";
 import { IoMdMore } from "react-icons/io";
 import { AiOutlineMessage } from "react-icons/ai";
-import React from "react";
+import React, { useRef } from "react";
 import { useRouter } from 'next/navigation';
+import CameraButton from './CameraButton';
+import { useAvatarUpload } from '@/hooks/useAvatarUpload';
 
 interface ProfileHeroProps {
   user: User;
   isCurrentUser: boolean;
+  onUpdateUser?: (updatedUser: User) => void;
 }
 
 const renderBio = (bio: string | null | undefined) => {
@@ -26,12 +29,31 @@ const renderBio = (bio: string | null | undefined) => {
   ));
 };
 
-export default function ProfileHero({ user, isCurrentUser }: ProfileHeroProps) {
+export default function ProfileHero({ user, isCurrentUser, onUpdateUser }: ProfileHeroProps) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploadAvatar } = useAvatarUpload({
+    userId: user.id,
+    onSuccess: onUpdateUser
+  });
 
   const handleMessageClick = () => {
-    // Navigate to messages page with the user ID as a query parameter
     router.push(`/messages?userId=${user.id}`);
+  };
+
+  const handleCameraClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      await uploadAvatar(file);
+    } catch (error) {
+      console.error('Error handling file upload:', error);
+    }
   };
 
   return (
@@ -52,6 +74,18 @@ export default function ProfileHero({ user, isCurrentUser }: ProfileHeroProps) {
               fill
               className="object-cover"
             />
+            {isCurrentUser && (
+              <>
+                <CameraButton onClick={handleCameraClick} />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  className="hidden"
+                />
+              </>
+            )}
           </motion.div>
 
           {/* User Info */}
