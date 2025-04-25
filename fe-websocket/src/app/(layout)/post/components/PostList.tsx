@@ -8,7 +8,7 @@ import { usePosts } from '@/hooks/usePosts';
 
 const PostList: React.FC = () => {
     const { ref, inView } = useInView();
-    const { posts, loading, hasMore, loadMore } = usePosts();
+    const { posts, loading, error, hasMore, loadMore } = usePosts();
 
     useEffect(() => {
         if (inView && hasMore && !loading) {
@@ -41,11 +41,17 @@ const PostList: React.FC = () => {
             ))}
 
             {/* Loading more indicator */}
-            {loading && (
+            {loading && posts.length > 0 && (
                 <div className="space-y-6">
                     {[...Array(2)].map((_, index) => (
                         <PostSkeleton key={index} />
                     ))}
+                </div>
+            )}
+
+            {error && (
+                <div className="text-center text-red-500 py-4">
+                    {error.message || 'Failed to fetch posts'}
                 </div>
             )}
 

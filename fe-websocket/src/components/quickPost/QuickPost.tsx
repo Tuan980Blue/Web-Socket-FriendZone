@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { ChevronDown, Check, Loader2 } from 'lucide-react';
 import { Avatar, Button } from "@mantine/core";
+import { useQueryClient } from '@tanstack/react-query';
 import QuickPostHeader from './QuickPostHeader';
 import QuickPostContent from './QuickPostContent';
 import QuickPostActions from './QuickPostActions';
@@ -20,6 +21,7 @@ interface QuickPostProps {
 
 export default function QuickPost({ isCurrentUser, onPostCreated }: QuickPostProps) {
   const { theme } = useTheme();
+  const queryClient = useQueryClient();
   const [postContent, setPostContent] = useState('');
   const [showOptions, setShowOptions] = useState(false);
   const [selectedPrivacy, setSelectedPrivacy] = useState('public');
@@ -48,6 +50,11 @@ export default function QuickPost({ isCurrentUser, onPostCreated }: QuickPostPro
       setPostContent('');
       setImages([]);
       setIsExpanded(false);
+      
+      // Invalidate and refetch posts
+      await queryClient.invalidateQueries({ queryKey: ['myPosts'] });
+      await queryClient.invalidateQueries({ queryKey: ['posts'] });
+      
       onPostCreated?.();
     } catch (error) {
       console.error('Error creating post:', error);

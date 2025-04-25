@@ -1,64 +1,49 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Post } from '@/types/post';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { postService } from '@/services/postService';
 
+const LIMIT = 10;
+
 export const usePosts = (userId?: string) => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const limit = 10;
-
-  const fetchPosts = useCallback(async (pageNum: number = 1) => {
-    try {
-      setLoading(true);
-      setError(null);
-
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ['posts', userId],
+    queryFn: async ({ pageParam = 1 }) => {
       let response;
       if (userId) {
-        response = await postService.getUserPosts(userId, pageNum, limit);
+        response = await postService.getUserPosts(userId, pageParam, LIMIT);
       } else {
-        response = await postService.getPosts(pageNum, limit);
+        response = await postService.getPosts(pageParam, LIMIT);
       }
+      return response;
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const nextPage = allPages.length + 1;
+      return nextPage <= lastPage.pagination.totalPages ? nextPage : undefined;
+    },
+    initialPageParam: 1,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+  });
 
-      if (pageNum === 1) {
-        setPosts(response.posts);
-      } else {
-        setPosts(prev => [...prev, ...response.posts]);
-      }
-
-      setHasMore(pageNum < response.pagination.totalPages);
-    } catch (err) {
-      setError('Failed to fetch posts');
-      console.error('Error fetching posts:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [userId, limit]);
-
-  const loadMore = () => {
-    if (!loading && hasMore) {
-      setPage(prev => prev + 1);
-    }
-  };
-
-  const refreshPosts = () => {
-    setPage(1);
-    setHasMore(true);
-    fetchPosts(1);
-  };
-
-  useEffect(() => {
-    fetchPosts(page);
-  }, [page, fetchPosts]);
+  const posts = data?.pages.flatMap((page) => page.posts) ?? [];
+  const loading = isFetching || isFetchingNextPage;
 
   return {
     posts,
     loading,
-    error,
-    hasMore,
-    loadMore,
-    refreshPosts
+    error: error as Error | null,
+    hasMore: hasNextPage,
+    loadMore: fetchNextPage,
+    refreshPosts: refetch,
   };
 }; 

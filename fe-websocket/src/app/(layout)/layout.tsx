@@ -13,6 +13,7 @@ import {usePathname} from 'next/navigation';
 import AuthGuard from "@/components/AuthGuardProps";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import { useUserData } from "@/hooks/useUserData";
+import {Notifications} from "@mantine/notifications";
 
 export default function Layout({
                                    children,
@@ -30,6 +31,7 @@ export default function Layout({
                     <div className="flex-1 flex relative">
                         <LeftSidebar/>
                         <AuthGuard>
+                            <Notifications position="top-right" autoClose={2000}/>
                             <main
                                 className={`flex-1 md:ml-64 ${isProfilePage ? '' : 'xl:mr-72'} mt-16 pb-16 md:pb-0`}>
                                 <div className="px-2 md:px-6 p-2">

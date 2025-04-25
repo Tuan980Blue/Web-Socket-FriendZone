@@ -9,6 +9,7 @@ import React, {useRef, useState} from "react";
 import {useRouter} from 'next/navigation';
 import {useAvatarUpload} from '@/hooks/useAvatarUpload';
 import {IconX} from '@tabler/icons-react';
+import { useUserData } from '@/hooks/useUserData';
 
 interface ProfileHeroProps {
     user: User;
@@ -35,9 +36,15 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const { setUser } = useUserData();
     const {uploadAvatar} = useAvatarUpload({
         userId: user.id,
-        onSuccess: onUpdateUser
+        onSuccess: (updatedUser) => {
+            if (onUpdateUser) {
+                onUpdateUser(updatedUser);
+            }
+            setUser(updatedUser);
+        }
     });
 
     const handleMessageClick = () => {
