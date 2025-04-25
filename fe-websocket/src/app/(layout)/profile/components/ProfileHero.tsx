@@ -1,4 +1,3 @@
-import {motion} from 'framer-motion';
 import Image from 'next/image';
 import {User} from '@/types/user';
 import {Button, Modal, Group, Stack, Image as MantineImage, Avatar} from "@mantine/core";
