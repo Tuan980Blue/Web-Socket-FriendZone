@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import {User} from '@/types/user';
-import {Button, Modal, Group, Stack, Image as MantineImage, Avatar} from "@mantine/core";
+import {Button, Modal, Group, Stack, Image as MantineImage} from "@mantine/core";
 import {IconCamera, IconUserPlus, IconEdit} from "@tabler/icons-react";
 import {RiUserFollowLine} from "react-icons/ri";
 import {IoMdMore} from "react-icons/io";
