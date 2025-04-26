@@ -62,10 +62,6 @@ export function useChat(options: UseChatOptions = {}) {
       if (!selectedChat || !user) return Promise.reject('No chat selected or user not logged in');
       return Promise.resolve(chatService.sendMessage(selectedChat.id, content));
     },
-    onSuccess: () => {
-      // Invalidate và refetch danh sách chat để cập nhật chat gần đây
-      queryClient.invalidateQueries({ queryKey: ['chats', user?.id] });
-    },
   });
 
   // Xử lý tin nhắn mới từ WebSocket
@@ -100,9 +96,12 @@ export function useChat(options: UseChatOptions = {}) {
           return [message, ...oldData];
         }
 
+        // Tạo bản sao mới của mảng và xóa chat cũ
         const newChats = [...oldData];
-        newChats[chatIndex] = message;
-        return newChats;
+        newChats.splice(chatIndex, 1);
+        
+        // Thêm chat mới vào đầu danh sách
+        return [message, ...newChats];
       });
     };
 
@@ -173,9 +172,12 @@ export function useChat(options: UseChatOptions = {}) {
           return [tempMessage, ...oldData];
         }
 
+        // Tạo bản sao mới của mảng và xóa chat cũ
         const newChats = [...oldData];
-        newChats[chatIndex] = tempMessage;
-        return newChats;
+        newChats.splice(chatIndex, 1);
+        
+        // Thêm chat mới vào đầu danh sách
+        return [tempMessage, ...newChats];
       });
 
       // Gửi tin nhắn qua WebSocket
