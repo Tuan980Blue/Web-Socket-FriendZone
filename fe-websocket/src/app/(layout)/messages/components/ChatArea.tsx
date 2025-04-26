@@ -1,9 +1,10 @@
-import React, { useRef, useEffect } from 'react';
-import { Button, TextInput, Group, Avatar, Text, Loader } from '@mantine/core';
-import { IconArrowLeft, IconSend, IconCamera, IconMoodSmile, IconPaperclip } from '@tabler/icons-react';
+import React, {useRef, useEffect} from 'react';
+import {Button, TextInput, Group, Avatar, Text, Loader} from '@mantine/core';
+import {IconArrowLeft, IconSend, IconCamera, IconMoodSmile, IconPaperclip} from '@tabler/icons-react';
 import ChatMessage from './ChatMessage';
-import { Message as ChatServiceMessage } from '@/services/chatService';
-import { useTheme } from 'next-themes';
+import {Message as ChatServiceMessage} from '@/services/chatService';
+import {useTheme} from 'next-themes';
+import Link from "next/link";
 
 type Message = ChatServiceMessage;
 
@@ -20,30 +21,32 @@ interface ChatAreaProps {
     isLoading: boolean;
     currentUserId: string;
     chatAvatar?: string;
+    chatPartnerId: string;
 }
 
 const ChatArea: React.FC<ChatAreaProps> = ({
-    messages,
-    chatName,
-    isOnline,
-    onSendMessage,
-    onTypingStart,
-    onTypingStop,
-    isTyping,
-    onBack,
-    className = '',
-    isLoading,
-    currentUserId,
-    chatAvatar
-}) => {
+                                               messages,
+                                               chatName,
+                                               isOnline,
+                                               onSendMessage,
+                                               onTypingStart,
+                                               onTypingStop,
+                                               isTyping,
+                                               onBack,
+                                               className = '',
+                                               isLoading,
+                                               currentUserId,
+                                               chatAvatar,
+                                               chatPartnerId
+                                           }) => {
     const [message, setMessage] = React.useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
-    const { theme } = useTheme();
+    const {theme} = useTheme();
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
     };
 
     useEffect(() => {
@@ -77,7 +80,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     return (
         <div className={`flex-1 flex flex-col bg-[#FAFAFA] dark:bg-[#121212] ${className}`}>
             {/* Chat Header - Fixed at top */}
-            <div className="flex items-center md:p-4 py-1 border-b border-[#DBDBDB] dark:border-[#262626] sticky top-0 z-10 bg-[#FAFAFA] dark:bg-[#121212]">
+            <div
+                className="flex items-center md:p-4 py-1 border-b border-[#DBDBDB] dark:border-[#262626] sticky top-0 z-10 bg-[#FAFAFA] dark:bg-[#121212]">
                 <Button
                     variant="subtle"
                     size="sm"
@@ -85,43 +89,50 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                     className="md:hidden mr-2 text-[#262626] dark:text-[#FAFAFA]"
                     onClick={onBack}
                 >
-                    <IconArrowLeft size={20} />
+                    <IconArrowLeft size={20}/>
                 </Button>
-                <div className="relative">
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
-                    <Avatar
-                        src={chatAvatar}
-                        alt={chatName}
-                        radius="xl"
-                        size="md"
-                        className="relative z-10 border-2 border-[#FAFAFA] dark:border-[#121212]"
-                    >
-                        {chatName.charAt(0).toUpperCase()}
-                    </Avatar>
-                </div>
+                <Link href={`/profile/${chatPartnerId}`}>
+                    <div className="relative">
+                        <div
+                            className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
+                        <Avatar
+                            src={chatAvatar}
+                            alt={chatName}
+                            radius="xl"
+                            size="md"
+                            className="relative z-10 border-2 border-[#FAFAFA] dark:border-[#121212]"
+                        >
+                            {chatName.charAt(0).toUpperCase()}
+                        </Avatar>
+                    </div>
+                </Link>
                 <div className="ml-3">
+                    <Link href={`/profile/${chatPartnerId}`}>
                     <Text fw={500} className="text-[#262626] dark:text-[#FAFAFA]">{chatName}</Text>
+                    </Link>
                     <Text size="sm" className="flex items-center text-[#8E8E8E]">
-                        <span className={`w-2 h-2 rounded-full mr-2 ${isOnline ? 'bg-[#20C997]' : 'bg-[#8E8E8E]'}`}></span>
+                        <span
+                            className={`w-2 h-2 rounded-full mr-2 ${isOnline ? 'bg-[#20C997]' : 'bg-[#8E8E8E]'}`}></span>
                         {isOnline ? 'Online' : 'Offline'}
                     </Text>
                 </div>
             </div>
 
             {/* Messages Area - Scrollable */}
-            <div 
+            <div
                 ref={messagesContainerRef}
                 className="flex-1 overflow-y-auto p-4 custom-scrollbar"
-                style={{ 
-                    height: 'calc(100vh - 12rem)', 
+                style={{
+                    height: 'calc(100vh - 12rem)',
                     scrollBehavior: 'smooth'
                 }}
             >
                 {isLoading ? (
                     <div className="flex justify-center items-center h-full">
                         <div className="relative">
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-spin blur-xl opacity-30"></div>
-                            <Loader color="#DD2A7B" size="md" />
+                            <div
+                                className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-spin blur-xl opacity-30"></div>
+                            <Loader color="#DD2A7B" size="md"/>
                         </div>
                     </div>
                 ) : messages.length > 0 ? (
@@ -133,14 +144,15 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 isOwnMessage={msg.senderId === currentUserId}
                             />
                         ))}
-                        <div ref={messagesEndRef} />
+                        <div ref={messagesEndRef}/>
                     </div>
                 ) : (
                     <div className="flex flex-col justify-center items-center h-full">
                         <div className="relative mb-4">
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
+                            <div
+                                className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
                             <div className="relative z-10 p-4 rounded-full bg-[#FAFAFA] dark:bg-[#121212]">
-                                <IconSend size={32} className="text-[#DD2A7B]" />
+                                <IconSend size={32} className="text-[#DD2A7B]"/>
                             </div>
                         </div>
                         <Text className="text-[#8E8E8E]">No messages yet. Start a conversation!</Text>
@@ -150,7 +162,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
             {/* Typing Indicator */}
             {isTyping && (
-                <div className="px-4 py-2 bg-[#FAFAFA] dark:bg-[#121212] border-t border-[#DBDBDB] dark:border-[#262626]">
+                <div
+                    className="px-4 py-2 bg-[#FAFAFA] dark:bg-[#121212] border-t border-[#DBDBDB] dark:border-[#262626]">
                     <Text size="sm" className="text-[#8E8E8E]">
                         {chatName} is typing...
                     </Text>
@@ -158,16 +171,18 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             )}
 
             {/* Message Input - Fixed at bottom */}
-            <div className="py-2 md:py-4 border-t border-[#DBDBDB] dark:border-[#262626] sticky bottom-0 z-10 bg-[#FAFAFA] dark:bg-[#121212]">
+            <div
+                className="py-2 md:py-4 border-t border-[#DBDBDB] dark:border-[#262626] sticky bottom-0 z-10 bg-[#FAFAFA] dark:bg-[#121212]">
                 <Group>
-                    <div className="flex-1 flex items-center bg-[#FAFAFA] dark:bg-[#262626] rounded-full border border-[#DBDBDB] dark:border-[#262626] ">
-                        <Button 
-                            variant="subtle" 
+                    <div
+                        className="flex-1 flex items-center bg-[#FAFAFA] dark:bg-[#262626] rounded-full border border-[#DBDBDB] dark:border-[#262626] ">
+                        <Button
+                            variant="subtle"
                             size="xs"
-                            radius="xl" 
+                            radius="xl"
                             className="text-[#8E8E8E] hover:bg-transparent"
                         >
-                            <IconCamera size={20} />
+                            <IconCamera size={20}/>
                         </Button>
                         <TextInput
                             placeholder="Message..."
@@ -194,7 +209,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 radius="xl"
                                 className="text-[#8E8E8E] hover:bg-transparent"
                             >
-                                <IconMoodSmile size={20} />
+                                <IconMoodSmile size={20}/>
                             </Button>
                             <Button
                                 variant="subtle"
@@ -202,7 +217,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 radius="xl"
                                 className="text-[#8E8E8E] hover:bg-transparent"
                             >
-                                <IconPaperclip size={20} />
+                                <IconPaperclip size={20}/>
                             </Button>
                         </div>
                     </div>
@@ -213,7 +228,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                         disabled={!message.trim()}
                         className="bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90"
                     >
-                        <IconSend size={20} />
+                        <IconSend size={20}/>
                     </Button>
                 </Group>
             </div>
