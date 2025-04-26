@@ -9,6 +9,7 @@ import { useUserData } from '@/hooks/useUserData';
 import { useSearchParams } from 'next/navigation';
 import { userService, User } from '@/services/userService';
 import { useChat } from '@/hooks/useChat';
+import { Message } from '@/services/chatService';
 
 interface ChatRoom {
     id: string;
@@ -21,7 +22,6 @@ interface ChatRoom {
 const Page = () => {
     const { user } = useUserData();
     const searchParams = useSearchParams();
-    const userIdFromUrl = searchParams.get('userId');
     
     // Sử dụng hook useChat
     const {
@@ -45,19 +45,39 @@ const Page = () => {
     // Load user data if userId is provided in URL
     useEffect(() => {
         const loadUserFromUrl = async () => {
-            if (userIdFromUrl && !selectedChat) {
+            const userParam = searchParams.get('user');
+            if (userParam && !selectedChat) {
                 try {
-                    const userData = await userService.getUserById(userIdFromUrl);
-                    if (userData) {
-                        setSelectedChat({
-                            id: userData.id,
-                            username: userData.username,
-                            avatar: userData.avatar || '',
-                            fullName: userData.fullName || userData.username,
-                            status: userData.status
-                        });
+                    // Decode user data from base64
+                    const decodedData = JSON.parse(atob(userParam));
+                    
+                    // Check if we already have a chat with this user
+                    const existingChat = chats.find((chat: Message) => 
+                        chat.senderId === decodedData.id || chat.receiverId === decodedData.id
+                    );
+
+                    if (existingChat) {
+                        // If chat exists, select it
+                        const otherUserId = existingChat.senderId === decodedData.id ? existingChat.senderId : existingChat.receiverId;
+                        const otherUser = {
+                            id: otherUserId,
+                            username: otherUserId === existingChat.senderId 
+                                ? existingChat.sender?.username 
+                                : existingChat.receiver?.username || '',
+                            avatar: otherUserId === existingChat.senderId 
+                                ? existingChat.sender?.avatar 
+                                : existingChat.receiver?.avatar || '',
+                            fullName: otherUserId === existingChat.senderId 
+                                ? (existingChat.sender?.fullName || existingChat.sender?.username) 
+                                : (existingChat.receiver?.fullName || existingChat.receiver?.username) || '',
+                            status: otherUserId === existingChat.senderId 
+                                ? existingChat.sender?.status 
+                                : existingChat.receiver?.status
+                        };
+                        setSelectedChat(otherUser);
                     } else {
-                        console.error('User not found');
+                        // If no chat exists, use the decoded user data
+                        setSelectedChat(decodedData);
                     }
                 } catch (error) {
                     console.error('Error loading user data:', error);
@@ -66,7 +86,7 @@ const Page = () => {
         };
 
         loadUserFromUrl();
-    }, [userIdFromUrl, selectedChat, setSelectedChat]);
+    }, [searchParams, selectedChat, setSelectedChat, chats]);
 
     const handleSelectChat = (chat: ChatRoom) => {
         setSelectedChat(chat);

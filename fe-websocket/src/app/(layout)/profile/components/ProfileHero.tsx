@@ -6,10 +6,10 @@ import {RiUserFollowLine} from "react-icons/ri";
 import {IoMdMore} from "react-icons/io";
 import {AiOutlineMessage} from "react-icons/ai";
 import React, {useRef, useState} from "react";
-import {useRouter} from 'next/navigation';
 import {useAvatarUpload} from '@/hooks/useAvatarUpload';
 import {IconX} from '@tabler/icons-react';
 import { useUserData } from '@/hooks/useUserData';
+import { useRouter } from 'next/navigation';
 
 interface ProfileHeroProps {
     user: User;
@@ -33,7 +33,6 @@ const renderBio = (bio: string | null | undefined) => {
 };
 
 export default function ProfileHero({user, isCurrentUser, onUpdateUser, onFollow, onUnfollow, isFollowingLoading = false}: ProfileHeroProps) {
-    const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
@@ -49,10 +48,7 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser, onFollow
             setUser(updatedUser);
         }
     });
-
-    const handleMessageClick = () => {
-        router.push(`/messages?userId=${user.id}`);
-    };
+    const router = useRouter();
 
     const handleCameraClick = () => {
         fileInputRef.current?.click();
@@ -96,6 +92,19 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser, onFollow
 
     const handleAvatarClick = () => {
         setIsAvatarModalOpen(true);
+    };
+
+    const handleMessage = () => {
+        // Encode user data to base64 to avoid URL encoding issues
+        const userData = {
+            id: user.id,
+            username: user.username,
+            avatar: user.avatar || '',
+            fullName: user.fullName || user.username,
+            status: user.status || 'OFFLINE'
+        };
+        const encodedData = btoa(JSON.stringify(userData));
+        router.push(`/messages?user=${encodedData}`);
     };
 
     return (
@@ -183,7 +192,7 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser, onFollow
                                             radius="md"
                                             className="border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
                                             leftSection={<AiOutlineMessage size={16}/>}
-                                            onClick={handleMessageClick}
+                                            onClick={handleMessage}
                                         >
                                             Message
                                         </Button>
