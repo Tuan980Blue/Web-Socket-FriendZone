@@ -15,6 +15,9 @@ interface ProfileHeroProps {
     user: User;
     isCurrentUser: boolean;
     onUpdateUser?: (updatedUser: User) => void;
+    onFollow?: () => Promise<void>;
+    onUnfollow?: () => Promise<void>;
+    isFollowingLoading?: boolean;
 }
 
 const renderBio = (bio: string | null | undefined) => {
@@ -29,7 +32,7 @@ const renderBio = (bio: string | null | undefined) => {
     ));
 };
 
-export default function ProfileHero({user, isCurrentUser, onUpdateUser}: ProfileHeroProps) {
+export default function ProfileHero({user, isCurrentUser, onUpdateUser, onFollow, onUnfollow, isFollowingLoading = false}: ProfileHeroProps) {
     const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -37,7 +40,7 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const { setUser } = useUserData();
-    const {uploadAvatar} = useAvatarUpload({
+    const { uploadAvatar } = useAvatarUpload({
         userId: user.id,
         onSuccess: (updatedUser) => {
             if (onUpdateUser) {
@@ -154,6 +157,9 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
                                                 radius="md"
                                                 className="border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
                                                 leftSection={<RiUserFollowLine size={16}/>}
+                                                onClick={onUnfollow}
+                                                loading={isFollowingLoading}
+                                                disabled={isFollowingLoading}
                                             >
                                                 Following
                                             </Button>
@@ -164,6 +170,9 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser}: Profile
                                                 radius="md"
                                                 className="bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200"
                                                 leftSection={<IconUserPlus size={16}/>}
+                                                onClick={onFollow}
+                                                loading={isFollowingLoading}
+                                                disabled={isFollowingLoading}
                                             >
                                                 Follow
                                             </Button>

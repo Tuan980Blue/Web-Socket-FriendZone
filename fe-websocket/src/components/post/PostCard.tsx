@@ -7,6 +7,7 @@ import {Post} from '@/types/post';
 import {formatDistanceToNow} from 'date-fns';
 import {vi} from 'date-fns/locale';
 import Image from 'next/image';
+import Link from "next/link";
 
 interface PostCardProps {
     post: Post;
@@ -51,24 +52,26 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
         <div
             className="bg-white dark:bg-[#121212] rounded-xl shadow-md overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
             {/* Post Header */}
+            {/* Post Header */}
             <div className="p-4 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                    <div className="flex-shrink-0">
+                <Link href={`/profile/${post.author.id}`} className="flex items-center space-x-3 group">
+                    <div
+                        className="w-12 h-12 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] p-[2px] shadow-lg">
                         <div
-                            className="w-10 h-10 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] flex items-center justify-center shadow-lg">
-                            <Avatar src={post.author.avatar || '/image-person.png'}/>
+                            className="w-full h-full bg-white dark:bg-black rounded-full flex items-center justify-center">
+                            <Avatar src={post.author.avatar || '/image-person.png'} radius="xl" size="md"/>
                         </div>
                     </div>
-                    <div>
-                        <h3 className="font-semibold text-[#262626] dark:text-[#FAFAFA]">
+                    <div className="flex flex-col">
+                        <span className="font-semibold text-[#262626] dark:text-[#FAFAFA]">
                             {post.author.fullName}
-                        </h3>
-                        <div className="flex items-center text-xs text-[#8E8E8E]">
+                        </span>
+                        <span className="flex items-center text-xs text-[#8E8E8E]">
                             <MapPin size={12} className="mr-1"/>
-                            <span>{post.location || 'Ho Chi Minh City'}</span>
-                        </div>
+                            {post.location || 'Ho Chi Minh City'}
+                        </span>
                     </div>
-                </div>
+                </Link>
                 <button className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                     <MoreHorizontal size={20} className="text-[#262626] dark:text-[#FAFAFA]"/>
                 </button>
