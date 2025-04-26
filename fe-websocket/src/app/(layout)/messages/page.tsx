@@ -162,6 +162,7 @@ const Page = () => {
                         isLoading={isLoadingMessages}
                         currentUserId={user?.id || ''}
                         chatAvatar={selectedChat.avatar}
+                        chatPartnerId={selectedChat.id}
                     />
                 ) : (
                     <EmptyChatState onNewChat={() => setNewChatModalOpen(true)} />
