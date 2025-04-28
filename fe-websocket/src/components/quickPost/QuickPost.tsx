@@ -12,7 +12,9 @@ import PrivacyDropdown from './PrivacyDropdown';
 import QuickOptionsPopup from './QuickOptionsPopup';
 import { useUserData } from "@/hooks/useUserData";
 import { postService } from '@/services/postService';
+import { uploadService } from '@/services/uploadService';
 import { CreatePostData } from '@/types/post';
+import { toast } from 'react-hot-toast';
 
 interface QuickPostProps {
   isCurrentUser: boolean;
@@ -29,9 +31,50 @@ export default function QuickPost({ isCurrentUser, onPostCreated }: QuickPostPro
   const [isLoading, setIsLoading] = useState(false);
   const [showPrivacyDropdown, setShowPrivacyDropdown] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { user } = useUserData();
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    // Kiểm tra số lượng ảnh
+    if (files.length + images.length > 10) {
+      toast.error('Bạn chỉ có thể tải lên tối đa 10 ảnh');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const uploadedImages: string[] = [];
+      
+      // Upload từng file lên Cloudinary
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        // Kiểm tra kích thước file (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error(`Ảnh ${file.name} vượt quá kích thước cho phép (5MB)`);
+          continue;
+        }
+        const response = await uploadService.uploadImage(file);
+        uploadedImages.push(response.secure_url);
+      }
+
+      // Cập nhật state với URLs từ Cloudinary
+      setImages(prev => [...prev, ...uploadedImages]);
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      toast.error('Có lỗi xảy ra khi tải lên ảnh');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handlePostSubmit = async () => {
     if (!postContent.trim()) return;
@@ -40,7 +83,7 @@ export default function QuickPost({ isCurrentUser, onPostCreated }: QuickPostPro
     try {
       const postData: CreatePostData = {
         content: postContent,
-        images: [], // Chưa lưu ảnh
+        images: images,
         isArchived: false,
         isHighlighted: false,
         tags: [],
@@ -56,30 +99,12 @@ export default function QuickPost({ isCurrentUser, onPostCreated }: QuickPostPro
       await queryClient.invalidateQueries({ queryKey: ['posts'] });
       
       onPostCreated?.();
+      toast.success('Đăng bài thành công');
     } catch (error) {
       console.error('Error creating post:', error);
+      toast.error('Có lỗi xảy ra khi đăng bài');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    const newImages: string[] = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          newImages.push(e.target.result as string);
-          if (newImages.length === files.length) {
-            setImages(prev => [...prev, ...newImages]);
-          }
-        }
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -123,6 +148,8 @@ export default function QuickPost({ isCurrentUser, onPostCreated }: QuickPostPro
                 setPostContent={setPostContent}
                 images={images}
                 setImages={setImages}
+                onRemoveImage={handleRemoveImage}
+                isUploading={isUploading}
               />
             </div>
 
@@ -143,16 +170,16 @@ export default function QuickPost({ isCurrentUser, onPostCreated }: QuickPostPro
                 />
                 <Button
                   onClick={(e) => { e.stopPropagation(); handlePostSubmit(); }}
-                  disabled={!postContent.trim() || isLoading}
+                  disabled={!postContent.trim() || isLoading || isUploading}
                   className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 flex items-center space-x-2
-                    ${!postContent.trim() || isLoading
+                    ${!postContent.trim() || isLoading || isUploading
                       ? 'bg-[#DBDBDB] text-[#8E8E8E] cursor-not-allowed'
                       : 'bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white hover:opacity-90 hover:shadow-lg'}`}
                 >
-                  {isLoading ? (
+                  {isLoading || isUploading ? (
                     <>
                       <Loader2 className="animate-spin" size={16} />
-                      <span>Đang đăng...</span>
+                      <span>{isUploading ? 'Đang tải ảnh...' : 'Đang đăng...'}</span>
                     </>
                   ) : (
                     <>
@@ -173,7 +200,7 @@ export default function QuickPost({ isCurrentUser, onPostCreated }: QuickPostPro
           type="file"
           ref={fileInputRef}
           className="hidden"
-          accept="image/*,video/*"
+          accept="image/*"
           multiple
           onChange={handleImageUpload}
         />
