@@ -7,6 +7,7 @@ import {
     Badge,
     ActionIcon,
     Tooltip,
+    useMantineTheme,
 } from '@mantine/core';
 import {
     IconHeart,
@@ -21,28 +22,31 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { Notification } from '@/services/notificationService';
+import { useMantineColorScheme } from '@mantine/core';
 
 interface NotificationCardProps {
     notification: Notification;
     onMarkAsRead: (id: string) => void;
+    isMobile?: boolean;
 }
 
-const getNotificationIcon = (type: Notification['type']) => {
+const getNotificationIcon = (type: Notification['type'], isMobile?: boolean) => {
+    const size = isMobile ? 12 : 14;
     switch (type) {
         case 'LIKE':
-            return <IconHeart size={14} color="red" />;
+            return <IconHeart size={size} color="red" />;
         case 'COMMENT':
-            return <IconMessageCircle size={14} color="blue" />;
+            return <IconMessageCircle size={size} color="blue" />;
         case 'FOLLOW':
-            return <IconUserPlus size={14} color="green" />;
+            return <IconUserPlus size={size} color="green" />;
         case 'MENTION':
-            return <IconAt size={14} color="purple" />;
+            return <IconAt size={size} color="purple" />;
         case 'TAG':
-            return <IconHash size={14} color="orange" />;
+            return <IconHash size={size} color="orange" />;
         case 'STORY_VIEW':
-            return <IconEye size={14} color="cyan" />;
+            return <IconEye size={size} color="cyan" />;
         case 'STORY_REACTION':
-            return <IconMoodSmile size={14} color="yellow" />;
+            return <IconMoodSmile size={size} color="yellow" />;
         default:
             return null;
     }
@@ -91,26 +95,39 @@ const getAvatarUrl = (notification: Notification) => {
     }
 };
 
-export const NotificationCard = ({ notification, onMarkAsRead }: NotificationCardProps) => {
+export const NotificationCard = ({ notification, onMarkAsRead, isMobile }: NotificationCardProps) => {
+    const theme = useMantineTheme();
+    const { colorScheme } = useMantineColorScheme();
     const handleMarkAsRead = () => {
         onMarkAsRead(notification.id);
     };
 
     return (
-        <Card withBorder padding="md" radius="md">
-            <Group justify="space-between" align="flex-start">
-                <Group gap="sm">
+        <Card 
+            withBorder 
+            padding={isMobile ? "sm" : "md"} 
+            radius="md"
+            style={{
+                backgroundColor: colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+            }}
+        >
+            <Group justify="space-between" align="flex-start" wrap="nowrap">
+                <Group gap={isMobile ? "xs" : "sm"} wrap="nowrap">
                     <Avatar
                         src={getAvatarUrl(notification) || '/image-person.png'}
                         alt="Avatar"
                         radius="xl"
-                        size="md"
+                        size={isMobile ? "sm" : "md"}
                     />
-                    <div>
-                        <Text size="sm" fw={500}>
+                    <div style={{ flex: 1 }}>
+                        <Text 
+                            size={isMobile ? "xs" : "sm"} 
+                            fw={500}
+                            lineClamp={2}
+                        >
                             {notification.content}
                         </Text>
-                        <Text size="xs" c="dimmed">
+                        <Text size={isMobile ? "10px" : "xs"} c="dimmed">
                             {formatDistanceToNow(new Date(notification.createdAt), {
                                 addSuffix: true,
                                 locale: vi,
@@ -119,11 +136,12 @@ export const NotificationCard = ({ notification, onMarkAsRead }: NotificationCar
                     </div>
                 </Group>
 
-                <Group gap="xs">
+                <Group gap="xs" wrap="nowrap">
                     <Badge
                         color={getNotificationColor(notification.type)}
                         variant="light"
-                        leftSection={getNotificationIcon(notification.type)}
+                        leftSection={getNotificationIcon(notification.type, isMobile)}
+                        size={isMobile ? "xs" : "sm"}
                     >
                         {notification.type}
                     </Badge>
@@ -133,8 +151,9 @@ export const NotificationCard = ({ notification, onMarkAsRead }: NotificationCar
                                 variant="light"
                                 color="blue"
                                 onClick={handleMarkAsRead}
+                                size={isMobile ? "xs" : "sm"}
                             >
-                                <IconCheck size={16} />
+                                <IconCheck size={isMobile ? 14 : 16} />
                             </ActionIcon>
                         </Tooltip>
                     )}

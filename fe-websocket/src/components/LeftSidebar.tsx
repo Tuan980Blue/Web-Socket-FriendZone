@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import {
@@ -19,8 +19,13 @@ import UserHoverCard from "@/components/UserHoverCard";
 
 const LeftSidebar = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
     const {user} = useUserData();
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const menuItems = [
         {icon: Home, label: 'News Feed', href: '/'},
@@ -97,13 +102,15 @@ const LeftSidebar = () => {
                 </div>
 
                 {/* Dark Mode Toggle */}
-                <button
-                    onClick={() => setIsDarkMode(!isDarkMode)}
-                    className="mt-6 w-full p-2 flex items-center space-x-3 text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA] hover:bg-gray-200 dark:hover:bg-[#121212] rounded-lg"
-                >
-                    {isDarkMode ? <Sun size={20}/> : <Moon size={20}/>}
-                    <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
-                </button>
+                {mounted && (
+                    <button
+                        onClick={() => setIsDarkMode(!isDarkMode)}
+                        className="mt-6 w-full p-2 flex items-center space-x-3 text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA] hover:bg-gray-200 dark:hover:bg-[#121212] rounded-lg"
+                    >
+                        {isDarkMode ? <Sun size={20}/> : <Moon size={20}/>}
+                        <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+                    </button>
+                )}
             </div>
         </aside>
     );
