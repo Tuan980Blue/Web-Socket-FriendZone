@@ -15,7 +15,6 @@ export default function QuickPostContent({
   postContent,
   setPostContent,
   images,
-  setImages,
   onRemoveImage,
   isUploading
 }: QuickPostContentProps) {
