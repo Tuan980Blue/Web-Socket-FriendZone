@@ -31,7 +31,7 @@ import ProfileStories from './components/ProfileStories';
 import ProfileInfo from "@/app/(layout)/profile/components/ProfileInfo";
 import ProfileSkeleton from './components/ProfileSkeleton';
 import QuickPost from '../../../components/quickPost/QuickPost';
-import PostsMe from "@/app/(layout)/post/me/page";
+import ProfilePosts from './components/ProfilePosts';
 
 export default function Profile() {
     const [isDarkMode] = useState(false);
@@ -74,7 +74,7 @@ export default function Profile() {
                         <div className="bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm px-4">
                             {activeTab === 'posts' && (
                                 <div>
-                                    <PostsMe/>
+                                    <ProfilePosts userId={profileUser?.id} />
                                 </div>
                             )}
                             {activeTab === 'introduces' && (
