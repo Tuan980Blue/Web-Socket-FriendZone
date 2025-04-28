@@ -13,6 +13,7 @@ import ProfileTabs from '../components/ProfileTabs';
 import ProfileStories from '../components/ProfileStories';
 import ProfileInfo from '../components/ProfileInfo';
 import ProfileSkeleton from "@/app/(layout)/profile/components/ProfileSkeleton";
+import ProfilePosts from '../components/ProfilePosts';
 
 interface Props {
     userId: string;
@@ -100,7 +101,11 @@ export default function ProfilePageClient({ userId }: Props) {
                 <div className="space-y-4">
                     <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
                     <div className="bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm p-4">
-                        {activeTab === 'posts' && <div className="space-y-6"></div>}
+                        {activeTab === 'posts' && (
+                            <div>
+                                <ProfilePosts userId={userId} />
+                            </div>
+                        )}
                         {activeTab === 'introduces' && <ProfileInfo user={localUser} />}
                         {activeTab === 'photos' && <div className="grid grid-cols-2 md:grid-cols-3 gap-4"></div>}
                         {activeTab === 'videos' && <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>}

@@ -1,14 +1,18 @@
 'use client';
 
 import React from 'react';
-import { useMyPosts } from '@/hooks/useMyPosts';
 import { useInView } from 'react-intersection-observer';
+import { usePosts } from '@/hooks/usePosts';
 import PostCard from '@/components/post/PostCard';
 import PostSkeleton from '@/components/post/PostSkeleton';
 
-const PostsMe = () => {
+interface ProfilePostsProps {
+  userId?: string;
+}
+
+const ProfilePosts = ({ userId }: ProfilePostsProps) => {
   const { ref, inView } = useInView();
-  const { posts, loading, error, hasMore, loadMore } = useMyPosts();
+  const { posts, loading, error, hasMore, loadMore } = usePosts(userId);
 
   React.useEffect(() => {
     if (inView && hasMore && !loading) {
@@ -52,7 +56,7 @@ const PostsMe = () => {
 
         {!loading && !error && posts.length === 0 && (
           <div className="text-center py-8 text-gray-500">
-            Bạn chưa có bài viết nào
+            {userId ? 'Người dùng này chưa có bài viết nào' : 'Bạn chưa có bài viết nào'}
           </div>
         )}
 
@@ -62,4 +66,4 @@ const PostsMe = () => {
   );
 };
 
-export default PostsMe;
+export default ProfilePosts; 
