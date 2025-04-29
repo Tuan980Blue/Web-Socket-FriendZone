@@ -2,10 +2,10 @@
 
 import React from 'react';
 import PostCard from "@/components/post/PostCard";
+import PostNotFound from "@/components/post/PostNotFound";
 import { useQuery } from '@tanstack/react-query';
 import { postService } from '@/services/postService';
-import { Loader, Center, Text, Container } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
+import { Loader, Center, Container } from '@mantine/core';
 import { Post } from '@/types/post';
 
 interface Props {
@@ -29,24 +29,11 @@ const PostPageClient = ({postId}: Props) => {
     }
 
     if (error) {
-        notifications.show({
-            title: 'Lỗi',
-            message: 'Không thể tải bài viết. Vui lòng thử lại sau.',
-            color: 'red',
-        });
-        return (
-            <Center h="100vh">
-                <Text c="red" size="lg">Đã xảy ra lỗi khi tải bài viết</Text>
-            </Center>
-        );
+        return <PostNotFound type="error" />;
     }
 
     if (!post) {
-        return (
-            <Center h="100vh">
-                <Text size="lg">Không tìm thấy bài viết</Text>
-            </Center>
-        );
+        return <PostNotFound type="not-found" />;
     }
 
     return (
