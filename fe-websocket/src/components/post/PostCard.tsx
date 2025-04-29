@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useState} from 'react';
-import {Avatar, Modal, Button, Group, Menu} from '@mantine/core';
+import {Avatar, Modal, Menu} from '@mantine/core';
 import {Heart, MessageCircle, Send, Bookmark, MoreHorizontal, MapPin, Trash2, Flag, Share2, Copy} from 'lucide-react';
 import {Post} from '@/types/post';
 import {formatDistanceToNow} from 'date-fns';
