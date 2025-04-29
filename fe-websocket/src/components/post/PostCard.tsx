@@ -289,27 +289,40 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
             <Modal
                 opened={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}
-                title="Xác nhận xóa bài viết"
                 centered
+                withCloseButton={false}
+                size="xs"
+                radius="md"
+                padding={0}
+                styles={{
+                    body: {
+                        padding: 0,
+                    },
+                }}
             >
-                <div className="text-center">
-                    <p className="mb-4">Bạn có chắc chắn muốn xóa bài viết này?</p>
-                    <Group justify="center" gap="md">
-                        <Button
-                            variant="light"
-                            color="gray"
-                            onClick={() => setShowDeleteModal(false)}
-                        >
-                            Hủy
-                        </Button>
-                        <Button
-                            color="red"
-                            loading={isDeleting}
+                <div className="flex flex-col items-center">
+                    <div className="w-full p-6 text-center">
+                        <Trash2 size={48} className="mx-auto mb-4 text-red-500" />
+                        <h3 className="text-xl font-semibold mb-2">Xóa bài viết?</h3>
+                        <p className="text-gray-500 mb-6">Bạn có chắc chắn muốn xóa bài viết này? Hành động này không thể hoàn tác.</p>
+                    </div>
+                    <div className="w-full border-t border-gray-200 dark:border-gray-800">
+                        <button
                             onClick={handleDelete}
+                            disabled={isDeleting}
+                            className="w-full py-4 text-red-500 font-semibold hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
                         >
-                            Xóa
-                        </Button>
-                    </Group>
+                            {isDeleting ? 'Đang xóa...' : 'Xóa'}
+                        </button>
+                        <div className="w-full border-t border-gray-200 dark:border-gray-800">
+                            <button
+                                onClick={() => setShowDeleteModal(false)}
+                                className="w-full py-4 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                            >
+                                Hủy
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </Modal>
         </div>
