@@ -20,7 +20,7 @@ const ProfilePosts = ({ userId }: ProfilePostsProps) => {
     }
   }, [inView, hasMore, loading, loadMore]);
 
-  const handlePostDeleted = async (postId: string) => {
+  const handlePostDeleted = async () => {
     await refreshPosts();
   };
 

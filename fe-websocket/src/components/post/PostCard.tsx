@@ -62,7 +62,7 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
             await deletePost(post.id);
             setShowDeleteModal(false);
             onPostDeleted?.(post.id);
-        } catch (error) {
+        } catch {
             // Error handling is already done in usePosts hook
         }
     };
