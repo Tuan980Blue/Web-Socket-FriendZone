@@ -1,9 +1,12 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { postService } from '@/services/postService';
+import { notifications } from '@mantine/notifications';
 
 const LIMIT = 10;
 
 export const usePosts = (userId?: string) => {
+  const queryClient = useQueryClient();
+
   const {
     data,
     error,
@@ -35,6 +38,28 @@ export const usePosts = (userId?: string) => {
     refetchOnReconnect: false,
   });
 
+  const deletePostMutation = useMutation({
+    mutationFn: (postId: string) => postService.deletePost(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      if (userId) {
+        queryClient.invalidateQueries({ queryKey: ['posts', userId] });
+      }
+      notifications.show({
+        title: 'Xóa bài viết thành công',
+        message: 'Bài viết đã được xóa!',
+        color: 'green',
+      });
+    },
+    onError: () => {
+      notifications.show({
+        title: 'Xóa bài viết thất bại',
+        message: 'Đã có lỗi xảy ra khi xóa bài viết.',
+        color: 'red',
+      });
+    },
+  });
+
   const posts = data?.pages.flatMap((page) => page.posts) ?? [];
   const loading = isFetching || isFetchingNextPage;
 
@@ -45,5 +70,7 @@ export const usePosts = (userId?: string) => {
     hasMore: hasNextPage,
     loadMore: fetchNextPage,
     refreshPosts: refetch,
+    deletePost: deletePostMutation.mutate,
+    isDeleting: deletePostMutation.isPending,
   };
 }; 

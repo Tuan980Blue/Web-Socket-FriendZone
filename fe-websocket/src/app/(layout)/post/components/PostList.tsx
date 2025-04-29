@@ -8,13 +8,17 @@ import { usePosts } from '@/hooks/usePosts';
 
 const PostList: React.FC = () => {
     const { ref, inView } = useInView();
-    const { posts, loading, error, hasMore, loadMore } = usePosts();
+    const { posts, loading, error, hasMore, loadMore, refreshPosts } = usePosts();
 
     useEffect(() => {
         if (inView && hasMore && !loading) {
             loadMore();
         }
     }, [inView, hasMore, loading, loadMore]);
+
+    const handlePostDeleted = async () => {
+        await refreshPosts();
+    };
 
     if (loading && posts.length === 0) {
         return (
@@ -37,7 +41,11 @@ const PostList: React.FC = () => {
     return (
         <div className="space-y-6">
             {posts.map((post) => (
-                <PostCard key={post.id} post={post} />
+                <PostCard 
+                    key={post.id} 
+                    post={post} 
+                    onPostDeleted={handlePostDeleted}
+                />
             ))}
 
             {/* Loading more indicator */}
