@@ -25,7 +25,7 @@ export default function QuickPostContent({
         value={postContent}
         onChange={(e) => setPostContent(e.target.value)}
         placeholder="Bạn đang nghĩ gì thế?"
-        className="w-full min-h-[100px] p-2 rounded-lg bg-transparent border border-[#DBDBDB] dark:border-[#262626] focus:outline-none focus:ring-2 focus:ring-[#DD2A7B] resize-none"
+        className="w-full min-h-[100px] p-2 rounded-lg bg-transparent border border-[#DBDBDB] dark:border-[#262626] focus:outline-none focus:ring-1 focus:ring-[#DD2A7B] resize-none"
       />
 
       {/* Image Preview Grid */}
