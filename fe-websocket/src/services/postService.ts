@@ -64,7 +64,7 @@ export const postService = {
 
   getPostById: async (id: string): Promise<Post> => {
     const response = await api.get(`${API_URL}/posts/${id}`);
-    return response.data;
+    return response.data.data;
   },
 
   deletePost: async (id: string): Promise<void> => {
