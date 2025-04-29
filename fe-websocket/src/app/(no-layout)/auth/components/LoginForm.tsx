@@ -86,6 +86,13 @@ export default function LoginForm() {
                 borderColor: 'var(--primary-gradient-via)',
               },
             },
+            visibilityToggle: {
+              color: 'var(--primary-gradient-via)',
+              opacity: 1,
+              '&:hover': {
+                color: 'var(--primary-gradient-from)',
+              },
+            },
           }}
         />
 
