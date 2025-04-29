@@ -17,13 +17,13 @@ const PostNotFound: React.FC<PostNotFoundProps> = ({ type }) => {
                     <AlertCircle size={40} className="text-gray-400" />
                 </div>
                 
-                <Text size="xl" weight={500} className="text-center">
+                <Text fw={500} size="xl" className="text-center">
                     {type === 'error' 
                         ? 'Đã xảy ra lỗi khi tải bài viết'
                         : 'Không tìm thấy bài viết'}
                 </Text>
                 
-                <Text size="sm" color="dimmed" className="text-center max-w-md">
+                <Text size="sm" c="dimmed" className="text-center max-w-md">
                     {type === 'error'
                         ? 'Có vẻ như đã xảy ra lỗi khi tải bài viết. Vui lòng thử lại sau.'
                         : 'Bài viết bạn đang tìm kiếm có thể đã bị xóa hoặc không tồn tại.'}
@@ -31,7 +31,7 @@ const PostNotFound: React.FC<PostNotFoundProps> = ({ type }) => {
 
                 <Link href="/" passHref>
                     <Button
-                        leftIcon={<Home size={16} />}
+                        leftSection={<Home size={16} />}
                         variant="light"
                         color="blue"
                         radius="xl"
