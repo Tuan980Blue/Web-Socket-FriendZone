@@ -12,13 +12,17 @@ interface ProfilePostsProps {
 
 const ProfilePosts = ({ userId }: ProfilePostsProps) => {
   const { ref, inView } = useInView();
-  const { posts, loading, error, hasMore, loadMore } = usePosts(userId);
+  const { posts, loading, error, hasMore, loadMore, refreshPosts } = usePosts(userId);
 
   React.useEffect(() => {
     if (inView && hasMore && !loading) {
       loadMore();
     }
   }, [inView, hasMore, loading, loadMore]);
+
+  const handlePostDeleted = async (postId: string) => {
+    await refreshPosts();
+  };
 
   if (loading && posts.length === 0) {
     return (
@@ -36,7 +40,11 @@ const ProfilePosts = ({ userId }: ProfilePostsProps) => {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mt-4 space-y-4">
         {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
+          <PostCard 
+            key={post.id} 
+            post={post} 
+            onPostDeleted={handlePostDeleted}
+          />
         ))}
 
         {/* Loading more indicator */}

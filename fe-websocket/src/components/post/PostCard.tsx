@@ -1,24 +1,33 @@
 'use client';
 
 import React, {useState} from 'react';
-import {Avatar} from '@mantine/core';
-import {Heart, MessageCircle, Send, Bookmark, MoreHorizontal, MapPin} from 'lucide-react';
+import {Avatar, Modal, Button, Group, Menu} from '@mantine/core';
+import {Heart, MessageCircle, Send, Bookmark, MoreHorizontal, MapPin, Trash2, Flag, Share2, Copy} from 'lucide-react';
 import {Post} from '@/types/post';
 import {formatDistanceToNow} from 'date-fns';
 import {vi} from 'date-fns/locale';
 import Image from 'next/image';
 import Link from "next/link";
+import {useUserData} from '@/hooks/useUserData';
+import {usePosts} from '@/hooks/usePosts';
+import {notifications} from '@mantine/notifications';
 
 interface PostCardProps {
     post: Post;
+    onPostDeleted?: (postId: string) => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({post}) => {
+const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isLiked, setIsLiked] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const {user} = useUserData();
+    const {deletePost, isDeleting} = usePosts();
+
+    const isAuthor = user?.id === post.author.id;
 
     const handleLike = () => {
         setIsLiked(!isLiked);
@@ -48,10 +57,29 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
         setCurrentImageIndex((prev) => (prev - 1 + post.images.length) % post.images.length);
     };
 
+    const handleDelete = async () => {
+        try {
+            await deletePost(post.id);
+            setShowDeleteModal(false);
+            onPostDeleted?.(post.id);
+        } catch (error) {
+            // Error handling is already done in usePosts hook
+        }
+    };
+
+    const handleCopyLink = () => {
+        const postLink = `${window.location.origin}/post/${post.id}`;
+        navigator.clipboard.writeText(postLink);
+        notifications.show({
+            title: 'Đã sao chép liên kết',
+            message: 'Liên kết bài viết đã được sao chép vào clipboard!',
+            color: 'green',
+        });
+    };
+
     return (
         <div
             className="bg-white dark:bg-[#121212] rounded-xl shadow-md overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
-            {/* Post Header */}
             {/* Post Header */}
             <div className="p-4 flex items-center justify-between">
                 <Link href={`/profile/${post.author.id}`} className="flex items-center space-x-3 group">
@@ -72,9 +100,45 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
                         </span>
                     </div>
                 </Link>
-                <button className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
-                    <MoreHorizontal size={20} className="text-[#262626] dark:text-[#FAFAFA]"/>
-                </button>
+                <Menu position="bottom-end" shadow="md" width={200}>
+                    <Menu.Target>
+                        <button className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                            <MoreHorizontal size={20} className="text-[#262626] dark:text-[#FAFAFA]"/>
+                        </button>
+                    </Menu.Target>
+
+                    <Menu.Dropdown>
+                        {isAuthor && (
+                            <Menu.Item
+                                color="red"
+                                leftSection={<Trash2 size={16}/>}
+                                onClick={() => setShowDeleteModal(true)}
+                            >
+                                Xóa bài viết
+                            </Menu.Item>
+                        )}
+                        <Menu.Item
+                            leftSection={<Share2 size={16}/>}
+                            onClick={handleCopyLink}
+                        >
+                            Chia sẻ
+                        </Menu.Item>
+                        <Menu.Item
+                            leftSection={<Copy size={16}/>}
+                            onClick={handleCopyLink}
+                        >
+                            Sao chép liên kết
+                        </Menu.Item>
+                        {!isAuthor && (
+                            <Menu.Item
+                                color="red"
+                                leftSection={<Flag size={16}/>}
+                            >
+                                Báo cáo
+                            </Menu.Item>
+                        )}
+                    </Menu.Dropdown>
+                </Menu>
             </div>
 
             {/* Post Images */}
@@ -220,6 +284,34 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
                     {formatDistanceToNow(new Date(post.createdAt), {addSuffix: true, locale: vi})}
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            <Modal
+                opened={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                title="Xác nhận xóa bài viết"
+                centered
+            >
+                <div className="text-center">
+                    <p className="mb-4">Bạn có chắc chắn muốn xóa bài viết này?</p>
+                    <Group justify="center" gap="md">
+                        <Button
+                            variant="light"
+                            color="gray"
+                            onClick={() => setShowDeleteModal(false)}
+                        >
+                            Hủy
+                        </Button>
+                        <Button
+                            color="red"
+                            loading={isDeleting}
+                            onClick={handleDelete}
+                        >
+                            Xóa
+                        </Button>
+                    </Group>
+                </div>
+            </Modal>
         </div>
     );
 };
