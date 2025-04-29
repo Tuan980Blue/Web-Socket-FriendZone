@@ -34,7 +34,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     
     if (isLoading) {
         return (
-            <div className="w-full md:w-80 bg-[#FAFAFA] dark:bg-[#121212] border-r border-[#DBDBDB] dark:border-[#262626]">
+            <div className="w-full md:w-80 bg-[#FAFAFA] dark:bg-[#121212] border-r border-[#DBDBDB] dark:border-[#262626] h-screen flex flex-col">
                 <div className="p-4">
                     <div className="animate-pulse space-y-4">
                         {[...Array(5)].map((_, i) => (
@@ -70,8 +70,8 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     };
 
     return (
-        <div className="w-full md:w-80 bg-[#FAFAFA] dark:bg-[#121212] border-r border-[#DBDBDB] dark:border-[#262626]">
-            <div className="p-4">
+        <div className="w-full md:w-80 bg-[#FAFAFA] dark:bg-[#121212] md:border-r border-[#DBDBDB] dark:border-[#262626] md:h-screen flex flex-col">
+            <div className="p-4 flex-1 overflow-y-auto">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-semibold text-[#262626] dark:text-[#FAFAFA]">Messages</h2>
                     <Button
