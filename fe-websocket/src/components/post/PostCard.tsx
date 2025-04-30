@@ -144,16 +144,18 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
             {/* Post Images */}
             {post.images.length > 0 && (
                 <div className="relative">
-                    <div className="relative w-full max-h-[400px] overflow-hidden bg-gray-100 dark:bg-gray-900">
-                        <div
-                            className="aspect-square w-full max-w-xl mx-auto px-4 sm:px-6 md:px-8 flex items-center justify-center">
-                            <Image
-                                src={post.images[currentImageIndex]}
-                                alt="Post image"
-                                width={500}
-                                height={300}
-                                className="w-full h-full object-contain rounded-lg"
-                            />
+                    <div className="relative w-full bg-gray-100 dark:bg-gray-900">
+                        <div className="w-full max-w-xl mx-auto">
+                            <div className="relative w-full" style={{ paddingBottom: '100%' }}>
+                                <Image
+                                    src={post.images[currentImageIndex]}
+                                    alt="Post image"
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-cover"
+                                    priority={currentImageIndex === 0}
+                                />
+                            </div>
                         </div>
 
                         {/* Image Navigation Dots */}

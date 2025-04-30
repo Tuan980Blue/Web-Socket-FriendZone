@@ -1,6 +1,6 @@
 import React from 'react';
 import QuickPost from "@/components/quickPost/QuickPost";
-import PostList from "@/app/(layout)/post/components/PostList";
+import PostList from "@/app/(layout)/posts/components/PostList";
 
 const PostsPage = () => {
     return (
