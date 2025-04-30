@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import Story from "@/components/story/Story";
 import AddStoryModal from "@/components/story/AddStoryModal";
-import PostsPage from "@/app/(layout)/posts/page";
 import { useStories } from '@/hooks/useStories';
 import {useUserData} from "@/hooks/useUserData";
+import PostsPage from "@/app/(layout)/post/page";
 
 const Home = () => {
     const [isAddStoryModalOpen, setIsAddStoryModalOpen] = useState(false);
