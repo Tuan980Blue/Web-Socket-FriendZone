@@ -8,8 +8,9 @@ import {
     Tooltip,
     Badge,
     Stack,
+    UnstyledButton,
 } from '@mantine/core';
-import { IconUserPlus, IconClock } from '@tabler/icons-react';
+import { IconUserPlus, IconClock, IconUserCheck } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { User } from '@/types/user';
@@ -25,6 +26,7 @@ export interface UserCardProps {
     showMutualFollowers?: boolean;
     showFollowButton?: boolean;
     showUnfollowButton?: boolean;
+    isMobile?: boolean;
 }
 
 const UserCard = ({ 
@@ -32,27 +34,29 @@ const UserCard = ({
     onFollow, 
     onUnfollow, 
     isLoading,
-    variant = 'default'
+    variant = 'default',
+    isMobile = false
 }: UserCardProps) => {
     const isSuggestion = variant === 'suggestion';
-    const cardPadding = isSuggestion ? 'sm' : 'md';
-    const avatarSize = isSuggestion ? 'sm' : 'md';
-    const nameSize = isSuggestion ? 'sm' : 'md';
+    const cardPadding = isMobile ? 'xs' : (isSuggestion ? 'sm' : 'md');
+    const avatarSize = isMobile ? 'sm' : (isSuggestion ? 'md' : 'lg');
+    const nameSize = isMobile ? 'sm' : (isSuggestion ? 'md' : 'lg');
+    const buttonSize = isMobile ? 'compact-xs' : 'xs';
 
     return (
         <Card 
             withBorder 
             padding={cardPadding} 
             radius="md"
-            className="hover:shadow-md transition-all duration-200 bg-white dark:bg-[#121212] border-[#DBDBDB] dark:border-[#262626]"
+            className="hover:shadow-sm transition-all duration-200 bg-white dark:bg-[#121212] border-[#DBDBDB] dark:border-[#262626]"
         >
-            <Group justify="space-between" align="center" gap="sm">
+            <Group justify="space-between" align="center" gap="sm" wrap="nowrap">
                 <UserHoverCard user={user}>
-                <Group gap="sm" className="flex-1">
+                    <Group gap="sm" className="flex-1" wrap="nowrap">
                         <Link href={`/profile/${user.id}`} className="hover:opacity-80 transition-opacity">
-                            <div className="relative">
-                                    <div
-                                        className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
+                            <UnstyledButton>
+                                <div className="relative">
+                                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] animate-gradient-xy"></div>
                                     <div className="relative p-0.5 rounded-full bg-white dark:bg-[#121212]">
                                         <Avatar
                                             src={user.avatar || '/image-person.png'}
@@ -62,33 +66,34 @@ const UserCard = ({
                                             className="border-2 border-white dark:border-[#121212]"
                                         />
                                     </div>
-                            </div>
+                                </div>
+                            </UnstyledButton>
                         </Link>
-                        <Stack gap={2} className="flex-1">
+                        <Stack gap={2} className="flex-1 min-w-0">
                             <Link href={`/profile/${user.id}`} className="hover:opacity-80 transition-opacity">
                                 <Text
-                                    fw={500}
+                                    fw={600}
                                     size={nameSize}
-                                    className="text-[#262626] dark:text-white"
+                                    className="text-[#262626] dark:text-white truncate"
                                 >
                                     {user.fullName || user.username}
                                 </Text>
-                                <Text size="xs" className="text-[#8E8E8E] dark:text-[#A0A0A0]">
+                                <Text size={isMobile ? "xs" : "sm"} className="text-[#8E8E8E] dark:text-[#A0A0A0] truncate">
                                     @{user.username}
                                 </Text>
                             </Link>
                             <Group gap="xs" wrap="wrap">
                                 <Badge
                                     variant="light"
-                                    color={user.status === 'ONLINE' ? 'green' : 'red'}
+                                    color={user.status === 'ONLINE' ? 'green' : 'gray'}
                                     className="bg-opacity-20"
-                                    size="xs"
+                                    size={isMobile ? "xs" : "sm"}
                                 >
                                     {user.status}
                                 </Badge>
                                 <Group gap={2}>
-                                    <IconClock size={12} className="text-[#8E8E8E]" />
-                                    <Text size="xs" className="text-[#8E8E8E]">
+                                    <IconClock size={isMobile ? 10 : 12} className="text-[#8E8E8E]" />
+                                    <Text size={isMobile ? "xs" : "sm"} className="text-[#8E8E8E]">
                                         {formatDistanceToNow(new Date(user.lastSeen), {
                                             addSuffix: true,
                                             locale: vi,
@@ -97,35 +102,70 @@ const UserCard = ({
                                 </Group>
                             </Group>
                         </Stack>
-                </Group>
-            </UserHoverCard>
+                    </Group>
+                </UserHoverCard>
                 <Tooltip
                     label={user.isFollowing ? 'Hủy theo dõi' : 'Theo dõi'}
                     position="left"
                 >
                     {user.isFollowing ? (
                         <Button
-                            variant="light"
-                            color="blue"
-                            size="xs"
+                            variant="outline"
+                            color="gray"
+                            size={buttonSize}
                             radius="xl"
                             onClick={() => onUnfollow(user.id)}
                             loading={isLoading}
-                            className="transition-transform duration-200 bg-blue-50 dark:bg-blue-900/20"
+                            leftSection={<IconUserCheck size={isMobile ? 12 : 14} />}
+                            className="transition-all duration-200 border-[#DBDBDB] dark:border-[#262626] hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-700"
+                            styles={{
+                                root: {
+                                    backgroundColor: 'transparent',
+                                    '&:hover': {
+                                        backgroundColor: 'var(--mantine-color-gray-0)',
+                                    },
+                                },
+                                inner: {
+                                    fontWeight: 700,
+                                    letterSpacing: '0.3px',
+                                },
+                                label: {
+                                    color: 'var(--mantine-color-gray-7)',
+                                    '&:hover': {
+                                        color: 'var(--mantine-color-gray-8)',
+                                    },
+                                },
+                            }}
                         >
-                            Đang theo dõi
+                            {isMobile ? 'Following' : 'Đang theo dõi'}
                         </Button>
                     ) : (
                         <Button
                             variant="filled"
-                            color={"blue"}
-                            size="compact-xs"
-                            radius="sm"
+                            color="blue"
+                            size={buttonSize}
+                            radius="xl"
                             onClick={() => onFollow(user.id)}
                             loading={isLoading}
-                            leftSection={<IconUserPlus size={12} />}
+                            leftSection={<IconUserPlus size={isMobile ? 12 : 14} />}
+                            className="transition-all duration-200 hover:bg-blue-600"
+                            styles={{
+                                root: {
+                                    backgroundColor: 'var(--mantine-color-blue-6)',
+                                    '&:hover': {
+                                        backgroundColor: 'var(--mantine-color-blue-7)',
+                                    },
+                                },
+                                inner: {
+                                    fontWeight: 700,
+                                    letterSpacing: '0.3px',
+                                },
+                                label: {
+                                    color: 'white',
+                                },
+                            }}
                         >
-                            Theo dõi
+                            {isMobile ? 'Follow' : 'Theo dõi'}
                         </Button>
                     )}
                 </Tooltip>
