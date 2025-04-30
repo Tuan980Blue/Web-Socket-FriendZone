@@ -29,7 +29,7 @@ const LeftSidebar = () => {
 
     const menuItems = [
         {icon: Home, label: 'News Feed', href: '/'},
-        {icon: NotebookTabs, label: 'Post', href: '/post'},
+        {icon: NotebookTabs, label: 'Posts', href: '/posts'},
         {icon: Users, label: 'Follows', href: '/follows'},
         {icon: Film, label: 'Reels', href: '/reels'},
         {icon: Bookmark, label: 'Saved', href: '/saved'},

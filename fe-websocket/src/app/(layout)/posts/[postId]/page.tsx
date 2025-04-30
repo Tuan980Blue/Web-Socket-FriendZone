@@ -1,4 +1,4 @@
-import PostPageClient from "@/app/(layout)/post/[postId]/PostPageClient";
+import PostPageClient from "@/app/(layout)/posts/[postId]/PostPageClient";
 
 type Props = {
     params: Promise<{ postId: string }>;
