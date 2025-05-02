@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Input, Button, Text, Avatar, Loader } from '@mantine/core';
 import { IconSearch, IconUserPlus } from '@tabler/icons-react';
-import { User } from '@/services/userService';
+import { User } from '@/types/user';
 
 interface NewChatModalProps {
     opened: boolean;

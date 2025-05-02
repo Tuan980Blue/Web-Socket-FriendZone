@@ -1,6 +1,8 @@
 import axios from 'axios';
 import {Gender, User} from "@/types/user";
 
+export type { User };
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 const api = axios.create({
