@@ -154,15 +154,36 @@ class UserService {
     });
   }
 
-  // Update user
-  async updateUser(id, data) {
-    if (data.password) {
-      data.password = await bcrypt.hash(data.password, 10);
-    }
+  // Update user information
+  async updateUser(id, userData) {
+    // Remove sensitive fields that shouldn't be updated directly
+    const { password, email, role, ...updateData } = userData;
 
     return prisma.user.update({
       where: { id },
-      data
+      data: updateData,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        fullName: true,
+        avatar: true,
+        bio: true,
+        status: true,
+        lastSeen: true,
+        createdAt: true,
+        updatedAt: true,
+        isPrivate: true,
+        website: true,
+        location: true,
+        phoneNumber: true,
+        gender: true,
+        birthDate: true,
+        followersCount: true,
+        followingCount: true,
+        postsCount: true,
+        role: true
+      }
     });
   }
 

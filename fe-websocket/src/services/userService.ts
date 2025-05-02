@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Gender, UserStatus} from "@/types/user";
+import {Gender, UserStatus, User} from "@/types/user";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
@@ -19,28 +19,14 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-export interface User {
-    id: string;
-    email: string;
-    username: string;
+export interface UpdateProfileData {
     fullName?: string;
-    avatar?: string;
+    username?: string;
     bio?: string;
-    status: UserStatus;
-    lastSeen: Date;
-    createdAt: Date;
-    updatedAt: Date;
-    isPrivate: boolean;
     website?: string;
     location?: string;
     phoneNumber?: string;
-    gender: Gender;
-    birthDate?: Date;
-    followersCount: number;
-    followingCount: number;
-    postsCount: number;
-    isFollowing?: boolean;
-    mutualFollowersCount?: number;
+    gender?: Gender;
 }
 
 export const userService = {
@@ -61,6 +47,33 @@ export const userService = {
         } catch (error) {
             console.error('Error searching users:', error);
             return [];
+        }
+    },
+
+    updateProfile: async (userId: string, data: UpdateProfileData): Promise<User> => {
+        try {
+            const response = await api.put(`/auth/update`, data);
+            return response.data.user;
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            throw error;
+        }
+    },
+
+    uploadAvatar: async (userId: string, file: File): Promise<User> => {
+        try {
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            const response = await api.post(`/users/${userId}/avatar`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            return response.data.user;
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+            throw error;
         }
     }
 };
