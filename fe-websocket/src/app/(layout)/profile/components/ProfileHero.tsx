@@ -10,6 +10,7 @@ import {useAvatarUpload} from '@/hooks/useAvatarUpload';
 import {IconX} from '@tabler/icons-react';
 import { useUserData } from '@/hooks/useUserData';
 import { useRouter } from 'next/navigation';
+import EditProfileModal from './EditProfileModal';
 
 interface ProfileHeroProps {
     user: User;
@@ -32,12 +33,13 @@ const renderBio = (bio: string | null | undefined) => {
     ));
 };
 
-export default function ProfileHero({user, isCurrentUser, onUpdateUser, onFollow, onUnfollow, isFollowingLoading = false}: ProfileHeroProps) {
+export default function ProfileHero({user, isCurrentUser, onUpdateUser = () => {}, onFollow, onUnfollow, isFollowingLoading = false}: ProfileHeroProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const { setUser } = useUserData();
     const { uploadAvatar } = useAvatarUpload({
         userId: user.id,
@@ -154,6 +156,7 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser, onFollow
                                         radius="md"
                                         className="border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
                                         leftSection={<IconEdit size={16}/>}
+                                        onClick={() => setIsEditModalOpen(true)}
                                     >
                                         Edit Profile
                                     </Button>
@@ -233,6 +236,14 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser, onFollow
                     </div>
                 </div>
             </div>
+
+            {/* Edit Profile Modal */}
+            <EditProfileModal
+                opened={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                user={user}
+                onUpdateUser={onUpdateUser}
+            />
 
             {/* Preview Modal */}
             <Modal

@@ -1,6 +1,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
+import Image from 'next/image';
 
 interface QuickPostContentProps {
   postContent: string;
@@ -33,10 +34,13 @@ export default function QuickPostContent({
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {images.map((image, index) => (
             <div key={index} className="relative aspect-square">
-              <img
+              <Image
                 src={image}
                 alt={`Preview ${index + 1}`}
+                width={500}
+                height={300}
                 className="w-full h-full object-cover rounded-lg"
+                style={{ objectFit: 'cover' }}
               />
               <button
                 onClick={() => onRemoveImage(index)}

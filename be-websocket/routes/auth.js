@@ -177,4 +177,14 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
+// Update user information
+router.put('/update', auth, async (req, res) => {
+  try {
+    const user = await userService.updateUser(req.user.id, req.body);
+    res.json({ user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 module.exports = router; 
