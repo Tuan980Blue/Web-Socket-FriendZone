@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Gender, UserStatus, User} from "@/types/user";
+import {Gender, User} from "@/types/user";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
