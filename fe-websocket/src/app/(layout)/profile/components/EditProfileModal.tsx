@@ -1,11 +1,12 @@
-import { Modal, TextInput, Textarea, Button, Stack, Group, Avatar, Text, Divider } from '@mantine/core';
+import { Modal, TextInput, Textarea, Button, Stack, Group, Avatar, Text, Divider, Select } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconCamera } from '@tabler/icons-react';
 import { useState, useRef } from 'react';
-import { User } from '@/types/user';
+import { User, Gender } from '@/types/user';
 import { useUserData } from '@/hooks/useUserData';
 import { userService } from '@/services/userService';
 import { notifications } from '@mantine/notifications';
+import { DateInput } from '@mantine/dates';
 
 interface EditProfileModalProps {
     opened: boolean;
@@ -14,13 +15,24 @@ interface EditProfileModalProps {
     onUpdateUser: (updatedUser: User) => void;
 }
 
+interface FormValues {
+    fullName: string;
+    username: string;
+    bio: string;
+    website: string;
+    location: string;
+    phoneNumber: string;
+    gender: Gender;
+    birthDate: Date | null;
+}
+
 export default function EditProfileModal({ opened, onClose, user, onUpdateUser }: EditProfileModalProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const { setUser } = useUserData();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const form = useForm({
+    const form = useForm<FormValues>({
         initialValues: {
             fullName: user.fullName || '',
             username: user.username || '',
@@ -28,7 +40,8 @@ export default function EditProfileModal({ opened, onClose, user, onUpdateUser }
             website: user.website || '',
             location: user.location || '',
             phoneNumber: user.phoneNumber || '',
-            gender: user.gender || '',
+            gender: user.gender || 'OTHER',
+            birthDate: user.birthDate ? new Date(user.birthDate) : null,
         },
     });
 
@@ -203,13 +216,33 @@ export default function EditProfileModal({ opened, onClose, user, onUpdateUser }
                             }}
                         />
 
-                        <TextInput
+                        <DateInput
+                            label="Date of Birth"
+                            placeholder="Select your date of birth"
+                            valueFormat="DD/MM/YYYY"
+                            clearable
+                            maxDate={new Date()}
+                            {...form.getInputProps('birthDate')}
+                            classNames={{
+                                label: "text-sm font-medium text-gray-700 dark:text-gray-300",
+                                input: "border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500",
+                            }}
+                        />
+
+                        <Select
                             label="Gender"
-                            placeholder="Add your gender"
+                            placeholder="Select your gender"
+                            data={[
+                                { value: 'MALE', label: 'Male' },
+                                { value: 'FEMALE', label: 'Female' },
+                                { value: 'OTHER', label: 'Other' },
+                            ]}
                             {...form.getInputProps('gender')}
                             classNames={{
                                 label: "text-sm font-medium text-gray-700 dark:text-gray-300",
                                 input: "border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500",
+                                dropdown: "border border-gray-200 dark:border-gray-700",
+                                option: "hover:bg-gray-100 dark:hover:bg-gray-700",
                             }}
                         />
                     </Stack>
