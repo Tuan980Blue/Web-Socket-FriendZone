@@ -15,13 +15,24 @@ interface EditProfileModalProps {
     onUpdateUser: (updatedUser: User) => void;
 }
 
+interface FormValues {
+    fullName: string;
+    username: string;
+    bio: string;
+    website: string;
+    location: string;
+    phoneNumber: string;
+    gender: Gender;
+    birthDate: Date | null;
+}
+
 export default function EditProfileModal({ opened, onClose, user, onUpdateUser }: EditProfileModalProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const { setUser } = useUserData();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const form = useForm({
+    const form = useForm<FormValues>({
         initialValues: {
             fullName: user.fullName || '',
             username: user.username || '',
@@ -29,7 +40,7 @@ export default function EditProfileModal({ opened, onClose, user, onUpdateUser }
             website: user.website || '',
             location: user.location || '',
             phoneNumber: user.phoneNumber || '',
-            gender: user.gender || '',
+            gender: user.gender || 'OTHER',
             birthDate: user.birthDate ? new Date(user.birthDate) : null,
         },
     });
