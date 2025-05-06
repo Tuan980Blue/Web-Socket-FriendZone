@@ -52,6 +52,9 @@ interface PostWithAdmin extends Post {
     }[];
 }
 
+type FilterKey = 'username' | 'keyword' | 'status' | 'reportCount' | 'dateRange';
+type FilterValue = string | number | null | FilterDate;
+
 // Components
 const PostTable = ({ posts, onAction }: { posts: PostWithAdmin[]; onAction: (action: string, post: PostWithAdmin) => void }) => {
     return (
@@ -154,18 +157,20 @@ const PostTable = ({ posts, onAction }: { posts: PostWithAdmin[]; onAction: (act
     );
 };
 
+interface FilterState {
+    username: string;
+    keyword: string;
+    status: string | null;
+    reportCount: number | null;
+    dateRange: FilterDate;
+}
+
 const AdvancedFilters = ({
     filters,
     onFilterChange,
 }: {
-    filters: {
-        username: string;
-        keyword: string;
-        status: string | null;
-        reportCount: number | null;
-        dateRange: FilterDate;
-    };
-    onFilterChange: (key: string, value: any) => void;
+    filters: FilterState;
+    onFilterChange: (key: FilterKey, value: FilterValue) => void;
 }) => {
     return (
         <Paper p="md" withBorder>
@@ -359,15 +364,15 @@ const PostDetailModal = ({
 };
 
 const Page = () => {
-    const { posts, loading, error, hasMore, loadMore, deletePost, isDeleting } = usePosts();
+    const { posts, loading, error, hasMore, loadMore, deletePost } = usePosts();
     const [selectedPost, setSelectedPost] = useState<PostWithAdmin | null>(null);
     const [detailOpened, { open: openDetail, close: closeDetail }] = useDisclosure(false);
-    const [filters, setFilters] = useState({
+    const [filters, setFilters] = useState<FilterState>({
         username: '',
         keyword: '',
-        status: null as string | null,
-        reportCount: null as number | null,
-        dateRange: { from: null as Date | null, to: null as Date | null },
+        status: null,
+        reportCount: null,
+        dateRange: { from: null, to: null },
     });
 
     // Mock data for demonstration
