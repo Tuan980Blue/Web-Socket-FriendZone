@@ -8,7 +8,6 @@ import { User } from '@/types/user';
 
 // Components
 import ProfileHero from '../components/ProfileHero';
-import ProfileStats from '../components/ProfileStats';
 import ProfileTabs from '../components/ProfileTabs';
 import ProfileStories from '../components/ProfileStories';
 import ProfileInfo from '../components/ProfileInfo';
@@ -96,7 +95,6 @@ export default function ProfilePageClient({ userId }: Props) {
                 key={forceUpdate}
             />
             <ProfileStories user={localUser} />
-            <ProfileStats user={localUser} />
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div className="space-y-4">
                     <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />

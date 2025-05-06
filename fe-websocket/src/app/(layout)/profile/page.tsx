@@ -25,7 +25,6 @@ function LoginRequired() {
 
 // Components
 import ProfileHero from './components/ProfileHero';
-import ProfileStats from './components/ProfileStats';
 import ProfileTabs from './components/ProfileTabs';
 import ProfileStories from './components/ProfileStories';
 import ProfileInfo from "@/app/(layout)/profile/components/ProfileInfo";
@@ -53,8 +52,6 @@ export default function Profile() {
             {/* Hero Section */}
             <ProfileHero user={profileUser} isCurrentUser={true}/>
 
-            {/* Stats with Animation */}
-            <ProfileStats user={profileUser}/>
             {/* Stories Section */}
             <ProfileStories user={profileUser}/>
 

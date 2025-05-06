@@ -56,6 +56,7 @@ const Navbar = () => {
               className="w-full pl-10 pr-4 py-2 rounded-full bg-[#FAFAFA] dark:bg-[#121212] border border-[#DBDBDB] dark:border-[#262626] focus:outline-none focus:ring-2 focus:ring-[#DD2A7B] transition-all duration-300"
               onFocus={() => setIsSearchFocused(true)}
               onBlur={() => setIsSearchFocused(false)}
+              suppressHydrationWarning
             />
           </div>
         </div>
