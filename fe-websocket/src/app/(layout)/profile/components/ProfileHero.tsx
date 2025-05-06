@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import {User} from '@/types/user';
-import {Button, Modal, Group, Stack, Image as MantineImage, Avatar} from "@mantine/core";
-import {IconCamera, IconUserPlus, IconEdit} from "@tabler/icons-react";
+import {Button, Modal, Group, Stack, Image as MantineImage, Avatar, Menu} from "@mantine/core";
+import {IconCamera, IconUserPlus, IconEdit, IconLink, IconShare} from "@tabler/icons-react";
 import {RiUserFollowLine} from "react-icons/ri";
 import {IoMdMore} from "react-icons/io";
 import {AiOutlineMessage} from "react-icons/ai";
@@ -109,6 +109,28 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser = () => {
         router.push(`/messages?user=${encodedData}`);
     };
 
+    const handleCopyProfileLink = () => {
+        const profileUrl = window.location.href;
+        navigator.clipboard.writeText(profileUrl);
+    };
+
+    const handleShareProfile = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: `${user.username}'s Profile`,
+                    text: `Check out ${user.username}'s profile on FriendZone`,
+                    url: window.location.href,
+                });
+            } catch (error) {
+                console.error('Error sharing:', error);
+            }
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            handleCopyProfileLink();
+        }
+    };
+
     return (
         <div className="">
             {/* Profile Content */}
@@ -201,14 +223,32 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser = () => {
                                         </Button>
                                     </>
                                 )}
-                                <Button
-                                    variant="subtle"
-                                    size="sm"
-                                    radius="md"
-                                    className="text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
-                                >
-                                    <IoMdMore size={24}/>
-                                </Button>
+                                <Menu shadow="md" width={200} position="bottom-end">
+                                    <Menu.Target>
+                                        <Button
+                                            variant="subtle"
+                                            size="sm"
+                                            radius="md"
+                                            className="text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                                        >
+                                            <IoMdMore size={24}/>
+                                        </Button>
+                                    </Menu.Target>
+                                    <Menu.Dropdown>
+                                        <Menu.Item
+                                            leftSection={<IconLink size={16} />}
+                                            onClick={handleCopyProfileLink}
+                                        >
+                                            Copy Profile Link
+                                        </Menu.Item>
+                                        <Menu.Item
+                                            leftSection={<IconShare size={16} />}
+                                            onClick={handleShareProfile}
+                                        >
+                                            Share Profile
+                                        </Menu.Item>
+                                    </Menu.Dropdown>
+                                </Menu>
                             </div>
                         </div>
 
