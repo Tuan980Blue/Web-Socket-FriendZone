@@ -2,7 +2,7 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 import { postService } from '@/services/postService';
 import { notifications } from '@mantine/notifications';
 
-const LIMIT = 10;
+const LIMIT = 9;
 
 export const usePosts = (userId?: string) => {
   const queryClient = useQueryClient();
