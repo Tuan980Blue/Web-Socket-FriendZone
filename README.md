@@ -1,5 +1,7 @@
 # 🌐 [Link-PreView-Web](https://anhtuandev.id.vn/)
 
+![image](https://github.com/user-attachments/assets/764842a7-026d-4827-a7d0-e7b412587499)
+
 **FriendZone** là một nền tảng mạng xã hội lấy cảm hứng từ **Instagram**, phần mềm thời gian thực được xây dựng với WebSocket, nơi người dùng có thể nhắn tin, tương tác và cập nhật trạng thái ngay lập tức – không cần F5!
 
 ## 🚀 Tính năng nổi bật
