@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import { toggleLike } from '@/services/postService';
-import { Like, Comment } from '@/types/post';
+import { Like } from '@/types/post';
 
 interface UsePostInteractionsProps {
   postId: string;
