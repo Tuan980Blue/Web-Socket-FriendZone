@@ -11,6 +11,11 @@ import Link from "next/link";
 import {useUserData} from '@/hooks/useUserData';
 import {usePosts} from '@/hooks/usePosts';
 import {notifications} from '@mantine/notifications';
+import { toggleLike, getPostLikes } from '@/services/postService';
+import CommentList from './CommentList';
+import CommentForm from './CommentForm';
+import { Comment } from '@/types/post';
+import { usePostInteractions } from '@/hooks/usePostInteractions';
 
 interface PostCardProps {
     post: Post;
@@ -19,19 +24,32 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [isLiked, setIsLiked] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [showComments, setShowComments] = useState(false);
-    const [commentText, setCommentText] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const {user} = useUserData();
     const {deletePost, isDeleting} = usePosts();
 
-    const isAuthor = user?.id === post.author.id;
+    const {
+        isLiked,
+        likeCount,
+        isLiking,
+        showLikesModal,
+        likes,
+        handleLike,
+        setShowLikesModal,
+        commentCount,
+        handleCommentAdded,
+        handleCommentDeleted,
+        handleCommentEdited,
+    } = usePostInteractions({
+        postId: post.id,
+        initialLikeCount: post.likeCount,
+        initialCommentCount: post.commentCount,
+        initialLikes: post.likes,
+    });
 
-    const handleLike = () => {
-        setIsLiked(!isLiked);
-    };
+    const isAuthor = user?.id === post.author.id;
 
     const handleSave = () => {
         setIsSaved(!isSaved);
@@ -39,14 +57,6 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
 
     const handleComment = () => {
         setShowComments(!showComments);
-    };
-
-    const handleSubmitComment = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (commentText.trim()) {
-            // TODO: Handle comment submission
-            setCommentText('');
-        }
     };
 
     const nextImage = () => {
@@ -209,10 +219,17 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                 <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-4">
                         <button
-                            className={`p-1 rounded-full ${isLiked ? 'text-red-500' : 'text-[#262626] dark:text-[#FAFAFA]'}`}
+                            className={`p-1 rounded-full transition-colors duration-200 ${
+                                isLiked ? 'text-red-500' : 'text-[#262626] dark:text-[#FAFAFA]'
+                            }`}
                             onClick={handleLike}
+                            disabled={isLiking}
                         >
-                            <Heart size={24} fill={isLiked ? 'currentColor' : 'none'}/>
+                            <Heart
+                                size={24}
+                                fill={isLiked ? 'currentColor' : 'none'}
+                                className={isLiked ? 'animate-like' : ''}
+                            />
                         </button>
                         <button
                             className="p-1 rounded-full text-[#262626] dark:text-[#FAFAFA]"
@@ -225,7 +242,9 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                         </button>
                     </div>
                     <button
-                        className={`p-1 rounded-full ${isSaved ? 'text-[#262626] dark:text-[#FAFAFA]' : 'text-[#262626] dark:text-[#FAFAFA]'}`}
+                        className={`p-1 rounded-full transition-colors duration-200 ${
+                            isSaved ? 'text-[#262626] dark:text-[#FAFAFA]' : 'text-[#262626] dark:text-[#FAFAFA]'
+                        }`}
                         onClick={handleSave}
                     >
                         <Bookmark size={24} fill={isSaved ? 'currentColor' : 'none'}/>
@@ -233,14 +252,46 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                 </div>
 
                 {/* Post Stats */}
-                <div className="text-sm font-semibold text-[#262626] dark:text-[#FAFAFA] mb-2">
-                    1,234 likes
-                </div>
+                <div className="space-y-2">
+                    {likeCount > 0 && (
+                        <button
+                            onClick={() => setShowLikesModal(true)}
+                            className="text-sm font-semibold text-[#262626] dark:text-[#FAFAFA] hover:underline"
+                        >
+                            {likeCount.toLocaleString()} lượt thích
+                        </button>
+                    )}
 
-                {/* Post Content */}
-                <div className="mb-2">
-                    <span className="font-semibold mr-2">{post.author.username}</span>
-                    <span className="text-[#262626] dark:text-[#FAFAFA]">{post.content}</span>
+                    {/* Post Content */}
+                    <div className="mb-2">
+                        <span className="font-semibold mr-2">{post.author.username}</span>
+                        <span className="text-[#262626] dark:text-[#FAFAFA]">{post.content}</span>
+                    </div>
+
+                    {/* Comments Section */}
+                    {showComments && (
+                        <div className="mt-4 space-y-4">
+                            <CommentList
+                                postId={post.id}
+                                initialComments={post.comments}
+                                onCommentCountChange={handleCommentDeleted}
+                            />
+                            <CommentForm
+                                postId={post.id}
+                                onCommentAdded={handleCommentAdded}
+                            />
+                        </div>
+                    )}
+
+                    {/* View Comments Button */}
+                    {commentCount > 0 && !showComments && (
+                        <button
+                            onClick={handleComment}
+                            className="text-sm text-gray-500 dark:text-gray-400 hover:underline"
+                        >
+                            Xem tất cả {commentCount} bình luận
+                        </button>
+                    )}
                 </div>
 
                 {/* Tags */}
@@ -257,35 +308,39 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                     </div>
                 )}
 
-                {/* Comments Section */}
-                {showComments && (
-                    <div className="mt-4 border-t border-gray-200 dark:border-gray-800 pt-4">
-                        <h3 className="font-semibold mb-2">Comments</h3>
-                        {/* TODO: Add comments list */}
-                        <form onSubmit={handleSubmitComment} className="flex items-center mt-4">
-                            <input
-                                type="text"
-                                placeholder="Add a comment..."
-                                className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#DD2A7B]"
-                                value={commentText}
-                                onChange={(e) => setCommentText(e.target.value)}
-                            />
-                            <button
-                                type="submit"
-                                className="ml-2 text-[#DD2A7B] font-semibold text-sm"
-                                disabled={!commentText.trim()}
-                            >
-                                Post
-                            </button>
-                        </form>
-                    </div>
-                )}
-
                 {/* Post Time */}
                 <div className="text-xs text-[#8E8E8E] mt-2">
                     {formatDistanceToNow(new Date(post.createdAt), {addSuffix: true, locale: vi})}
                 </div>
             </div>
+
+            {/* Likes Modal */}
+            <Modal
+                opened={showLikesModal}
+                onClose={() => setShowLikesModal(false)}
+                title="Lượt thích"
+                size="sm"
+            >
+                <div className="space-y-4">
+                    {likes.map(like => (
+                        <div key={like.id} className="flex items-center space-x-3">
+                            <Avatar
+                                src={like.user.avatar || '/image-person.png'}
+                                radius="xl"
+                                size="sm"
+                            />
+                            <div>
+                                <Link
+                                    href={`/profile/${like.user.id}`}
+                                    className="font-semibold hover:underline"
+                                >
+                                    {like.user.username}
+                                </Link>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </Modal>
 
             {/* Delete Confirmation Modal */}
             <Modal
