@@ -31,7 +31,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId, onCommentAdded }) => 
         message: 'Bình luận đã được thêm',
         color: 'green',
       });
-    } catch (error) {
+    } catch {
       notifications.show({
         title: 'Lỗi',
         message: 'Không thể thêm bình luận',
