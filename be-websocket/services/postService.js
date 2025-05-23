@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const notificationService = require('./notificationService');
 
 const createPost = async (req, res) => {
   try {
@@ -437,7 +438,16 @@ const addComment = async (req, res) => {
 
     // Check if post exists
     const post = await prisma.post.findUnique({
-      where: { id: postId }
+      where: { id: postId },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            fullName: true
+          }
+        }
+      }
     });
 
     if (!post) {
@@ -473,19 +483,18 @@ const addComment = async (req, res) => {
       }
     });
 
-    // Create notification for post author
+    // Create notification for post author using notificationService
     if (post.authorId !== userId) {
-      await prisma.notification.create({
-        data: {
-          userId: post.authorId,
-          type: 'COMMENT',
-          content: `${req.user.username} commented on your post`,
-          data: {
-            postId,
-            commentId: comment.id
-          }
+      await notificationService.createNotification(
+        post.authorId,
+        'COMMENT',
+        {
+          postId,
+          commentId: comment.id,
+          commenterUsername: req.user.username,
+          commenterFullName: req.user.fullName
         }
-      });
+      );
     }
 
     res.status(201).json({
@@ -609,7 +618,16 @@ const toggleLike = async (req, res) => {
 
     // Check if post exists
     const post = await prisma.post.findUnique({
-      where: { id: postId }
+      where: { id: postId },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            fullName: true
+          }
+        }
+      }
     });
 
     if (!post) {
@@ -670,18 +688,17 @@ const toggleLike = async (req, res) => {
         }
       });
 
-      // Create notification for post author
+      // Create notification for post author using notificationService
       if (post.authorId !== userId) {
-        await prisma.notification.create({
-          data: {
-            userId: post.authorId,
-            type: 'LIKE',
-            content: `${req.user.username} liked your post`,
-            data: {
-              postId
-            }
+        await notificationService.createNotification(
+          post.authorId,
+          'LIKE',
+          {
+            postId,
+            likerUsername: req.user.username,
+            likerFullName: req.user.fullName
           }
-        });
+        );
       }
 
       res.json({
