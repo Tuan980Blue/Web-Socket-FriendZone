@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import { toggleLike } from '@/services/postService';
+import { toggleLike, getPostLikes } from '@/services/postService';
 import { Like, Comment } from '@/types/post';
 
 interface UsePostInteractionsProps {
@@ -36,7 +36,7 @@ export const usePostInteractions = ({
       const newLikeCount = response.data.liked ? likeCount + 1 : likeCount - 1;
       setLikeCount(newLikeCount);
       onLikeCountChange?.(newLikeCount);
-    } catch {
+    } catch (error) {
       notifications.show({
         title: 'Lỗi',
         message: 'Không thể thực hiện thao tác like',
@@ -47,7 +47,7 @@ export const usePostInteractions = ({
     }
   };
 
-  const handleCommentAdded = () => {
+  const handleCommentAdded = (comment: Comment) => {
     const newCommentCount = commentCount + 1;
     setCommentCount(newCommentCount);
     onCommentCountChange?.(newCommentCount);

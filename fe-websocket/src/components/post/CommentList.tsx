@@ -37,7 +37,7 @@ const CommentList: React.FC<CommentListProps> = ({
 
       setHasMore(pageNum < response.data.pagination.pages);
       onCommentCountChange?.(response.data.pagination.total);
-    } catch {
+    } catch (error) {
       notifications.show({
         title: 'Lỗi',
         message: 'Không thể tải bình luận',
@@ -51,7 +51,7 @@ const CommentList: React.FC<CommentListProps> = ({
       setIsLoading(true);
       fetchComments(1).finally(() => setIsLoading(false));
     }
-  }, [postId, initialComments.length, fetchComments]);
+  }, [postId]);
 
   const handleLoadMore = async () => {
     if (isLoadingMore) return;
