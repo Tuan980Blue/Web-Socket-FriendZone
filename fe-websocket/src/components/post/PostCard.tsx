@@ -75,7 +75,7 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
     };
 
     const handleCopyLink = () => {
-        const postLink = `${window.location.origin}/post/${post.id}`;
+        const postLink = `${window.location.origin}/posts/${post.id}`;
         navigator.clipboard.writeText(postLink);
         notifications.show({
             title: 'Đã sao chép liên kết',
