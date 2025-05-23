@@ -37,7 +37,7 @@ const CommentList: React.FC<CommentListProps> = ({
 
       setHasMore(pageNum < response.data.pagination.pages);
       onCommentCountChange?.(response.data.pagination.total);
-    } catch (_error) {
+    } catch (error) {
       notifications.show({
         title: 'Lỗi',
         message: 'Không thể tải bình luận',

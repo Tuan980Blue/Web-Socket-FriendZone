@@ -38,7 +38,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, onCommentDeleted, on
         message: 'Bình luận đã được cập nhật',
         color: 'green',
       });
-    } catch (_error) {
+    } catch (error) {
       notifications.show({
         title: 'Lỗi',
         message: 'Không thể cập nhật bình luận',
@@ -58,7 +58,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, onCommentDeleted, on
         message: 'Bình luận đã được xóa',
         color: 'green',
       });
-    } catch (_error) {
+    } catch (error) {
       notifications.show({
         title: 'Lỗi',
         message: 'Không thể xóa bình luận',
