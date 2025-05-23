@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Post, PostResponse, CreatePostData } from '@/types/post';
+import { Post, PostResponse, CreatePostData, CommentFormData, CommentResponse, CommentsResponse, LikeResponse, LikesResponse } from '@/types/post';
 import { notifications } from '@mantine/notifications';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
@@ -77,4 +77,40 @@ export const postService = {
     });
     return response.data;
   }
+};
+
+// Comment services
+export const addComment = async (postId: string, data: CommentFormData): Promise<CommentResponse> => {
+  const response = await api.post(`${API_URL}/posts/${postId}/comments`, data);
+  return response.data;
+};
+
+export const editComment = async (commentId: string, data: CommentFormData): Promise<CommentResponse> => {
+  const response = await api.put(`${API_URL}/posts/comments/${commentId}`, data);
+  return response.data;
+};
+
+export const deleteComment = async (commentId: string): Promise<{ success: boolean; message: string }> => {
+  const response = await api.delete(`${API_URL}/posts/comments/${commentId}`);
+  return response.data;
+};
+
+export const getPostComments = async (postId: string, page = 1, limit = 10): Promise<CommentsResponse> => {
+  const response = await api.get(`${API_URL}/posts/${postId}/comments`, {
+    params: { page, limit }
+  });
+  return response.data;
+};
+
+// Like services
+export const toggleLike = async (postId: string): Promise<LikeResponse> => {
+  const response = await api.post(`${API_URL}/posts/${postId}/like`);
+  return response.data;
+};
+
+export const getPostLikes = async (postId: string, page = 1, limit = 10): Promise<LikesResponse> => {
+  const response = await api.get(`${API_URL}/posts/${postId}/likes`, {
+    params: { page, limit }
+  });
+  return response.data;
 }; 
