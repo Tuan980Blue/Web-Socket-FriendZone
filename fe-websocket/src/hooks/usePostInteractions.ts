@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import { toggleLike, getPostLikes } from '@/services/postService';
+import { toggleLike } from '@/services/postService';
 import { Like, Comment } from '@/types/post';
 
 interface UsePostInteractionsProps {
