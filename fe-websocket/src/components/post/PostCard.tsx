@@ -11,10 +11,8 @@ import Link from "next/link";
 import {useUserData} from '@/hooks/useUserData';
 import {usePosts} from '@/hooks/usePosts';
 import {notifications} from '@mantine/notifications';
-import { toggleLike, getPostLikes } from '@/services/postService';
 import CommentList from './CommentList';
 import CommentForm from './CommentForm';
-import { Comment } from '@/types/post';
 import { usePostInteractions } from '@/hooks/usePostInteractions';
 
 interface PostCardProps {
@@ -41,7 +39,6 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
         commentCount,
         handleCommentAdded,
         handleCommentDeleted,
-        handleCommentEdited,
     } = usePostInteractions({
         postId: post.id,
         initialLikeCount: post.likeCount,
