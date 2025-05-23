@@ -36,7 +36,7 @@ export const usePostInteractions = ({
       const newLikeCount = response.data.liked ? likeCount + 1 : likeCount - 1;
       setLikeCount(newLikeCount);
       onLikeCountChange?.(newLikeCount);
-    } catch (error) {
+    } catch (_error) {
       notifications.show({
         title: 'Lỗi',
         message: 'Không thể thực hiện thao tác like',
@@ -47,7 +47,7 @@ export const usePostInteractions = ({
     }
   };
 
-  const handleCommentAdded = (comment: Comment) => {
+  const handleCommentAdded = (_comment: Comment) => {
     const newCommentCount = commentCount + 1;
     setCommentCount(newCommentCount);
     onCommentCountChange?.(newCommentCount);
