@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import {
     Card,
     Avatar,
@@ -98,8 +99,36 @@ const getAvatarUrl = (notification: Notification) => {
 export const NotificationCard = ({ notification, onMarkAsRead, isMobile }: NotificationCardProps) => {
     const theme = useMantineTheme();
     const { colorScheme } = useMantineColorScheme();
-    const handleMarkAsRead = () => {
+    const router = useRouter();
+
+    const handleMarkAsRead = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent card click when clicking the mark as read button
         onMarkAsRead(notification.id);
+    };
+
+    const handleCardClick = () => {
+        // Mark as read when clicking the card
+        if (!notification.isRead) {
+            onMarkAsRead(notification.id);
+        }
+
+        // Navigate based on notification type
+        switch (notification.type) {
+            case 'COMMENT':
+            case 'LIKE':
+                if (notification.data.postId) {
+                    router.push(`/posts/${notification.data.postId}`);
+                }
+                break;
+            case 'FOLLOW':
+                if (notification.data.followerId) {
+                    router.push(`/profile/${notification.data.followerId}`);
+                }
+                break;
+            // Add other cases as needed
+            default:
+                break;
+        }
     };
 
     return (
@@ -109,7 +138,14 @@ export const NotificationCard = ({ notification, onMarkAsRead, isMobile }: Notif
             radius="md"
             style={{
                 backgroundColor: colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+                cursor: 'pointer',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: theme.shadows.md,
+                },
             }}
+            onClick={handleCardClick}
         >
             <Group justify="space-between" align="flex-start" wrap="nowrap">
                 <Group gap={isMobile ? "xs" : "sm"} wrap="nowrap">

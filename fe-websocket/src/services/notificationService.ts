@@ -26,6 +26,11 @@ export interface Notification {
     type: NotificationType;
     content: string;
     data: {
+        // Post related fields
+        postId?: string;
+        commentId?: string;
+        
+        // User related fields
         followerId?: string;
         followerUsername?: string;
         followerFullName?: string;
