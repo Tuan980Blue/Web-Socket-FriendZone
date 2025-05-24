@@ -2,8 +2,53 @@ const prisma = require('../prisma/client');
 const bcrypt = require('bcryptjs');
 
 class UserService {
+  // Validate password
+  validatePassword(password) {
+    const errors = [];
+    
+    // Check length (8-32 characters)
+    if (password.length < 8 || password.length > 32) {
+      errors.push('Password must be between 8 and 32 characters');
+    }
+
+    // Check for at least one uppercase letter
+    if (!/[A-Z]/.test(password)) {
+      errors.push('Password must contain at least one uppercase letter');
+    }
+
+    // Check for at least one lowercase letter
+    if (!/[a-z]/.test(password)) {
+      errors.push('Password must contain at least one lowercase letter');
+    }
+
+    // Check for at least one number
+    if (!/[0-9]/.test(password)) {
+      errors.push('Password must contain at least one number');
+    }
+
+    // Check for at least one special character
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      errors.push('Password must contain at least one special character (!@#$%^&*(),.?":{}|<>)');
+    }
+
+    // Check for common passwords (you can expand this list)
+    const commonPasswords = ['password123', '12345678', 'qwerty123', 'admin123'];
+    if (commonPasswords.includes(password.toLowerCase())) {
+      errors.push('Password is too common');
+    }
+
+    if (errors.length > 0) {
+      throw new Error(errors.join('. '));
+    }
+
+    return true;
+  }
+
   // Create new user
   async createUser(userData) {
+    // Validate password before hashing
+    this.validatePassword(userData.password);
+    
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
     return prisma.user.create({
@@ -74,31 +119,37 @@ class UserService {
   }
 
   // Find user by ID
-  async findById(id) {
+  async findById(id, includePassword = false) {
+    const select = {
+      id: true,
+      username: true,
+      email: true,
+      fullName: true,
+      avatar: true,
+      bio: true,
+      status: true,
+      lastSeen: true,
+      createdAt: true,
+      updatedAt: true,
+      isPrivate: true,
+      website: true,
+      location: true,
+      phoneNumber: true,
+      gender: true,
+      birthDate: true,
+      followersCount: true,
+      followingCount: true,
+      postsCount: true,
+      role: true
+    };
+
+    if (includePassword) {
+      select.password = true;
+    }
+
     return prisma.user.findUnique({
       where: { id },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        fullName: true,
-        avatar: true,
-        bio: true,
-        status: true,
-        lastSeen: true,
-        createdAt: true,
-        updatedAt: true,
-        isPrivate: true,
-        website: true,
-        location: true,
-        phoneNumber: true,
-        gender: true,
-        birthDate: true,
-        followersCount: true,
-        followingCount: true,
-        postsCount: true,
-        role: true
-      }
+      select
     });
   }
 
@@ -183,6 +234,40 @@ class UserService {
         followingCount: true,
         postsCount: true,
         role: true
+      }
+    });
+  }
+
+  // Update user password
+  async updatePassword(id, newPassword, currentPassword) {
+    // Validate new password
+    this.validatePassword(newPassword);
+
+    // Get current user with password
+    const user = await this.findById(id, true);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Check if new password is different from current password
+    const isSamePassword = await this.comparePassword(newPassword, user.password);
+    if (isSamePassword) {
+      throw new Error('New password must be different from current password');
+    }
+
+    // Verify current password
+    const isMatch = await this.comparePassword(currentPassword, user.password);
+    if (!isMatch) {
+      throw new Error('Current password is incorrect');
+    }
+    
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    return prisma.user.update({
+      where: { id },
+      data: {
+        password: hashedPassword,
+        updatedAt: new Date()
       }
     });
   }
