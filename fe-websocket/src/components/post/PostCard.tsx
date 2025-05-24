@@ -34,8 +34,10 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
         isLiking,
         showLikesModal,
         likes,
+        isLoadingLikes,
         handleLike,
         setShowLikesModal,
+        handleShowLikesModal,
         commentCount,
         handleCommentAdded,
         handleCommentDeleted,
@@ -252,7 +254,7 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                 <div className="space-y-2">
                     {likeCount > 0 && (
                         <button
-                            onClick={() => setShowLikesModal(true)}
+                            onClick={handleShowLikesModal}
                             className="text-sm font-semibold text-[#262626] dark:text-[#FAFAFA] hover:underline"
                         >
                             {likeCount.toLocaleString()} lượt thích
@@ -319,23 +321,33 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                 size="sm"
             >
                 <div className="space-y-4">
-                    {likes.map(like => (
-                        <div key={like.id} className="flex items-center space-x-3">
-                            <Avatar
-                                src={like.user.avatar || '/image-person.png'}
-                                radius="xl"
-                                size="sm"
-                            />
-                            <div>
-                                <Link
-                                    href={`/profile/${like.user.id}`}
-                                    className="font-semibold hover:underline"
-                                >
-                                    {like.user.username}
-                                </Link>
-                            </div>
+                    {isLoadingLikes ? (
+                        <div className="flex justify-center py-4">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
                         </div>
-                    ))}
+                    ) : likes.length > 0 ? (
+                        likes.map(like => (
+                            <div key={like.id} className="flex items-center space-x-3">
+                                <Avatar
+                                    src={like.user.avatar || '/image-person.png'}
+                                    radius="xl"
+                                    size="sm"
+                                />
+                                <div>
+                                    <Link
+                                        href={`/profile/${like.user.id}`}
+                                        className="font-semibold hover:underline"
+                                    >
+                                        {like.user.username}
+                                    </Link>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="text-center text-gray-500 py-4">
+                            Chưa có lượt thích nào
+                        </div>
+                    )}
                 </div>
             </Modal>
 

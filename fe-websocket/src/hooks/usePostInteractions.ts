@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { notifications } from '@mantine/notifications';
-import { toggleLike } from '@/services/postService';
+import { toggleLike, getPostLikes } from '@/services/postService';
 import { Like } from '@/types/post';
 
 interface UsePostInteractionsProps {
@@ -25,7 +25,8 @@ export const usePostInteractions = ({
   const [commentCount, setCommentCount] = useState(initialCommentCount);
   const [isLiking, setIsLiking] = useState(false);
   const [showLikesModal, setShowLikesModal] = useState(false);
-  const [likes] = useState<Like[]>(initialLikes);
+  const [likes, setLikes] = useState<Like[]>(initialLikes);
+  const [isLoadingLikes, setIsLoadingLikes] = useState(false);
 
   const handleLike = async () => {
     if (isLiking) return;
@@ -46,6 +47,25 @@ export const usePostInteractions = ({
       setIsLiking(false);
     }
   };
+
+  const handleShowLikesModal = useCallback(async () => {
+    setShowLikesModal(true);
+    try {
+      setIsLoadingLikes(true);
+      const response = await getPostLikes(postId);
+      if (response.success && response.data) {
+        setLikes(response.data.likes);
+      }
+    } catch {
+      notifications.show({
+        title: 'Lỗi',
+        message: 'Không thể tải danh sách likes',
+        color: 'red',
+      });
+    } finally {
+      setIsLoadingLikes(false);
+    }
+  }, [postId]);
 
   const handleCommentAdded = () => {
     const newCommentCount = commentCount + 1;
@@ -70,8 +90,10 @@ export const usePostInteractions = ({
     isLiking,
     showLikesModal,
     likes,
+    isLoadingLikes,
     handleLike,
     setShowLikesModal,
+    handleShowLikesModal,
 
     // Comment states and handlers
     commentCount,
