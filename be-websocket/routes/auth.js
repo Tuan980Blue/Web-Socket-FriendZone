@@ -187,4 +187,33 @@ router.put('/update', auth, async (req, res) => {
   }
 });
 
+// Change Password
+router.post('/change-password', auth, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current password and new password are required' });
+    }
+
+    // Update password with validation
+    await userService.updatePassword(req.user.id, newPassword, currentPassword);
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (error) {
+    // Handle specific error messages
+    if (error.message === 'New password must be different from current password') {
+      return res.status(400).json({ error: error.message });
+    }
+    if (error.message === 'Current password is incorrect') {
+      return res.status(401).json({ error: error.message });
+    }
+    if (error.message === 'User not found') {
+      return res.status(404).json({ error: error.message });
+    }
+    // Handle validation errors
+    res.status(400).json({ error: error.message });
+  }
+});
+
 module.exports = router; 
