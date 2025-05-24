@@ -16,6 +16,7 @@ const {
   getPostLikes
 } = require('../services/postService');
 const auth = require('../middleware/auth');
+const authMiddleware = require("../middleware/auth");
 
 // Post routes
 router.post('/', auth, createPost);
@@ -34,6 +35,6 @@ router.get('/:postId/comments', getPostComments);
 
 // Like routes
 router.post('/:postId/like', auth, toggleLike);
-router.get('/:postId/likes', getPostLikes);
+router.get('/:postId/likes',authMiddleware, getPostLikes);
 
 module.exports = router; 

@@ -718,10 +718,12 @@ const toggleLike = async (req, res) => {
 const getPostLikes = async (req, res) => {
   try {
     const { postId } = req.params;
+    const currentUserId = req.user.id;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
+    // Get likes with user information
     const likes = await prisma.like.findMany({
       where: { postId },
       skip,
@@ -741,6 +743,34 @@ const getPostLikes = async (req, res) => {
       }
     });
 
+    // Get all user IDs from likes
+    const userIds = likes.map(like => like.user.id);
+
+    // Check follow status for all users in one query
+    const followStatuses = await prisma.follow.findMany({
+      where: {
+        followerId: currentUserId,
+        followingId: {
+          in: userIds
+        }
+      },
+      select: {
+        followingId: true
+      }
+    });
+
+    // Create a map of following status
+    const followingMap = new Map(followStatuses.map(f => [f.followingId, true]));
+
+    // Transform the response to include isFollowing
+    const transformedLikes = likes.map(like => ({
+      ...like,
+      user: {
+        ...like.user,
+        isFollowing: followingMap.has(like.user.id)
+      }
+    }));
+
     const total = await prisma.like.count({
       where: { postId }
     });
@@ -748,7 +778,7 @@ const getPostLikes = async (req, res) => {
     res.json({
       success: true,
       data: {
-        likes,
+        likes: transformedLikes,
         pagination: {
           total,
           page,

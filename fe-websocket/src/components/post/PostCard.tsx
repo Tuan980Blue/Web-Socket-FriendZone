@@ -1,8 +1,8 @@
 'use client';
 
 import React, {useState} from 'react';
-import {Avatar, Modal, Menu} from '@mantine/core';
-import {Heart, MessageCircle, Send, Bookmark, MoreHorizontal, MapPin, Trash2, Flag, Share2, Copy} from 'lucide-react';
+import {Avatar, Modal, Menu, Button, Text, Group, Stack, Divider, Badge} from '@mantine/core';
+import {Heart, MessageCircle, Send, Bookmark, MoreHorizontal, MapPin, Trash2, Flag, Share2, Copy, UserPlus, UserMinus, Clock} from 'lucide-react';
 import {Post} from '@/types/post';
 import {formatDistanceToNow} from 'date-fns';
 import {vi} from 'date-fns/locale';
@@ -14,6 +14,7 @@ import {notifications} from '@mantine/notifications';
 import CommentList from './CommentList';
 import CommentForm from './CommentForm';
 import { usePostInteractions } from '@/hooks/usePostInteractions';
+import { useFollows } from '@/hooks/useFollows';
 
 interface PostCardProps {
     post: Post;
@@ -27,6 +28,7 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const {user} = useUserData();
     const {deletePost, isDeleting} = usePosts();
+    const { handleFollow, handleUnfollow } = useFollows();
 
     const {
         isLiked,
@@ -317,37 +319,137 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
             <Modal
                 opened={showLikesModal}
                 onClose={() => setShowLikesModal(false)}
-                title="Lượt thích"
                 size="sm"
+                radius="md"
+                padding={0}
+                styles={{
+                    header: {
+                        padding: '16px 20px',
+                        borderBottom: '1px solid var(--mantine-color-gray-3)',
+                        backgroundColor: 'var(--mantine-color-body)',
+                    },
+                    body: {
+                        padding: 0,
+                    },
+                }}
             >
-                <div className="space-y-4">
-                    {isLoadingLikes ? (
-                        <div className="flex justify-center py-4">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
-                        </div>
-                    ) : likes.length > 0 ? (
-                        likes.map(like => (
-                            <div key={like.id} className="flex items-center space-x-3">
-                                <Avatar
-                                    src={like.user.avatar || '/image-person.png'}
-                                    radius="xl"
-                                    size="sm"
-                                />
-                                <div>
-                                    <Link
-                                        href={`/profile/${like.user.id}`}
-                                        className="font-semibold hover:underline"
-                                    >
-                                        {like.user.username}
-                                    </Link>
-                                </div>
+                <div className="flex flex-col">
+                    {/* Header */}
+                    <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+                        <Text size="lg" fw={600} ta="center">
+                            Lượt thích
+                        </Text>
+                        <Text size="sm" c="dimmed" ta="center" mt={4}>
+                            {likeCount.toLocaleString()} người đã thích bài viết này
+                        </Text>
+                    </div>
+
+                    {/* Likes List */}
+                    <div className="max-h-[60vh] overflow-y-auto">
+                        {isLoadingLikes ? (
+                            <div className="flex flex-col items-center justify-center py-12">
+                                <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+                                <Text size="sm" c="dimmed" mt={4}>
+                                    Đang tải danh sách...
+                                </Text>
                             </div>
-                        ))
-                    ) : (
-                        <div className="text-center text-gray-500 py-4">
-                            Chưa có lượt thích nào
-                        </div>
-                    )}
+                        ) : likes.length > 0 ? (
+                            <Stack gap={0}>
+                                {likes.map((like, index) => (
+                                    <div key={like.id}>
+                                        <div className="p-4 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+                                            <Group justify="space-between" wrap="nowrap">
+                                                <Group gap="sm" wrap="nowrap">
+                                                    <div className="relative">
+                                                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] p-[2px]">
+                                                            <div className="w-full h-full bg-white dark:bg-black rounded-full flex items-center justify-center">
+                                                                <Avatar
+                                                                    src={like.user.avatar || '/image-person.png'}
+                                                                    radius="xl"
+                                                                    size="md"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        {like.user.id === user?.id && (
+                                                            <Badge
+                                                                size="xs"
+                                                                variant="filled"
+                                                                color="blue"
+                                                                className="absolute -top-1 -right-1"
+                                                            >
+                                                                Bạn
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <Group gap={4} wrap="nowrap">
+                                                            <Link
+                                                                href={`/profile/${like.user.id}`}
+                                                                className="font-semibold hover:underline truncate"
+                                                            >
+                                                                {like.user.username}
+                                                            </Link>
+                                                            {like.user.id === post.author.id && (
+                                                                <Badge size="xs" variant="light" color="blue">
+                                                                    Tác giả
+                                                                </Badge>
+                                                            )}
+                                                        </Group>
+                                                        <Text size="xs" c="dimmed" className="flex items-center gap-1">
+                                                            <Clock size={12} />
+                                                            {formatDistanceToNow(new Date(like.createdAt), {
+                                                                addSuffix: true,
+                                                                locale: vi
+                                                            })}
+                                                        </Text>
+                                                    </div>
+                                                </Group>
+                                                {like.user.id !== user?.id && (
+                                                    <Button
+                                                        variant="subtle"
+                                                        size="xs"
+                                                        radius="xl"
+                                                        onClick={() => {
+                                                            const isFollowing = like.user.isFollowing ?? false;
+                                                            if (isFollowing) {
+                                                                handleUnfollow(like.user.id);
+                                                            } else {
+                                                                handleFollow(like.user.id);
+                                                            }
+                                                        }}
+                                                        leftSection={
+                                                            (like.user.isFollowing ?? false) ? (
+                                                                <UserMinus size={14} />
+                                                            ) : (
+                                                                <UserPlus size={14} />
+                                                            )
+                                                        }
+                                                    >
+                                                        {(like.user.isFollowing ?? false) ? 'Bỏ theo dõi' : 'Theo dõi'}
+                                                    </Button>
+                                                )}
+                                            </Group>
+                                        </div>
+                                        {index < likes.length - 1 && (
+                                            <Divider />
+                                        )}
+                                    </div>
+                                ))}
+                            </Stack>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-12 px-4">
+                                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                                    <Heart size={24} className="text-gray-400" />
+                                </div>
+                                <Text size="lg" fw={500} ta="center">
+                                    Chưa có lượt thích nào
+                                </Text>
+                                <Text size="sm" c="dimmed" ta="center" mt={4}>
+                                    Hãy là người đầu tiên thích bài viết này
+                                </Text>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </Modal>
 
