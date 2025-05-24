@@ -3,6 +3,7 @@ export interface User {
   username: string;
   fullName: string;
   avatar: string;
+  isFollowing?: boolean;
 }
 
 export interface Comment {
