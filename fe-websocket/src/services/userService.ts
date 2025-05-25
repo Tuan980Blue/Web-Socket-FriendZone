@@ -31,6 +31,11 @@ export interface UpdateProfileData {
     gender?: Gender;
 }
 
+export interface ChangePasswordData {
+    currentPassword: string;
+    newPassword: string;
+}
+
 export const userService = {
     getUserById: async (userId: string): Promise<User | null> => {
         try {
@@ -76,6 +81,15 @@ export const userService = {
         } catch (error) {
             console.error('Error uploading avatar:', error);
             throw error;
+        }
+    },
+
+    changePassword: async (data: ChangePasswordData): Promise<void> => {
+        try {
+            await api.post('/auth/change-password', data);
+        } catch (error: any) {
+            console.error('Error changing password:', error);
+            throw new Error(error.response?.data?.error || 'Failed to change password');
         }
     }
 };
