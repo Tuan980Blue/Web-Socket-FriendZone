@@ -7,6 +7,15 @@ interface ErrorResponse {
     error: string;
 }
 
+interface ApiResponse<T> {
+    data: T;
+    user: User;
+    pagination?: {
+        total: number;
+        pages: number;
+    };
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 const api = axios.create({
@@ -43,8 +52,8 @@ export interface ChangePasswordData {
 export const userService = {
     getUserById: async (userId: string): Promise<User | null> => {
         try {
-            const response = await api.get(`/users/${userId}`);
-            return response.data;
+            const response = await api.get<ApiResponse<User>>(`/users/${userId}`);
+            return response.data.data;
         } catch (err) {
             const error = err as AxiosError<ErrorResponse>;
             console.error('Error fetching user:', error);
@@ -54,8 +63,8 @@ export const userService = {
     
     searchUsers: async (query: string): Promise<User[]> => {
         try {
-            const response = await api.get(`/users/search?q=${encodeURIComponent(query)}`);
-            return response.data;
+            const response = await api.get<ApiResponse<User[]>>(`/users/search?q=${encodeURIComponent(query)}`);
+            return response.data.data;
         } catch (err) {
             const error = err as AxiosError<ErrorResponse>;
             console.error('Error searching users:', error);
@@ -65,7 +74,10 @@ export const userService = {
 
     updateProfile: async (userId: string, data: UpdateProfileData): Promise<User> => {
         try {
-            const response = await api.put(`/auth/update`, data);
+            const response = await api.put<ApiResponse<User>>(`/auth/update`, data);
+            if (!response.data.user) {
+                throw new Error('User data not found in response');
+            }
             return response.data.user;
         } catch (err) {
             const error = err as AxiosError<ErrorResponse>;
@@ -79,11 +91,14 @@ export const userService = {
             const formData = new FormData();
             formData.append('avatar', file);
 
-            const response = await api.post(`/users/${userId}/avatar`, formData, {
+            const response = await api.post<ApiResponse<User>>(`/users/${userId}/avatar`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
+            if (!response.data.user) {
+                throw new Error('User data not found in response');
+            }
             return response.data.user;
         } catch (err) {
             const error = err as AxiosError<ErrorResponse>;
