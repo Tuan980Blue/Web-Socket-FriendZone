@@ -47,13 +47,17 @@ const CommentList: React.FC<CommentListProps> = ({
     }
   }, [postId, onCommentCountChange]);
 
-  useEffect(() => {
+  const initialFetch = useCallback(() => {
     if (!initialFetchDone.current && initialComments.length === 0) {
       initialFetchDone.current = true;
       setIsLoading(true);
       fetchComments(1).finally(() => setIsLoading(false));
     }
-  }, []);
+  }, [fetchComments, initialComments.length]);
+
+  useEffect(() => {
+    initialFetch();
+  }, [initialFetch]);
 
   const handleLoadMore = async () => {
     if (isLoadingMore) return;

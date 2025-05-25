@@ -7,12 +7,6 @@ interface ErrorResponse {
     error: string;
 }
 
-interface ApiError extends Error {
-    response?: {
-        data: ErrorResponse;
-    };
-}
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 const api = axios.create({
@@ -51,7 +45,8 @@ export const userService = {
         try {
             const response = await api.get(`/users/${userId}`);
             return response.data;
-        } catch (error) {
+        } catch (err) {
+            const error = err as AxiosError<ErrorResponse>;
             console.error('Error fetching user:', error);
             return null;
         }
@@ -61,7 +56,8 @@ export const userService = {
         try {
             const response = await api.get(`/users/search?q=${encodeURIComponent(query)}`);
             return response.data;
-        } catch (error) {
+        } catch (err) {
+            const error = err as AxiosError<ErrorResponse>;
             console.error('Error searching users:', error);
             return [];
         }
@@ -71,9 +67,10 @@ export const userService = {
         try {
             const response = await api.put(`/auth/update`, data);
             return response.data.user;
-        } catch (error) {
+        } catch (err) {
+            const error = err as AxiosError<ErrorResponse>;
             console.error('Error updating profile:', error);
-            throw error;
+            throw new Error(error.response?.data?.error || error.message || 'Failed to update profile');
         }
     },
 
