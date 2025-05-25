@@ -24,7 +24,7 @@ interface ProfileInfoProps {
 
 export default function ProfileInfo({ user }: ProfileInfoProps) {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const { isCurrentUser } = useProfileData(user.id);
+  const {isCurrentUser} = useProfileData(user.id);
 
   const formatDate = (dateString: string | Date | undefined) => {
     if (!dateString) return 'N/A';
