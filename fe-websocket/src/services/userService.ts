@@ -7,6 +7,12 @@ interface ErrorResponse {
     error: string;
 }
 
+interface ApiError extends Error {
+    response?: {
+        data: ErrorResponse;
+    };
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 const api = axios.create({
