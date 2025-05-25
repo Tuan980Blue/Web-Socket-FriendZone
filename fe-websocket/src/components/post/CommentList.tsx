@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button, Loader } from '@mantine/core';
 import { Comment } from '@/types/post';
 import { getPostComments } from '@/services/postService';
@@ -23,8 +23,9 @@ const CommentList: React.FC<CommentListProps> = ({
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const initialFetchDone = useRef(false);
 
-  const fetchComments = async (pageNum: number, isLoadMore = false) => {
+  const fetchComments = useCallback(async (pageNum: number, isLoadMore = false) => {
     try {
       const response = await getPostComments(postId, pageNum);
       const newComments = response.data.comments;
@@ -44,14 +45,19 @@ const CommentList: React.FC<CommentListProps> = ({
         color: 'red',
       });
     }
-  };
+  }, [postId, onCommentCountChange]);
 
-  useEffect(() => {
-    if (!initialComments.length) {
+  const initialFetch = useCallback(() => {
+    if (!initialFetchDone.current && initialComments.length === 0) {
+      initialFetchDone.current = true;
       setIsLoading(true);
       fetchComments(1).finally(() => setIsLoading(false));
     }
-  }, [postId]);
+  }, [fetchComments, initialComments.length]);
+
+  useEffect(() => {
+    initialFetch();
+  }, [initialFetch]);
 
   const handleLoadMore = async () => {
     if (isLoadingMore) return;
