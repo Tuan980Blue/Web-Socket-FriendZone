@@ -1,21 +1,22 @@
-import { 
-  FaUser, 
-  FaEnvelope, 
-  FaGlobe, 
-  FaMapMarkerAlt, 
-  FaBirthdayCake, 
-  FaPhone, 
-  FaUserFriends, 
-  FaImage, 
-  FaClock, 
-  FaLock, 
-  FaGlobeAmericas 
+import {
+  FaUser,
+  FaEnvelope,
+  FaGlobe,
+  FaMapMarkerAlt,
+  FaBirthdayCake,
+  FaPhone,
+  FaUserFriends,
+  FaImage,
+  FaClock,
+  FaLock,
+  FaGlobeAmericas
 } from 'react-icons/fa';
 import { User } from '@/types/user';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ChangePasswordModal from './ChangePasswordModal';
+import {useProfileData} from "@/hooks/useProfileData";
 
 interface ProfileInfoProps {
   user: User;
@@ -23,6 +24,7 @@ interface ProfileInfoProps {
 
 export default function ProfileInfo({ user }: ProfileInfoProps) {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const { isCurrentUser } = useProfileData(user.id);
 
   const formatDate = (dateString: string | Date | undefined) => {
     if (!dateString) return 'N/A';
@@ -69,7 +71,7 @@ export default function ProfileInfo({ user }: ProfileInfoProps) {
   ];
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -157,19 +159,23 @@ export default function ProfileInfo({ user }: ProfileInfoProps) {
           </motion.div>
         )}
 
-        {/* Security Section */}
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Security</h3>
-          <button
-            onClick={() => setIsPasswordModalOpen(true)}
-            className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-            </svg>
-            <span>Change Password</span>
-          </button>
-        </div>
+        {isCurrentUser && (
+            <>
+              {/* Security Section */}
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Security</h3>
+                <button
+                    onClick={() => setIsPasswordModalOpen(true)}
+                    className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                  </svg>
+                  <span>Change Password</span>
+                </button>
+              </div>
+            </>
+        )}
 
         {/* Change Password Modal */}
         <ChangePasswordModal
