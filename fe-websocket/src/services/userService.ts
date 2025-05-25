@@ -110,7 +110,8 @@ export const userService = {
     changePassword: async (data: ChangePasswordData): Promise<void> => {
         try {
             await api.post('/auth/change-password', data);
-        } catch (error: any) {
+        } catch (err) {
+            const error = err as AxiosError<ErrorResponse>;
             console.error('Error changing password:', error);
             throw new Error(error.response?.data?.error || 'Failed to change password');
         }
