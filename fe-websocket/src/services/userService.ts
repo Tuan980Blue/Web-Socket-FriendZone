@@ -1,7 +1,11 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import {Gender, User} from "@/types/user";
 
 export type { User };
+
+interface ErrorResponse {
+    error: string;
+}
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
@@ -78,9 +82,10 @@ export const userService = {
                 },
             });
             return response.data.user;
-        } catch (error) {
+        } catch (err) {
+            const error = err as AxiosError<ErrorResponse>;
             console.error('Error uploading avatar:', error);
-            throw error;
+            throw new Error(error.response?.data?.error || error.message || 'Failed to upload avatar');
         }
     },
 

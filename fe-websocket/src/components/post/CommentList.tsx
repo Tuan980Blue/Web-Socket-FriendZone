@@ -47,11 +47,11 @@ const CommentList: React.FC<CommentListProps> = ({
   };
 
   useEffect(() => {
-    if (!initialComments.length) {
+    if (initialComments.length === 0) {
       setIsLoading(true);
       fetchComments(1).finally(() => setIsLoading(false));
     }
-  }, [postId]);
+  }, [postId, fetchComments, initialComments.length]);
 
   const handleLoadMore = async () => {
     if (isLoadingMore) return;
