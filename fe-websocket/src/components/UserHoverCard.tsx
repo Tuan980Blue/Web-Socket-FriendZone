@@ -1,10 +1,10 @@
 import { Avatar, HoverCard, Text, Group, Stack, useMantineTheme } from '@mantine/core';
-import { User } from '@/types/user';
+import { UserInContext } from '@/types/user';
 import { ReactNode } from 'react';
 import { useMediaQuery } from '@mantine/hooks';
 
 interface UserHoverCardProps {
-  user: User | null;
+  user: UserInContext | null;
   children?: ReactNode;
 }
 

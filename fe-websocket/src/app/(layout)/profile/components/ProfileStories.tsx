@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { IconPlus } from '@tabler/icons-react';
-import { User } from '@/types/user';
+import { UserInContext } from '@/types/user';
 
 interface ProfileStoriesProps {
-  user: User;
+  user: UserInContext;
 }
 
 export default function ProfileStories({ user }: ProfileStoriesProps) {

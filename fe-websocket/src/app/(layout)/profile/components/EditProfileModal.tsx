@@ -2,7 +2,7 @@ import { Modal, TextInput, Textarea, Button, Stack, Group, Avatar, Text, Divider
 import { useForm } from '@mantine/form';
 import { IconCamera } from '@tabler/icons-react';
 import { useState, useRef } from 'react';
-import { User, Gender } from '@/types/user';
+import { UserInContext, Gender } from '@/types/user';
 import { useUserData } from '@/hooks/useUserData';
 import { userService } from '@/services/userService';
 import { notifications } from '@mantine/notifications';
@@ -11,8 +11,8 @@ import { DateInput } from '@mantine/dates';
 interface EditProfileModalProps {
     opened: boolean;
     onClose: () => void;
-    user: User;
-    onUpdateUser: (updatedUser: User) => void;
+    user: UserInContext;
+    onUpdateUser: (updatedUser: UserInContext) => void;
 }
 
 interface FormValues {

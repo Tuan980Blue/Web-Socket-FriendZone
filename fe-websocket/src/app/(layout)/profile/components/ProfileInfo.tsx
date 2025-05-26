@@ -11,7 +11,7 @@ import {
   FaLock,
   FaGlobeAmericas
 } from 'react-icons/fa';
-import { User } from '@/types/user';
+import { UserInContext } from '@/types/user';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
@@ -19,7 +19,7 @@ import ChangePasswordModal from './ChangePasswordModal';
 import {useProfileData} from "@/hooks/useProfileData";
 
 interface ProfileInfoProps {
-  user: User;
+  user: UserInContext;
 }
 
 export default function ProfileInfo({ user }: ProfileInfoProps) {
