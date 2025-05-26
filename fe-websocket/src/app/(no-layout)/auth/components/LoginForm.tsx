@@ -159,7 +159,7 @@ export default function LoginForm() {
         setLoading(false);
       }
     }
-  }, [mounted, router, setUser]);
+  }, [mounted, router, setUser, form]);
 
   const handleGoogleSuccess = useCallback(async (response: GoogleLoginResponse) => {
     if (!mounted) return;
