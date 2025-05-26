@@ -28,9 +28,14 @@ export interface User {
   role: UserRole;
 }
 
+// Type for user in context and API responses
+export type UserInContext = Omit<User, 'password'> & {
+  password?: string; // Make password optional
+};
+
 export interface UserContextType {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: UserInContext | null;
+  setUser: (user: UserInContext | null) => void;
   isLoading: boolean;
   error: string | null;
 } 
