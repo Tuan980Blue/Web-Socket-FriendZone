@@ -14,7 +14,6 @@ export default function RegisterForm() {
 
     const form = useForm({
         initialValues: {
-            username: '',
             email: '',
             password: '',
             confirmPassword: '',
@@ -23,8 +22,28 @@ export default function RegisterForm() {
             birthDate: null as Date | null,
         },
         validate: {
-            username: (value) => (value.length < 3 ? 'Username must be at least 3 characters' : null),
-            email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+            email: (value) => {
+                // Check if email is empty
+                if (!value) return 'Email is required';
+                
+                // Check for whitespace
+                if (/\s/.test(value)) return 'Email cannot contain spaces';
+                
+                // Check email length (max 254 characters as per RFC 5321)
+                if (value.length > 254) return 'Email is too long';
+                
+                // Check for basic email format
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Invalid email format';
+                
+                // Check for valid domain (at least one dot after @)
+                if (!value.split('@')[1]?.includes('.')) return 'Invalid email domain';
+                
+                // Check for valid characters
+                if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) 
+                    return 'Email contains invalid characters';
+                
+                return null;
+            },
             password: (value) => (value.length < 6 ? 'Password must be at least 6 characters' : null),
             confirmPassword: (value, values) =>
                 value !== values.password ? 'Passwords do not match' : null,
@@ -39,8 +58,13 @@ export default function RegisterForm() {
             setLoading(true);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {confirmPassword, ...registerData} = values;
+            
+            // Extract username from email (everything before @)
+            const username = values.email.split('@')[0];
+            
             await auth.register({
                 ...registerData,
+                username,
                 birthDate: registerData.birthDate?.toISOString() || null,
             });
 
@@ -90,27 +114,15 @@ export default function RegisterForm() {
                     {...form.getInputProps('fullName')}
                     styles={inputStyles}
                 />
-                <SimpleGrid cols={{base: 1, sm: 2}} spacing="sm">
-                    <TextInput
-                        required
-                        size="sm"
-                        label="Username"
-                        placeholder="Choose a username"
-                        radius="md"
-                        {...form.getInputProps('username')}
-                        styles={inputStyles}
-                    />
-
-                    <TextInput
-                        required
-                        size="sm"
-                        label="Email"
-                        placeholder="Enter your email"
-                        radius="md"
-                        {...form.getInputProps('email')}
-                        styles={inputStyles}
-                    />
-                </SimpleGrid>
+                <TextInput
+                    required
+                    size="sm"
+                    label="Email"
+                    placeholder="Enter your email"
+                    radius="md"
+                    {...form.getInputProps('email')}
+                    styles={inputStyles}
+                />
 
                 <SimpleGrid cols={{base: 1, sm: 2}} spacing="sm">
                     <PasswordInput
