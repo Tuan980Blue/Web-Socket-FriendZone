@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
-import { User } from '@/types/user';
+import { UserInContext } from '@/types/user';
 import { useUserData } from './useUserData';
 import { profileService } from '@/services/profileService';
 
 interface UseProfileDataReturn {
-  profileUser: User | null;
+  profileUser: UserInContext | null;
   isLoading: boolean;
   error: string | null;
   isCurrentUser: boolean;
-  updateProfile: (data: Partial<User>) => Promise<void>;
+  updateProfile: (data: Partial<UserInContext>) => Promise<void>;
   updateAvatar: (file: File) => Promise<void>;
   updateCover: (file: File) => Promise<void>;
 }
 
 export const useProfileData = (userId: string | undefined): UseProfileDataReturn => {
   const { user: currentUser, isLoading: isCurrentUserLoading } = useUserData();
-  const [profileUser, setProfileUser] = useState<User | null>(null);
+  const [profileUser, setProfileUser] = useState<UserInContext | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +46,7 @@ export const useProfileData = (userId: string | undefined): UseProfileDataReturn
 
   const isCurrentUser = currentUser?.id === userId || (!userId || userId === 'profile');
 
-  const updateProfile = async (data: Partial<User>) => {
+  const updateProfile = async (data: Partial<UserInContext>) => {
     if (!profileUser) return;
     try {
       const updatedUser = await profileService.updateProfile(profileUser.id, data);
