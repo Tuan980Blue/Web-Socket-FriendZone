@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useProfileData } from '@/hooks/useProfileData';
 import { useFollows } from '@/hooks/useFollows';
-import { User } from '@/types/user';
+import { UserInContext } from '@/types/user';
 
 // Components
 import ProfileHero from '../components/ProfileHero';
@@ -24,7 +24,7 @@ export default function ProfilePageClient({ userId }: Props) {
     const [activeTab, setActiveTab] = useState('posts');
     const [forceUpdate, setForceUpdate] = useState(0);
     const [isFollowingLoading, setIsFollowingLoading] = useState(false);
-    const [localUser, setLocalUser] = useState<User | null>(null);
+    const [localUser, setLocalUser] = useState<UserInContext | null>(null);
 
     const { profileUser, isLoading, error, isCurrentUser } = useProfileData(userId);
     const { handleFollow, handleUnfollow } = useFollows();

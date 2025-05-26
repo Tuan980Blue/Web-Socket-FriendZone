@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import {User} from '@/types/user';
+import {UserInContext} from '@/types/user';
 import {Button, Modal, Group, Stack, Image as MantineImage, Avatar, Menu} from "@mantine/core";
 import {IconCamera, IconUserPlus, IconEdit, IconLink, IconShare} from "@tabler/icons-react";
 import {RiUserFollowLine} from "react-icons/ri";
@@ -13,9 +13,9 @@ import { useRouter } from 'next/navigation';
 import EditProfileModal from './EditProfileModal';
 
 interface ProfileHeroProps {
-    user: User;
+    user: UserInContext;
     isCurrentUser: boolean;
-    onUpdateUser?: (updatedUser: User) => void;
+    onUpdateUser?: (updatedUser: UserInContext) => void;
     onFollow?: () => Promise<void>;
     onUnfollow?: () => Promise<void>;
     isFollowingLoading?: boolean;
