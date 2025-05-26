@@ -24,6 +24,7 @@ model User {
   updatedAt      DateTime   @updatedAt
   isPrivate      Boolean    @default(false)
   isBanned       Boolean    @default(false)
+  isGoogleAccount Boolean   @default(false)
   website        String?
   location       String?
   phoneNumber    String?
