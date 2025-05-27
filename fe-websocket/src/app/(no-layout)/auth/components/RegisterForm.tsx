@@ -6,7 +6,7 @@ import {notifications} from '@mantine/notifications';
 import {auth} from '@/services/api';
 import {useRouter} from 'next/navigation';
 import {AxiosError} from 'axios';
-import {IconBrandGoogle, IconBrandFacebook} from '@tabler/icons-react';
+import {IconBrandGoogle} from '@tabler/icons-react';
 import {GoogleOAuthProvider, useGoogleLogin} from '@react-oauth/google';
 import {useUserData} from '@/hooks/useUserData';
 import CreatePasswordModal from './CreatePasswordModal';
@@ -314,25 +314,9 @@ export default function RegisterForm() {
                         <Divider w={80}/>
                     </Group>
 
-                    <SimpleGrid cols={{base: 1, md: 2}} spacing="sm">
+                    <Group grow>
                         <CustomGoogleLogin onSuccess={handleGoogleSuccess} />
-                        <Button
-                            variant="default"
-                            size="sm"
-                            radius="md"
-                            leftSection={<IconBrandFacebook style={{width: rem(16), height: rem(16), color: "blue"}}/>}
-                            styles={{
-                                root: {
-                                    borderColor: 'var(--border)',
-                                    '&:hover': {
-                                        backgroundColor: 'var(--background)',
-                                    },
-                                },
-                            }}
-                        >
-                            Facebook
-                        </Button>
-                    </SimpleGrid>
+                    </Group>
 
                     <Group justify="center" mt="xs">
                         <Text size="xs" c="dimmed">
