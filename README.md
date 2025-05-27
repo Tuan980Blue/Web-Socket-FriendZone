@@ -11,7 +11,7 @@
 - 📡 **Trạng thái người dùng** – Ai đang online/offline?.
 - 📝 **Cập nhật trạng thái** – Chia sẻ cảm xúc, hình ảnh, hay bất cứ điều gì bạn muốn.
 - 🔒 **Xác thực người dùng** – Bảo mật bằng JWT.
-- 📱 **Responsive UI** – Giao diện đẹp, mượt mà trên mọi thiết bị.
+- 📱 **Responsive UI** – Giao diện mượt mà trên mọi thiết bị.
 
 ## 🧱 Công nghệ sử dụng
 
