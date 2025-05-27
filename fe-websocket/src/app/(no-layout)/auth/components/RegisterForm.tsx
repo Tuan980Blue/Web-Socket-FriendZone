@@ -314,9 +314,9 @@ export default function RegisterForm() {
                         <Divider w={80}/>
                     </Group>
 
-                    <SimpleGrid cols={{base: 1, md: 2}} spacing="sm">
+                    <Group grow>
                         <CustomGoogleLogin onSuccess={handleGoogleSuccess} />
-                    </SimpleGrid>
+                    </Group>
 
                     <Group justify="center" mt="xs">
                         <Text size="xs" c="dimmed">
