@@ -272,6 +272,34 @@ class UserService {
     });
   }
 
+  // Reset password (for OTP-based password reset)
+  async resetPassword(id, newPassword) {
+    // Validate new password
+    this.validatePassword(newPassword);
+
+    // Get current user with password
+    const user = await this.findById(id, true);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Check if new password is different from current password
+    const isSamePassword = await this.comparePassword(newPassword, user.password);
+    if (isSamePassword) {
+      throw new Error('New password must be different from current password');
+    }
+    
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    return prisma.user.update({
+      where: { id },
+      data: {
+        password: hashedPassword,
+        updatedAt: new Date()
+      }
+    });
+  }
+
 }
 
 module.exports = new UserService(); 

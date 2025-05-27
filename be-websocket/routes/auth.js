@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const userService = require('../services/userService');
 const auth = require('../middleware/auth');
+const OTPService = require('../services/otpService');
+const { OTPType } = require('@prisma/client');
 
 // Google OAuth Login
 router.post('/google-login', async (req, res) => {
@@ -234,11 +236,63 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(404).json({ error: 'No account found with this email' });
     }
 
-    // TODO: Generate reset token and send email
-    // For now, just return success
-    res.json({ message: 'Password reset instructions sent to your email' });
+    // Send OTP for password reset
+    await OTPService.createAndSendOTP(email, OTPType.RESET_PASSWORD);
+
+    res.json({ 
+      message: 'Password reset OTP has been sent to your email',
+      email: email // Return email for frontend to use in reset password form
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Forgot password error:', error);
+    res.status(400).json({ error: error.message || 'Failed to process password reset request' });
+  }
+});
+
+// Reset Password with OTP
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ 
+        error: 'Email, OTP and new password are required' 
+      });
+    }
+
+    // Verify OTP without marking it as used
+    const { isValid, otp: otpRecord } = await OTPService.verifyOTP(email, otp, OTPType.RESET_PASSWORD);
+    if (!isValid) {
+      return res.status(400).json({ error: 'OTP không hợp lệ hoặc đã hết hạn' });
+    }
+
+    // Find user
+    const user = await userService.findByEmail(email);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    try {
+      // Reset password using the new function
+      await userService.resetPassword(user.id, newPassword);
+      
+      // Only mark OTP as used after password is successfully updated
+      await OTPService.markOTPAsUsed(otpRecord.id);
+
+      res.json({ message: 'Password has been reset successfully' });
+    } catch (error) {
+      // If password update fails, OTP remains valid for retry
+      if (error.message.includes('Password must')) {
+        return res.status(400).json({ 
+          error: error.message,
+          otpValid: true // Tell frontend that OTP is still valid
+        });
+      }
+      throw error; // Re-throw other errors
+    }
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(400).json({ error: error.message || 'Failed to reset password' });
   }
 });
 
