@@ -25,6 +25,7 @@ model User {
   isPrivate      Boolean    @default(false)
   isBanned       Boolean    @default(false)
   isGoogleAccount Boolean   @default(false)
+  isEmailVerified Boolean   @default(false)
   website        String?
   location       String?
   phoneNumber    String?
@@ -249,6 +250,18 @@ model Hashtag {
   story   Story?  @relation(fields: [storyId], references: [id])
 }
 
+model OTP {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  code      String
+  type      OTPType
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  isUsed    Boolean  @default(false)
+
+  @@index([email, type])
+}
+
 enum UserStatus {
   ONLINE
   OFFLINE
@@ -282,4 +295,9 @@ enum UserRole {
   USER
   ADMIN
   MODERATOR
+}
+
+enum OTPType {
+  EMAIL_VERIFICATION
+  RESET_PASSWORD
 }

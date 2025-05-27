@@ -12,6 +12,7 @@ const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
 const uploadRoutes = require('./routes/upload');
 const postRoutes = require('./routes/post');
+const otpRoutes = require('./routes/otp');
 const SocketService = require('./services/socketService');
 const prisma = require('./prisma/client');
 
@@ -35,6 +36,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/otp', otpRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
