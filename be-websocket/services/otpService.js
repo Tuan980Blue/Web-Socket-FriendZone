@@ -11,6 +11,9 @@ class OTPService {
   // Create and send OTP
   static async createAndSendOTP(email, type) {
     try {
+      // Clean up old OTPs for this email and type
+      await this.cleanupOldOTPsForEmail(email, type);
+      
       // Generate OTP
       const otp = this.generateOTP();
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
@@ -65,6 +68,9 @@ class OTPService {
         return { isValid: false, otp: null };
       }
 
+      // Clean up expired OTPs after verification
+      await this.cleanupExpiredOTPs();
+
       return { isValid: true, otp };
     } catch (error) {
       console.error('Error in verifyOTP:', error);
@@ -99,6 +105,42 @@ class OTPService {
       });
     } catch (error) {
       console.error('Error in cleanupExpiredOTPs:', error);
+      throw error;
+    }
+  }
+
+  // Clean up old OTPs for specific email and type
+  static async cleanupOldOTPsForEmail(email, type) {
+    try {
+      // Keep only the latest OTP for this email and type
+      const latestOTP = await prisma.oTP.findFirst({
+        where: {
+          email,
+          type,
+          isUsed: false,
+          expiresAt: {
+            gt: new Date(),
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      if (latestOTP) {
+        // Delete all other OTPs for this email and type
+        await prisma.oTP.deleteMany({
+          where: {
+            email,
+            type,
+            id: {
+              not: latestOTP.id,
+            },
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Error in cleanupOldOTPsForEmail:', error);
       throw error;
     }
   }
