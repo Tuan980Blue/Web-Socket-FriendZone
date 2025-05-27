@@ -6,7 +6,7 @@ import { auth } from '@/services/api';
 import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { useUserData } from '@/hooks/useUserData';
-import { IconBrandGoogle, IconBrandFacebook } from '@tabler/icons-react';
+import { IconBrandGoogle } from '@tabler/icons-react';
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import CreatePasswordModal from './CreatePasswordModal';
 import { UserInContext, convertUserInContextToUser } from '@/types/user';
@@ -265,22 +265,6 @@ export default function LoginForm() {
 
           <Group grow>
             <CustomGoogleLogin onSuccess={handleGoogleSuccess} />
-            <Button
-              variant="default"
-              size="sm"
-              radius="md"
-              leftSection={<IconBrandFacebook style={{ width: rem(16), height: rem(16), color: "blue"}} />}
-              styles={{
-                root: {
-                  borderColor: 'var(--border)',
-                  '&:hover': {
-                    backgroundColor: 'var(--background)',
-                  },
-                },
-              }}
-            >
-              Facebook
-            </Button>
           </Group>
 
           <Group justify="center" mt="xs">
