@@ -64,7 +64,20 @@ export const userService = {
     searchUsers: async (query: string): Promise<User[]> => {
         try {
             const response = await api.get<ApiResponse<User[]>>(`/users/search?q=${encodeURIComponent(query)}`);
-            return response.data.data;
+            
+            // Kiểm tra nếu response.data là array trực tiếp
+            if (Array.isArray(response.data)) {
+                return response.data;
+            }
+            
+            // Kiểm tra nếu response.data có thuộc tính data
+            if (response.data && response.data.data) {
+                return response.data.data;
+            }
+            
+            // Nếu không có format nào khớp, log lỗi và trả về mảng rỗng
+            console.error('Unexpected API response format:', response.data);
+            return [];
         } catch (err) {
             const error = err as AxiosError<ErrorResponse>;
             console.error('Error searching users:', error);

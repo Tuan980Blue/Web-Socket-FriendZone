@@ -24,7 +24,6 @@ const NewChatModal: React.FC<NewChatModalProps> = ({
     onSearch,
     onStartNewChat
 }) => {
-    
     return (
         <Modal
             opened={opened}
@@ -74,7 +73,7 @@ const NewChatModal: React.FC<NewChatModalProps> = ({
             </div>
 
             <div className="max-h-80 overflow-y-auto custom-scrollbar">
-                {searchResults.length > 0 ? (
+                {searchResults && searchResults.length > 0 ? (
                     <div className="space-y-2">
                         {searchResults.map((user) => (
                             <div

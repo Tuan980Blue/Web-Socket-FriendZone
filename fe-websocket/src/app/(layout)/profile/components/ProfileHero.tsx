@@ -105,7 +105,7 @@ export default function ProfileHero({user, isCurrentUser, onUpdateUser = () => {
             fullName: user.fullName || user.username,
             status: user.status || 'OFFLINE'
         };
-        const encodedData = btoa(JSON.stringify(userData));
+        const encodedData = btoa(encodeURIComponent(JSON.stringify(userData)));
         router.push(`/messages?user=${encodedData}`);
     };
 

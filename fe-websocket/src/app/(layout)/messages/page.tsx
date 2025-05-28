@@ -42,6 +42,14 @@ const Page = () => {
     const [searchResults, setSearchResults] = useState<User[]>([]);
     const [isSearching, setIsSearching] = useState(false);
 
+    // Reset search state when modal is closed
+    const handleCloseModal = () => {
+        setNewChatModalOpen(false);
+        setSearchQuery('');
+        setSearchResults([]);
+        setIsSearching(false);
+    };
+
     // Load user data if userId is provided in URL
     useEffect(() => {
         const loadUserFromUrl = async () => {
@@ -49,7 +57,7 @@ const Page = () => {
             if (userParam && !selectedChat) {
                 try {
                     // Decode user data from base64
-                    const decodedData = JSON.parse(atob(userParam));
+                    const decodedData = JSON.parse(decodeURIComponent(atob(userParam)));
                     
                     // Check if we already have a chat with this user
                     const existingChat = chats.find((chat: Message) => 
@@ -171,7 +179,7 @@ const Page = () => {
 
             <NewChatModal 
                 opened={newChatModalOpen}
-                onClose={() => setNewChatModalOpen(false)}
+                onClose={handleCloseModal}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 searchResults={searchResults}
