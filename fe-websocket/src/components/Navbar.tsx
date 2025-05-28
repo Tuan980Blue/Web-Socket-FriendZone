@@ -58,12 +58,12 @@ const Navbar = () => {
           </Link>
 
           <Link href="/messages" className={`relative p-2 rounded-full hover:bg-[#FAFAFA] dark:hover:bg-[#121212] ${pathname === '/messages' ? 'icon-primery' : 'text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA]'}`}>
-            <MessageSquare className={"md:size-6 size-4"} />
+            <MessageSquare className={"md:size-6 size-5"} />
             <span className="absolute top-1 right-1 w-2 h-2 bg-[#ED4956] rounded-full"></span>
           </Link>
           
           <Link href="/notifications" className={`relative p-2 rounded-full hover:bg-[#FAFAFA] dark:hover:bg-[#121212] ${pathname === '/notifications' ? 'icon-primery' : 'text-[#666666] dark:text-[#A0A0A0] hover:text-[#262626] dark:hover:text-[#FAFAFA]'}`}>
-            <Bell className={"md:size-6 size-4"} />
+            <Bell className={"md:size-6 size-5"} />
             <span className="absolute top-1 right-1 w-2 h-2 bg-[#ED4956] rounded-full"></span>
           </Link>
 
@@ -76,7 +76,7 @@ const Navbar = () => {
                 <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                 >
-                  <div className="flex-shrink-0 w-6 h-6 md:w-10 md:h-10">
+                  <div className="flex-shrink-0 w-7 h-7 md:w-10 md:h-10">
                     <div className="w-full h-full rounded-full border-2 border-pink-500 flex items-center justify-center shadow-lg">
                       <Avatar
                           src={user?.avatar || '/image-person.png'}
