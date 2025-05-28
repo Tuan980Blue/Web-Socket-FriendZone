@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Home,
-  Search,
   CircleFadingPlus ,
   Users ,
   Film
@@ -18,7 +17,6 @@ const MobileNav = () => {
 
   const menuItems = [
     { icon: Home, label: 'Home', href: '/' },
-    { icon: Search, label: 'Search', href: '/search' },
     { icon: Film , label: 'Reels', href: '/reels' },
     { icon: CircleFadingPlus, label: 'Posts', href: '/posts' },
     { icon: Users , label: 'Follow', href: '/follows' },
