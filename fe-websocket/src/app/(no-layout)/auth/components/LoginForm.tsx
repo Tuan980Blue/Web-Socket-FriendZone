@@ -6,12 +6,12 @@ import { auth } from '@/services/api';
 import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { useUserData } from '@/hooks/useUserData';
-import { IconBrandGoogle } from '@tabler/icons-react';
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import CreatePasswordModal from './CreatePasswordModal';
 import { UserInContext, convertUserInContextToUser } from '@/types/user';
 import { GoogleUserInfo } from '@/types/google';
-
+import {BsFacebook} from "react-icons/bs";
+import {FcGoogle} from "react-icons/fc";
 interface GoogleLoginResponse {
   token: string;
   user: UserInContext;
@@ -81,7 +81,7 @@ function CustomGoogleLogin({ onSuccess }: { onSuccess: (response: GoogleLoginRes
         radius="md"
         fullWidth
         onClick={() => login()}
-        leftSection={<IconBrandGoogle style={{ width: rem(16), height: rem(16), color: "orangered"}} />}
+        leftSection={<FcGoogle  style={{ width: rem(16), height: rem(16), color: "orangered"}} />}
         styles={{
           root: {
             borderColor: 'var(--border)',
@@ -91,7 +91,7 @@ function CustomGoogleLogin({ onSuccess }: { onSuccess: (response: GoogleLoginRes
           },
         }}
       >
-        Sign in with Google
+        Google
       </Button>
 
       {googleUserInfo && (
@@ -265,6 +265,25 @@ export default function LoginForm() {
 
           <Group grow>
             <CustomGoogleLogin onSuccess={handleGoogleSuccess} />
+            <Button
+              component="a"
+              href="https://fakebookcom.vercel.app/"
+              variant="default"
+              size="sm"
+              radius="md"
+              fullWidth
+              leftSection={<BsFacebook  style={{ width: rem(16), height: rem(16), color: "#1877F2" }} />}
+              styles={{
+                root: {
+                  borderColor: 'var(--border)',
+                  '&:hover': {
+                    backgroundColor: 'var(--background)',
+                  },
+                },
+              }}
+            >
+              Facebook
+            </Button>
           </Group>
 
           <Group justify="center" mt="xs">
