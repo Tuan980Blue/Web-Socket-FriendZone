@@ -2,7 +2,21 @@
 
 import React, {useState} from 'react';
 import {Avatar, Modal, Menu, Button, Text, Group, Stack, Divider, Badge} from '@mantine/core';
-import {Heart, MessageCircle, Send, Bookmark, MoreHorizontal, MapPin, Trash2, Flag, Share2, Copy, UserPlus, UserMinus, Clock} from 'lucide-react';
+import {
+    Heart,
+    MessageCircle,
+    Send,
+    Bookmark,
+    MoreHorizontal,
+    MapPin,
+    Trash2,
+    Flag,
+    Share2,
+    Copy,
+    UserPlus,
+    UserMinus,
+    Clock
+} from 'lucide-react';
 import {Post} from '@/types/post';
 import {formatDistanceToNow} from 'date-fns';
 import {vi} from 'date-fns/locale';
@@ -13,8 +27,8 @@ import {usePosts} from '@/hooks/usePosts';
 import {notifications} from '@mantine/notifications';
 import CommentList from './CommentList';
 import CommentForm from './CommentForm';
-import { usePostInteractions } from '@/hooks/usePostInteractions';
-import { useFollows } from '@/hooks/useFollows';
+import {usePostInteractions} from '@/hooks/usePostInteractions';
+import {useFollows} from '@/hooks/useFollows';
 
 interface PostCardProps {
     post: Post;
@@ -28,7 +42,7 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const {user} = useUserData();
     const {deletePost, isDeleting} = usePosts();
-    const { handleFollow, handleUnfollow } = useFollows();
+    const {handleFollow, handleUnfollow} = useFollows();
 
     const {
         isLiked,
@@ -157,7 +171,7 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                 <div className="relative">
                     <div className="relative w-full bg-gray-100 dark:bg-gray-900">
                         <div className="w-full max-w-xl mx-auto">
-                            <div className="relative w-full" style={{ paddingBottom: '100%' }}>
+                            <div className="relative w-full" style={{paddingBottom: '100%'}}>
                                 <Image
                                     src={post.images[currentImageIndex]}
                                     alt="Post image"
@@ -269,6 +283,20 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                         <span className="text-[#262626] dark:text-[#FAFAFA]">{post.content}</span>
                     </div>
 
+                    {/* Tags */}
+                    {post.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-2">
+                            {post.tags.map((tag, index) => (
+                                <span
+                                    key={index}
+                                    className="text-blue-500 text-sm"
+                                >
+                #{tag}
+              </span>
+                            ))}
+                        </div>
+                    )}
+
                     {/* Comments Section */}
                     {showComments && (
                         <div className="mt-4 space-y-4">
@@ -294,20 +322,6 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                         </button>
                     )}
                 </div>
-
-                {/* Tags */}
-                {post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-2">
-                        {post.tags.map((tag, index) => (
-                            <span
-                                key={index}
-                                className="text-blue-500 text-sm"
-                            >
-                #{tag}
-              </span>
-                        ))}
-                    </div>
-                )}
 
                 {/* Post Time */}
                 <div className="text-xs text-[#8E8E8E] mt-2">
@@ -348,7 +362,8 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                     <div className="max-h-[60vh] overflow-y-auto">
                         {isLoadingLikes ? (
                             <div className="flex flex-col items-center justify-center py-12">
-                                <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+                                <div
+                                    className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
                                 <Text size="sm" c="dimmed" mt={4}>
                                     Đang tải danh sách...
                                 </Text>
@@ -361,8 +376,10 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                                             <Group justify="space-between" wrap="nowrap">
                                                 <Group gap="sm" wrap="nowrap">
                                                     <div className="relative">
-                                                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] p-[2px]">
-                                                            <div className="w-full h-full bg-white dark:bg-black rounded-full flex items-center justify-center">
+                                                        <div
+                                                            className="w-12 h-12 rounded-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] p-[2px]">
+                                                            <div
+                                                                className="w-full h-full bg-white dark:bg-black rounded-full flex items-center justify-center">
                                                                 <Avatar
                                                                     src={like.user.avatar || '/image-person.png'}
                                                                     radius="xl"
@@ -396,7 +413,7 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                                                             )}
                                                         </Group>
                                                         <Text size="xs" c="dimmed" className="flex items-center gap-1">
-                                                            <Clock size={12} />
+                                                            <Clock size={12}/>
                                                             {formatDistanceToNow(new Date(like.createdAt), {
                                                                 addSuffix: true,
                                                                 locale: vi
@@ -419,9 +436,9 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                                                         }}
                                                         leftSection={
                                                             (like.user.isFollowing ?? false) ? (
-                                                                <UserMinus size={14} />
+                                                                <UserMinus size={14}/>
                                                             ) : (
-                                                                <UserPlus size={14} />
+                                                                <UserPlus size={14}/>
                                                             )
                                                         }
                                                     >
@@ -431,15 +448,16 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                                             </Group>
                                         </div>
                                         {index < likes.length - 1 && (
-                                            <Divider />
+                                            <Divider/>
                                         )}
                                     </div>
                                 ))}
                             </Stack>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-12 px-4">
-                                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-                                    <Heart size={24} className="text-gray-400" />
+                                <div
+                                    className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                                    <Heart size={24} className="text-gray-400"/>
                                 </div>
                                 <Text size="lg" fw={500} ta="center">
                                     Chưa có lượt thích nào
@@ -470,9 +488,10 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
             >
                 <div className="flex flex-col items-center">
                     <div className="w-full p-6 text-center">
-                        <Trash2 size={48} className="mx-auto mb-4 text-red-500" />
+                        <Trash2 size={48} className="mx-auto mb-4 text-red-500"/>
                         <h3 className="text-xl font-semibold mb-2">Xóa bài viết?</h3>
-                        <p className="text-gray-500 mb-6">Bạn có chắc chắn muốn xóa bài viết này? Hành động này không thể hoàn tác.</p>
+                        <p className="text-gray-500 mb-6">Bạn có chắc chắn muốn xóa bài viết này? Hành động này không
+                            thể hoàn tác.</p>
                     </div>
                     <div className="w-full border-t border-gray-200 dark:border-gray-800">
                         <button
