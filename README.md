@@ -9,7 +9,7 @@
 - 🔥 **Giao tiếp thời gian thực** – Tin nhắn, phản hồi, và thông báo được cập nhật ngay lập tức nhờ WebSocket.
 - 👥 **Phòng chat riêng và nhóm** – Giao tiếp 1-1 hoặc theo nhóm cực kỳ mượt mà.
 - 📡 **Trạng thái người dùng** – Ai đang online/offline?.
-- 📝 **Cập nhật trạng thái** – Chia sẻ cảm xúc, hình ảnh, hay bất cứ điều gì bạn muốn.
+- 📝 **Chia sẻ trạng thái** – Chia sẻ cảm xúc, hình ảnh, hay bất cứ điều gì bạn muốn.
 - 🔒 **Xác thực người dùng** – Bảo mật bằng JWT, xác thực người dùng bằng OTP gửi về Gmail.
 - 📱 **Responsive UI** – Giao diện mượt mà trên mọi thiết bị.
 
