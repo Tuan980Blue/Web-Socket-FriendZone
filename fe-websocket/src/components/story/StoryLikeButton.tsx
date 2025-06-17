@@ -8,40 +8,44 @@ interface StoryLikeButtonProps {
   isLiked: boolean;
   likeCount: number;
   onLikeChange?: (isLiked: boolean) => void;
+  isOwnStory?: boolean;
 }
 
 const StoryLikeButton: React.FC<StoryLikeButtonProps> = ({
   storyId,
   isLiked,
   likeCount,
-  onLikeChange
+  onLikeChange,
+  isOwnStory = false
 }) => {
   const { likeStory, unlikeStory, isLikingStory, isUnlikingStory } = useStoryLikes(storyId);
   const [localIsLiked, setLocalIsLiked] = useState(isLiked);
-  const [localLikeCount, setLocalLikeCount] = useState(likeCount);
   const [error, setError] = useState<string | null>(null);
 
   // Update local state when props change
   React.useEffect(() => {
     setLocalIsLiked(isLiked);
-    setLocalLikeCount(likeCount);
   }, [isLiked, likeCount]);
 
   const handleLikeToggle = async () => {
+    // Prevent like/unlike for own stories
+    if (isOwnStory) {
+      setError('You cannot like your own story');
+      return;
+    }
+
     try {
       setError(null);
       
       if (localIsLiked) {
         // Optimistic update for unlike
         setLocalIsLiked(false);
-        setLocalLikeCount(prev => Math.max(0, prev - 1));
         
         await unlikeStory(storyId);
         onLikeChange?.(false);
       } else {
         // Optimistic update for like
         setLocalIsLiked(true);
-        setLocalLikeCount(prev => prev + 1);
         
         await likeStory(storyId);
         onLikeChange?.(true);
@@ -49,7 +53,6 @@ const StoryLikeButton: React.FC<StoryLikeButtonProps> = ({
     } catch (error) {
       // Revert optimistic update on error
       setLocalIsLiked(isLiked);
-      setLocalLikeCount(likeCount);
       setError('Failed to update like. Please try again.');
       
       console.error('Error toggling like:', error);
@@ -61,22 +64,23 @@ const StoryLikeButton: React.FC<StoryLikeButtonProps> = ({
   return (
     <div className="relative">
       <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={!isOwnStory ? { scale: 1.1 } : {}}
+        whileTap={!isOwnStory ? { scale: 0.9 } : {}}
         onClick={handleLikeToggle}
-        disabled={isLoading}
-        className="flex items-center space-x-2 text-white hover:text-red-400 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-        title={localIsLiked ? 'Unlike story' : 'Like story'}
-        aria-label={localIsLiked ? 'Unlike story' : 'Like story'}
+        disabled={isLoading || isOwnStory}
+        className={`flex items-center space-x-2 transition-colors duration-200 ${
+          isOwnStory 
+            ? 'text-gray-400 cursor-not-allowed opacity-50' 
+            : 'text-white hover:text-red-400 disabled:opacity-50 disabled:cursor-not-allowed'
+        }`}
+        title={isOwnStory ? 'You cannot like your own story' : (localIsLiked ? 'Unlike story' : 'Like story')}
+        aria-label={isOwnStory ? 'You cannot like your own story' : (localIsLiked ? 'Unlike story' : 'Like story')}
         aria-pressed={localIsLiked}
       >
         {localIsLiked ? (
           <IconHeartFilled className="w-6 h-6 text-red-500" />
         ) : (
           <IconHeart className="w-6 h-6" />
-        )}
-        {localLikeCount > 0 && (
-          <span className="text-sm font-medium">{localLikeCount}</span>
         )}
       </motion.button>
       
