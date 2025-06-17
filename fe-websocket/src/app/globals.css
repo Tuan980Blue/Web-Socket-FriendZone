@@ -76,3 +76,48 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: var(--text-secondary);
 }
+
+/* Hide scrollbar for story section */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Story progress bar animation */
+@keyframes story-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.story-progress {
+  animation: story-progress 5s linear;
+}
+
+/* Story hover effects */
+.story-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.story-item:hover {
+  transform: scale(1.05);
+}
+
+/* Story gradient border */
+.story-gradient {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .story-gradient {
+    background: linear-gradient(45deg, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #0abde3 75%, #54a0ff 100%);
+  }
+}

@@ -21,7 +21,7 @@ const generateNotificationContent = (type, data) => {
             case 'STORY_VIEW':
                 return `${parsedData.viewerFullName || parsedData.viewerUsername} đã xem story của bạn`;
             case 'STORY_REACTION':
-                return `${parsedData.reactorFullName || parsedData.reactorUsername} đã phản ứng với story của bạn`;
+                return `${parsedData.reactorFullName || parsedData.reactorUsername} đã thích story của bạn`;
             default:
                 return 'Bạn có thông báo mới';
         }

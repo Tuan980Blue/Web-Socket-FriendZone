@@ -5,6 +5,7 @@ export interface UploadResponse {
   success: boolean;
   secure_url: string;
   public_id: string;
+  url?: string;
 }
 
 export interface Post {
@@ -90,6 +91,43 @@ class UploadService {
         throw error;
       }
       throw new UploadError('Failed to upload image');
+    }
+  }
+
+  async uploadFile(file: File): Promise<UploadResponse> {
+    if (!file) {
+      throw new UploadError('No file provided');
+    }
+
+    // Check if file is image, video, or audio
+    const isValidType = file.type.startsWith('image/') || 
+                       file.type.startsWith('video/') || 
+                       file.type.startsWith('audio/');
+    
+    if (!isValidType) {
+      throw new UploadError('File must be an image, video, or audio');
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await api.post<UploadResponse>('/upload/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      // Add URL field for compatibility
+      return {
+        ...response.data,
+        url: response.data.secure_url
+      };
+    } catch (error) {
+      if (error instanceof UploadError) {
+        throw error;
+      }
+      throw new UploadError('Failed to upload file');
     }
   }
 
