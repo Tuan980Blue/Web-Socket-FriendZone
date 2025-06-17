@@ -726,6 +726,14 @@ const likeStory = async (req, res) => {
             });
         }
 
+        // Prevent story owner from liking their own story
+        if (story.authorId === userId) {
+            return res.status(400).json({
+                success: false,
+                error: 'You cannot like your own story',
+            });
+        }
+
         // Check if user already liked the story
         const existingLike = await prisma.storyLike.findUnique({
             where: {
@@ -847,6 +855,7 @@ const unlikeStory = async (req, res) => {
 const getStoryLikes = async (req, res) => {
     try {
         const {id} = req.params;
+        const userId = req.user.id;
         const currentTime = new Date();
 
         // Check if story exists and is not expired
@@ -863,6 +872,14 @@ const getStoryLikes = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 error: 'Story not found or has expired',
+            });
+        }
+
+        // Only story owner can view detailed like information
+        if (story.authorId !== userId) {
+            return res.status(403).json({
+                success: false,
+                error: 'Only story owner can view detailed like information',
             });
         }
 
@@ -906,6 +923,7 @@ const getStoryLikes = async (req, res) => {
 const getStoryViews = async (req, res) => {
     try {
         const {id} = req.params;
+        const userId = req.user.id;
         const currentTime = new Date();
 
         // Check if story exists and is not expired
@@ -932,6 +950,14 @@ const getStoryViews = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 error: 'Story not found or has expired',
+            });
+        }
+
+        // Only story owner can view detailed view information
+        if (story.authorId !== userId) {
+            return res.status(403).json({
+                success: false,
+                error: 'Only story owner can view detailed view information',
             });
         }
 

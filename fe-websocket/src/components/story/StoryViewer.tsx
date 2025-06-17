@@ -4,7 +4,7 @@ import { IconX, IconMessage, IconShare, IconChevronLeft, IconChevronRight, IconP
 import { Story } from '@/types/story';
 import { User } from '@/types/user';
 import StoryLikeButton from './StoryLikeButton';
-import StoryViewStats from './StoryViewStats';
+import StoryInsights from './StoryInsights';
 import HighlightManager from './HighlightManager';
 import { useRecordStoryView, useStories } from '@/hooks/useStories';
 
@@ -503,19 +503,25 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
               onClick={(e) => e.stopPropagation()}
             />
             
-            {/* Like Button */}
-            <StoryLikeButton
-              storyId={currentStory.id}
-              isLiked={isLiked}
-              likeCount={currentStory.likeCount || 0}
-              onLikeChange={handleLikeChange}
-            />
+            {/* Like Button - CHỈ hiển thị cho story của người khác */}
+            {!isOwnStory && (
+              <StoryLikeButton
+                storyId={currentStory.id}
+                isLiked={isLiked}
+                likeCount={currentStory.likeCount || 0}
+                onLikeChange={handleLikeChange}
+                isOwnStory={isOwnStory}
+              />
+            )}
             
-            {/* View Stats Button */}
-            <StoryViewStats
-              storyId={currentStory.id}
-              viewCount={currentStory.viewCount || 0}
-            />
+            {/* Story Insights Button - CHỈ cho chủ story */}
+            {isOwnStory && (
+              <StoryInsights
+                storyId={currentStory.id}
+                viewCount={currentStory.viewCount || 0}
+                likeCount={currentStory.likeCount || 0}
+              />
+            )}
             
             {/* Highlights Button (only for own stories) */}
             {currentUser?.id === currentStory.authorId && (
