@@ -7,7 +7,8 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "postinstall": "prisma generate",
-    "push": "prisma db push"
+    "push": "prisma db push",
+    "cleanup-stories": "node scripts/cleanupExpiredStories.js"
   },
   "keywords": [],
   "author": "",
