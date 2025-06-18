@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IconX, IconUpload, IconMapPin, IconHash, IconAt, IconPalette, IconAlertCircle } from '@tabler/icons-react';
 import { CreateStoryData } from '@/types/story';
+import { uploadService } from '@/services/uploadService';
 
 interface AddStoryModalProps {
   isOpen: boolean;
@@ -84,8 +85,7 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({ isOpen, onClose, onAddSto
       // Create preview URL
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
-      setMediaUrl(url);
-      
+
       // Auto-detect media type
       if (ALLOWED_IMAGE_TYPES.includes(file.type)) {
         setMediaType('IMAGE');
@@ -95,28 +95,26 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({ isOpen, onClose, onAddSto
         setMediaType('AUDIO');
       }
 
-      // Simulate upload progress (replace with actual upload logic)
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return 90;
-          }
-          return prev + 10;
-        });
-      }, 100);
-
-      // Simulate upload completion
-      setTimeout(() => {
-        setUploadProgress(100);
+      // Upload file to server and get real URL
+      // For now, only upload images since backend only supports images
+      if (ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        const uploadRes = await uploadService.uploadImage(file);
+        setMediaUrl(uploadRes.secure_url);
         setIsUploading(false);
-        clearInterval(progressInterval);
-      }, 1000);
-
+        setUploadProgress(100);
+      } else {
+        // For video/audio, just use blob URL for now
+        setMediaUrl(url);
+        setIsUploading(false);
+        setUploadProgress(100);
+        setValidationErrors(['Video and audio upload not supported yet. Please use images only.']);
+      }
     } catch (error) {
-      setValidationErrors(['Failed to process file. Please try again.']);
+      setValidationErrors(['Failed to upload file. Please try again.']);
       setIsUploading(false);
       setUploadProgress(0);
+      setMediaUrl('');
+      setPreviewUrl('');
       console.log(error);
     }
   }, [cleanupPreviewUrl, validateFile]);
