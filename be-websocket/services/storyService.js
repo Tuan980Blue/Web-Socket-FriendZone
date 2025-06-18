@@ -855,6 +855,15 @@ const unlikeStory = async (req, res) => {
 const getStoryLikes = async (req, res) => {
     try {
         const {id} = req.params;
+        
+        // Check if user is authenticated
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({
+                success: false,
+                error: 'Authentication required',
+            });
+        }
+        
         const userId = req.user.id;
         const currentTime = new Date();
 
@@ -923,6 +932,15 @@ const getStoryLikes = async (req, res) => {
 const getStoryViews = async (req, res) => {
     try {
         const {id} = req.params;
+        
+        // Check if user is authenticated
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({
+                success: false,
+                error: 'Authentication required',
+            });
+        }
+        
         const userId = req.user.id;
         const currentTime = new Date();
 
