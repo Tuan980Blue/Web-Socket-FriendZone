@@ -29,11 +29,11 @@ router.get('/user/:userId', getUserStories);
 // Story like routes
 router.post('/:id/like', auth, likeStory);
 router.delete('/:id/like', auth, unlikeStory);
-router.get('/:id/likes', getStoryLikes);
+router.get('/:id/likes', auth, getStoryLikes);
 
 // Story view routes
 router.post('/:id/view', auth, recordStoryView);
-router.get('/:id/views', getStoryViews);
+router.get('/:id/views', auth, getStoryViews);
 
 // Story CRUD routes
 router.get('/:id', getStoryById);
