@@ -81,11 +81,11 @@ export const storyService = {
   // Get user's own stories
   getMyStories: async (): Promise<Story[]> => {
     try {
-      const response = await api.get<{ success: true; data: Story[] }>(`${API_URL}/stories/me`);
+      const response = await api.get<{ success: true; data: Story[] }>(`${API_URL}/stories/my`);
       return response.data.data;
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      const errorMessage = axiosError.response?.data?.error || 'Không thể tải stories của bạn.';
+      const errorMessage = axiosError.response?.data?.error || 'Không thể tải stories.';
       notifications.show({
         title: 'Lỗi',
         message: errorMessage,
@@ -210,6 +210,93 @@ export const storyService = {
     }
   },
 
+  // Add stories to existing highlight
+  addStoriesToHighlight: async (highlightId: string, storyIds: string[]): Promise<Highlight> => {
+    try {
+      const response = await api.post<{ success: true; data: Highlight }>(`${API_URL}/stories/highlights/${highlightId}/add-stories`, {
+        storyIds,
+      });
+      notifications.show({
+        title: 'Thêm story thành công',
+        message: 'Stories đã được thêm vào highlight!',
+        color: 'green',
+      });
+      return response.data.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      const errorMessage = axiosError.response?.data?.error || 'Không thể thêm stories vào highlight.';
+      notifications.show({
+        title: 'Thêm story thất bại',
+        message: errorMessage,
+        color: 'red',
+      });
+      throw error;
+    }
+  },
+
+  // Remove stories from highlight
+  removeStoriesFromHighlight: async (highlightId: string, storyIds: string[]): Promise<Highlight> => {
+    try {
+      const response = await api.post<{ success: true; data: Highlight }>(`${API_URL}/stories/highlights/${highlightId}/remove-stories`, {
+        storyIds,
+      });
+      notifications.show({
+        title: 'Xóa story thành công',
+        message: 'Stories đã được xóa khỏi highlight!',
+        color: 'green',
+      });
+      return response.data.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      const errorMessage = axiosError.response?.data?.error || 'Không thể xóa stories khỏi highlight.';
+      notifications.show({
+        title: 'Xóa story thất bại',
+        message: errorMessage,
+        color: 'red',
+      });
+      throw error;
+    }
+  },
+
+  // Update highlight information
+  updateHighlight: async (highlightId: string, data: { name?: string; coverImage?: string }): Promise<Highlight> => {
+    try {
+      const response = await api.put<{ success: true; data: Highlight }>(`${API_URL}/stories/highlights/${highlightId}`, data);
+      notifications.show({
+        title: 'Cập nhật highlight thành công',
+        message: 'Highlight đã được cập nhật!',
+        color: 'green',
+      });
+      return response.data.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      const errorMessage = axiosError.response?.data?.error || 'Không thể cập nhật highlight.';
+      notifications.show({
+        title: 'Cập nhật highlight thất bại',
+        message: errorMessage,
+        color: 'red',
+      });
+      throw error;
+    }
+  },
+
+  // Get highlight by ID
+  getHighlightById: async (highlightId: string): Promise<Highlight> => {
+    try {
+      const response = await api.get<{ success: true; data: Highlight }>(`${API_URL}/stories/highlights/detail/${highlightId}`);
+      return response.data.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      const errorMessage = axiosError.response?.data?.error || 'Không thể tải thông tin highlight.';
+      notifications.show({
+        title: 'Lỗi',
+        message: errorMessage,
+        color: 'red',
+      });
+      throw error;
+    }
+  },
+
   // Like a story
   likeStory: async (storyId: string): Promise<void> => {
     try {
@@ -289,11 +376,11 @@ export const storyService = {
   // Get my story views
   getMyStoryViews: async (): Promise<MyStoryView[]> => {
     try {
-      const response = await api.get<MyStoryViewsResponse>(`${API_URL}/stories/me/views`);
+      const response = await api.get<{ success: true; data: MyStoryView[] }>(`${API_URL}/stories/my/views`);
       return response.data.data;
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      const errorMessage = axiosError.response?.data?.error || 'Không thể tải thống kê views.';
+      const errorMessage = axiosError.response?.data?.error || 'Không thể tải story views.';
       notifications.show({
         title: 'Lỗi',
         message: errorMessage,

@@ -16,7 +16,9 @@ const MyStoryViews: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const totalViews = myStoryViews.reduce((sum, story) => sum + story.viewCount, 0);
+  // Safety check to ensure myStoryViews is an array
+  const safeStoryViews = Array.isArray(myStoryViews) ? myStoryViews : [];
+  const totalViews = safeStoryViews.reduce((sum, story) => sum + story.viewCount, 0);
 
   return (
     <>
@@ -62,7 +64,7 @@ const MyStoryViews: React.FC = () => {
               <div className="flex items-center space-x-2 mb-4 text-gray-600 dark:text-gray-400">
                 <IconUsers className="w-5 h-5" />
                 <span className="text-sm">
-                  {totalViews} total views across {myStoryViews.length} stories
+                  {totalViews} total views across {safeStoryViews.length} stories
                 </span>
               </div>
 
@@ -70,9 +72,9 @@ const MyStoryViews: React.FC = () => {
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 </div>
-              ) : myStoryViews.length > 0 ? (
+              ) : safeStoryViews.length > 0 ? (
                 <div className="space-y-4">
-                  {myStoryViews.map((story: MyStoryView) => (
+                  {safeStoryViews.map((story: MyStoryView) => (
                     <div
                       key={story.id}
                       className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useStoryLikes } from '@/hooks/useStories';
+import { useStoryLikeMutations } from '@/hooks/useStories';
 import { motion } from 'framer-motion';
 import { IconHeart, IconHeartFilled } from '@tabler/icons-react';
 
@@ -18,7 +18,8 @@ const StoryLikeButton: React.FC<StoryLikeButtonProps> = ({
   onLikeChange,
   isOwnStory = false
 }) => {
-  const { likeStory, unlikeStory, isLikingStory, isUnlikingStory } = useStoryLikes(storyId);
+  // Use mutations only, no API calls
+  const { likeStory, unlikeStory, isLikingStory, isUnlikingStory } = useStoryLikeMutations(storyId);
   const [localIsLiked, setLocalIsLiked] = useState(isLiked);
   const [error, setError] = useState<string | null>(null);
 

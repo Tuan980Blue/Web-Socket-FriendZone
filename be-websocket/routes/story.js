@@ -10,6 +10,10 @@ const {
   createHighlight,
   getUserHighlights,
   deleteHighlight,
+  addStoriesToHighlight,
+  removeStoriesFromHighlight,
+  updateHighlight,
+  getHighlightById,
   likeStory,
   unlikeStory,
   getStoryLikes,
@@ -19,29 +23,29 @@ const {
 } = require('../services/storyService');
 const auth = require('../middleware/auth');
 
-// Story routes
+// Story routes - Specific routes first
 router.post('/', auth, createStory);
 router.get('/feed', auth, getStoriesFeed);
-router.get('/me', auth, getMyStories);
-router.get('/me/views', auth, getMyStoryViews);
+router.get('/my', auth, getMyStories);
+router.get('/my/views', auth, getMyStoryViews);
 router.get('/user/:userId', getUserStories);
 
-// Story like routes
+// Highlight routes - Specific routes first
+router.post('/highlights', auth, createHighlight);
+router.get('/highlights/:userId', getUserHighlights);
+router.get('/highlights/detail/:id', getHighlightById);
+router.put('/highlights/:id', auth, updateHighlight);
+router.post('/highlights/:id/add-stories', auth, addStoriesToHighlight);
+router.post('/highlights/:id/remove-stories', auth, removeStoriesFromHighlight);
+router.delete('/highlights/:id', auth, deleteHighlight);
+
+// Story interactions with ID parameter - These must come after specific routes
+router.get('/:id', getStoryById);
+router.delete('/:id', auth, deleteStory);
 router.post('/:id/like', auth, likeStory);
 router.delete('/:id/like', auth, unlikeStory);
 router.get('/:id/likes', auth, getStoryLikes);
-
-// Story view routes
-router.post('/:id/view', auth, recordStoryView);
 router.get('/:id/views', auth, getStoryViews);
-
-// Story CRUD routes
-router.get('/:id', getStoryById);
-router.delete('/:id', auth, deleteStory);
-
-// Highlight routes
-router.post('/highlights', auth, createHighlight);
-router.get('/highlights/:userId', getUserHighlights);
-router.delete('/highlights/:id', auth, deleteHighlight);
+router.post('/:id/view', auth, recordStoryView);
 
 module.exports = router; 

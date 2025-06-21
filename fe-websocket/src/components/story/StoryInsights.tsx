@@ -26,8 +26,13 @@ type InsightItem = {
 const StoryInsights: React.FC<StoryInsightsProps> = ({ storyId, viewCount, likeCount }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  const { viewsData, loading: viewsLoading, error: viewsError } = useStoryViews(storyId);
-  const { likesData, loading: likesLoading, error: likesError } = useStoryLikes(storyId);
+  // Only fetch data when modal is open
+  const { viewsData, loading: viewsLoading, error: viewsError } = useStoryViews(storyId, {
+    enabled: isModalOpen
+  });
+  const { likesData, loading: likesLoading, error: likesError } = useStoryLikes(storyId, {
+    enabled: isModalOpen
+  });
 
   const handleInsightsClick = () => {
     setIsModalOpen(true);
@@ -36,6 +41,19 @@ const StoryInsights: React.FC<StoryInsightsProps> = ({ storyId, viewCount, likeC
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  // Correctly calculate total unique interactions
+  const totalInteractions = useMemo(() => {
+    if (!isModalOpen) return viewCount; // Use props when modal is closed
+    const userIds = new Set<string>();
+    if (viewsData?.views) {
+      viewsData.views.forEach((view: StoryView) => userIds.add(view.user.id));
+    }
+    if (likesData?.likes) {
+      likesData.likes.forEach((like: StoryLike) => userIds.add(like.user.id));
+    }
+    return userIds.size;
+  }, [isModalOpen, viewsData, likesData, viewCount, likeCount]);
 
   // Combine views and likes into a single list, prioritizing likes over views
   const combinedInsights = useMemo((): InsightItem[] => {
@@ -83,7 +101,7 @@ const StoryInsights: React.FC<StoryInsightsProps> = ({ storyId, viewCount, likeC
         aria-label={`View story insights - ${viewCount} views, ${likeCount} likes`}
       >
         <IconUsers className="w-5 h-5" />
-        <span className="text-sm font-medium">{combinedInsights.length}</span>
+        <span className="text-sm font-medium">{totalInteractions}</span>
       </motion.button>
 
       {/* Insights Modal */}
@@ -131,7 +149,7 @@ const StoryInsights: React.FC<StoryInsightsProps> = ({ storyId, viewCount, likeC
                   </div>
                 </div>
                 <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {combinedInsights.length} total interactions
+                  {isLoading ? '...' : `${totalInteractions} total interactions`}
                 </div>
               </div>
 

@@ -9,7 +9,7 @@ import { User } from '@/types/user';
 // Components
 import ProfileHero from '../components/ProfileHero';
 import ProfileTabs from '../components/ProfileTabs';
-import ProfileStories from '../components/ProfileStories';
+import StoryHightlights from '../components/StoryHightlights';
 import ProfileInfo from '../components/ProfileInfo';
 import ProfileSkeleton from "@/app/(layout)/profile/components/ProfileSkeleton";
 import ProfilePosts from '../components/ProfilePosts';
@@ -94,7 +94,7 @@ export default function ProfilePageClient({ userId }: Props) {
                 isFollowingLoading={isFollowingLoading}
                 key={forceUpdate}
             />
-            <ProfileStories user={localUser} />
+            <StoryHightlights user={localUser} />
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div className="space-y-4">
                     <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />

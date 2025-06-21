@@ -7,7 +7,7 @@ interface ProfileStoriesProps {
   user: User;
 }
 
-export default function ProfileStories({ user }: ProfileStoriesProps) {
+export default function StoryHightlights({ user }: ProfileStoriesProps) {
   // Mock stories data - in real app this would come from the backend
   const stories = [
     { id: 1, image: '/image-person.png', title: 'Beach Day' },
