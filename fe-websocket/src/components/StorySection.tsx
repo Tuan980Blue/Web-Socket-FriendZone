@@ -6,7 +6,6 @@ import { Story, CreateStoryData } from '@/types/story';
 import AddStoryModal from './story/AddStoryModal';
 import StoryViewer from './story/StoryViewer';
 import MyStoryViews from './story/MyStoryViews';
-import HighlightManager from './story/HighlightManager';
 
 interface StorySectionProps {
   user: User | null;
