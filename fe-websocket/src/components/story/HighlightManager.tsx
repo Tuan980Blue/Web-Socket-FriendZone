@@ -499,10 +499,19 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
       {/* Trigger Button */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+        className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400
+          ${availableStories && availableStories.length > 0
+            ? 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800'
+            : 'bg-transparent hover:bg-green-50 dark:hover:bg-green-900'}
+        `}
+        title={availableStories && availableStories.length > 0 ? 'Lưu Story vào Highlight' : 'Tất cả story đã được lưu'}
+        aria-label={availableStories && availableStories.length > 0 ? 'Lưu Story vào Highlight' : 'Tất cả story đã được lưu'}
       >
-        <IconBookmark className="w-5 h-5" />
-        <span>Highlights ({highlights.length})</span>
+        {availableStories && availableStories.length > 0 ? (
+          <IconBookmark className="w-6 h-6 text-white dark:text-gray-200" stroke={1.5} fill="none" />
+        ) : (
+          <IconBookmark className="w-6 h-6 text-pink-500" stroke={1.5} fill="currentColor" />
+        )}
       </button>
     </>
   );
