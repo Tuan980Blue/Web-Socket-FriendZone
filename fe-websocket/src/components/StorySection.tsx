@@ -133,15 +133,6 @@ const StorySection: React.FC<StorySectionProps> = ({ user }) => {
               {user && myStories.length > 0 && (
                 <MyStoryViews />
               )}
-              
-              {/* Highlights Manager */}
-              {user && myStories.length > 0 && (
-                <HighlightManager
-                  userId={user.id}
-                  currentUser={user}
-                  stories={myStories}
-                />
-              )}
             </div>
           </div>
           
