@@ -53,7 +53,7 @@ export default function Profile() {
             <ProfileHero user={profileUser} isCurrentUser={true}/>
 
             {/* Stories Section */}
-            <StoryHightlights user={profileUser}/>
+            <StoryHightlights user={profileUser} isCurrentUser={true}/>
 
             {/* Quick Post Section */}
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

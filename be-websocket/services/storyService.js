@@ -531,10 +531,10 @@ const createHighlight = async (req, res) => {
         const {name, coverImage, storyIds} = req.body;
 
         // Validate input
-        if (!name || !coverImage) {
+        if (!name) {
             return res.status(400).json({
                 success: false,
-                error: 'Name and cover image are required',
+                error: 'Name is required',
             });
         }
 
@@ -544,6 +544,27 @@ const createHighlight = async (req, res) => {
                 error: 'At least one story ID is required',
             });
         }
+
+        // Get user info to use avatar as coverImage if not provided
+        const user = await prisma.user.findUnique({
+            where: {id: userId},
+            select: {
+                id: true,
+                username: true,
+                fullName: true,
+                avatar: true,
+            },
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found',
+            });
+        }
+
+        // Use user's avatar as coverImage if not provided
+        const finalCoverImage = coverImage || user.avatar;
 
         // Verify all stories belong to the user
         const stories = await prisma.story.findMany({
@@ -564,7 +585,7 @@ const createHighlight = async (req, res) => {
         const highlight = await prisma.highlight.create({
             data: {
                 name,
-                coverImage,
+                coverImage: finalCoverImage,
                 authorId: userId,
             },
             include: {
@@ -748,24 +769,6 @@ const addStoriesToHighlight = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 error: 'Some stories do not exist or do not belong to you',
-            });
-        }
-
-        // Check if stories are already in another highlight
-        const storiesInOtherHighlights = await prisma.story.findMany({
-            where: {
-                id: {in: storyIds},
-                highlightId: {
-                    not: null,
-                    not: highlightId,
-                },
-            },
-        });
-
-        if (storiesInOtherHighlights.length > 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'Some stories are already in other highlights',
             });
         }
 
@@ -1212,7 +1215,7 @@ const unlikeStory = async (req, res) => {
 const getStoryLikes = async (req, res) => {
     try {
         const {id} = req.params;
-        
+
         // Check if user is authenticated
         if (!req.user || !req.user.id) {
             return res.status(401).json({
@@ -1220,7 +1223,7 @@ const getStoryLikes = async (req, res) => {
                 error: 'Authentication required',
             });
         }
-        
+
         const userId = req.user.id;
         const currentTime = new Date();
 
@@ -1289,7 +1292,7 @@ const getStoryLikes = async (req, res) => {
 const getStoryViews = async (req, res) => {
     try {
         const {id} = req.params;
-        
+
         // Check if user is authenticated
         if (!req.user || !req.user.id) {
             return res.status(401).json({
@@ -1297,7 +1300,7 @@ const getStoryViews = async (req, res) => {
                 error: 'Authentication required',
             });
         }
-        
+
         const userId = req.user.id;
         const currentTime = new Date();
 
@@ -1611,4 +1614,4 @@ module.exports = {
     getStoryViews,
     getMyStoryViews,
     recordStoryView,
-}; 
+};
