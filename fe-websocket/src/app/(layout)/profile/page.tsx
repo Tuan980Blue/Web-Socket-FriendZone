@@ -26,7 +26,7 @@ function LoginRequired() {
 // Components
 import ProfileHero from './components/ProfileHero';
 import ProfileTabs from './components/ProfileTabs';
-import ProfileStories from './components/ProfileStories';
+import StoryHightlights from './components/StoryHightlights';
 import ProfileInfo from "@/app/(layout)/profile/components/ProfileInfo";
 import ProfileSkeleton from './components/ProfileSkeleton';
 import QuickPost from '../../../components/quickPost/QuickPost';
@@ -53,7 +53,7 @@ export default function Profile() {
             <ProfileHero user={profileUser} isCurrentUser={true}/>
 
             {/* Stories Section */}
-            <ProfileStories user={profileUser}/>
+            <StoryHightlights user={profileUser}/>
 
             {/* Quick Post Section */}
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

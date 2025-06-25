@@ -11,7 +11,11 @@ interface StoryLikeStatsProps {
 
 const StoryLikeStats: React.FC<StoryLikeStatsProps> = ({ storyId, likeCount }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { likesData, loading, error } = useStoryLikes(storyId);
+  
+  // Only fetch data when modal is open
+  const { likesData, loading, error } = useStoryLikes(storyId, {
+    enabled: isModalOpen
+  });
 
   const handleLikeStatsClick = () => {
     setIsModalOpen(true);

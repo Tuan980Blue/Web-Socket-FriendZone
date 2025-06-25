@@ -108,7 +108,6 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
       setMediaError(false);
       setShowDeleteConfirm(false);
       startTimeRef.current = Date.now();
-      startProgress();
     }
   }, [isOpen, currentIndex, currentStory]);
 
@@ -120,6 +119,24 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
       }
     };
   }, []);
+
+  const handleNext = useCallback(() => {
+    if (currentIndex < validStories.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+      onNext?.();
+    } else {
+      setTimeout(() => {
+        onClose();
+      }, 100);
+    }
+  }, [currentIndex, validStories.length, onNext, onClose]);
+
+  const handlePrev = useCallback(() => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+      onPrev?.();
+    }
+  }, [currentIndex, onPrev]);
 
   const startProgress = useCallback(() => {
     if (progressInterval.current) {
@@ -141,7 +158,14 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
         }
       }, PROGRESS_UPDATE_INTERVAL);
     }
-  }, [isPaused, mediaError]);
+  }, [isPaused, mediaError, handleNext]);
+
+  // Start progress when story changes
+  useEffect(() => {
+    if (isOpen && currentStory) {
+      startProgress();
+    }
+  }, [isOpen, currentStory, startProgress]);
 
   const pauseProgress = useCallback(() => {
     if (progressInterval.current) {
@@ -158,24 +182,6 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
     }
     startProgress();
   }, [startProgress]);
-
-  const handleNext = useCallback(() => {
-    if (currentIndex < validStories.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-      onNext?.();
-    } else {
-      setTimeout(() => {
-        onClose();
-      }, 100);
-    }
-  }, [currentIndex, validStories.length, onNext, onClose]);
-
-  const handlePrev = useCallback(() => {
-    if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
-      onPrev?.();
-    }
-  }, [currentIndex, onPrev]);
 
   const handleMediaLoad = useCallback(() => {
     setIsLoading(false);

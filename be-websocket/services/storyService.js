@@ -702,6 +702,363 @@ const deleteHighlight = async (req, res) => {
     }
 };
 
+// Add stories to existing highlight
+const addStoriesToHighlight = async (req, res) => {
+    try {
+        const {id: highlightId} = req.params;
+        const userId = req.user.id;
+        const {storyIds} = req.body;
+
+        // Validate input
+        if (!storyIds || !Array.isArray(storyIds) || storyIds.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'At least one story ID is required',
+            });
+        }
+
+        // Check if highlight exists and belongs to user
+        const highlight = await prisma.highlight.findUnique({
+            where: {id: highlightId},
+        });
+
+        if (!highlight) {
+            return res.status(404).json({
+                success: false,
+                error: 'Highlight not found',
+            });
+        }
+
+        if (highlight.authorId !== userId) {
+            return res.status(403).json({
+                success: false,
+                error: 'You are not authorized to modify this highlight',
+            });
+        }
+
+        // Verify all stories belong to the user
+        const stories = await prisma.story.findMany({
+            where: {
+                id: {in: storyIds},
+                authorId: userId,
+            },
+        });
+
+        if (stories.length !== storyIds.length) {
+            return res.status(400).json({
+                success: false,
+                error: 'Some stories do not exist or do not belong to you',
+            });
+        }
+
+        // Check if stories are already in another highlight
+        const storiesInOtherHighlights = await prisma.story.findMany({
+            where: {
+                id: {in: storyIds},
+                highlightId: {
+                    not: null,
+                    not: highlightId,
+                },
+            },
+        });
+
+        if (storiesInOtherHighlights.length > 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Some stories are already in other highlights',
+            });
+        }
+
+        // Add stories to highlight
+        await prisma.story.updateMany({
+            where: {
+                id: {in: storyIds},
+            },
+            data: {
+                highlightId: highlightId,
+                isHighlighted: true,
+            },
+        });
+
+        // Get updated highlight with stories
+        const updatedHighlight = await prisma.highlight.findUnique({
+            where: {id: highlightId},
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                        fullName: true,
+                        avatar: true,
+                    },
+                },
+                stories: {
+                    include: {
+                        mentions: {
+                            include: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        username: true,
+                                        fullName: true,
+                                        avatar: true,
+                                    },
+                                },
+                            },
+                        },
+                        hashtags: true,
+                    },
+                },
+            },
+        });
+
+        res.status(200).json({
+            success: true,
+            data: updatedHighlight,
+            message: 'Stories added to highlight successfully',
+        });
+    } catch (error) {
+        console.error('Error adding stories to highlight:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error',
+        });
+    }
+};
+
+// Remove stories from highlight
+const removeStoriesFromHighlight = async (req, res) => {
+    try {
+        const {id: highlightId} = req.params;
+        const userId = req.user.id;
+        const {storyIds} = req.body;
+
+        // Validate input
+        if (!storyIds || !Array.isArray(storyIds) || storyIds.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'At least one story ID is required',
+            });
+        }
+
+        // Check if highlight exists and belongs to user
+        const highlight = await prisma.highlight.findUnique({
+            where: {id: highlightId},
+        });
+
+        if (!highlight) {
+            return res.status(404).json({
+                success: false,
+                error: 'Highlight not found',
+            });
+        }
+
+        if (highlight.authorId !== userId) {
+            return res.status(403).json({
+                success: false,
+                error: 'You are not authorized to modify this highlight',
+            });
+        }
+
+        // Remove stories from highlight
+        await prisma.story.updateMany({
+            where: {
+                id: {in: storyIds},
+                highlightId: highlightId,
+            },
+            data: {
+                highlightId: null,
+                isHighlighted: false,
+            },
+        });
+
+        // Get updated highlight with stories
+        const updatedHighlight = await prisma.highlight.findUnique({
+            where: {id: highlightId},
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                        fullName: true,
+                        avatar: true,
+                    },
+                },
+                stories: {
+                    include: {
+                        mentions: {
+                            include: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        username: true,
+                                        fullName: true,
+                                        avatar: true,
+                                    },
+                                },
+                            },
+                        },
+                        hashtags: true,
+                    },
+                },
+            },
+        });
+
+        res.status(200).json({
+            success: true,
+            data: updatedHighlight,
+            message: 'Stories removed from highlight successfully',
+        });
+    } catch (error) {
+        console.error('Error removing stories from highlight:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error',
+        });
+    }
+};
+
+// Update highlight information
+const updateHighlight = async (req, res) => {
+    try {
+        const {id: highlightId} = req.params;
+        const userId = req.user.id;
+        const {name, coverImage} = req.body;
+
+        // Validate input
+        if (!name && !coverImage) {
+            return res.status(400).json({
+                success: false,
+                error: 'At least name or cover image is required',
+            });
+        }
+
+        // Check if highlight exists and belongs to user
+        const highlight = await prisma.highlight.findUnique({
+            where: {id: highlightId},
+        });
+
+        if (!highlight) {
+            return res.status(404).json({
+                success: false,
+                error: 'Highlight not found',
+            });
+        }
+
+        if (highlight.authorId !== userId) {
+            return res.status(403).json({
+                success: false,
+                error: 'You are not authorized to modify this highlight',
+            });
+        }
+
+        // Update highlight
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (coverImage) updateData.coverImage = coverImage;
+
+        const updatedHighlight = await prisma.highlight.update({
+            where: {id: highlightId},
+            data: updateData,
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                        fullName: true,
+                        avatar: true,
+                    },
+                },
+                stories: {
+                    include: {
+                        mentions: {
+                            include: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        username: true,
+                                        fullName: true,
+                                        avatar: true,
+                                    },
+                                },
+                            },
+                        },
+                        hashtags: true,
+                    },
+                },
+            },
+        });
+
+        res.status(200).json({
+            success: true,
+            data: updatedHighlight,
+            message: 'Highlight updated successfully',
+        });
+    } catch (error) {
+        console.error('Error updating highlight:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error',
+        });
+    }
+};
+
+// Get highlight by ID
+const getHighlightById = async (req, res) => {
+    try {
+        const {id: highlightId} = req.params;
+
+        const highlight = await prisma.highlight.findUnique({
+            where: {id: highlightId},
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                        fullName: true,
+                        avatar: true,
+                    },
+                },
+                stories: {
+                    include: {
+                        mentions: {
+                            include: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        username: true,
+                                        fullName: true,
+                                        avatar: true,
+                                    },
+                                },
+                            },
+                        },
+                        hashtags: true,
+                    },
+                },
+            },
+        });
+
+        if (!highlight) {
+            return res.status(404).json({
+                success: false,
+                error: 'Highlight not found',
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: highlight,
+        });
+    } catch (error) {
+        console.error('Error getting highlight:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error',
+        });
+    }
+};
+
 // Like a story
 const likeStory = async (req, res) => {
     try {
@@ -1244,6 +1601,10 @@ module.exports = {
     createHighlight,
     getUserHighlights,
     deleteHighlight,
+    addStoriesToHighlight,
+    removeStoriesFromHighlight,
+    updateHighlight,
+    getHighlightById,
     likeStory,
     unlikeStory,
     getStoryLikes,

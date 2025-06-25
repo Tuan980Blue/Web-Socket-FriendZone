@@ -126,6 +126,36 @@ export const useHighlights = (userId: string) => {
     },
   });
 
+  // Add stories to highlight mutation
+  const addStoriesToHighlightMutation = useMutation({
+    mutationFn: ({ highlightId, storyIds }: { highlightId: string; storyIds: string[] }) => 
+      storyService.addStoriesToHighlight(highlightId, storyIds),
+    onSuccess: () => {
+      // Invalidate and refetch highlights
+      queryClient.invalidateQueries({ queryKey: [USER_HIGHLIGHTS_QUERY_KEY, userId] });
+    },
+  });
+
+  // Remove stories from highlight mutation
+  const removeStoriesFromHighlightMutation = useMutation({
+    mutationFn: ({ highlightId, storyIds }: { highlightId: string; storyIds: string[] }) => 
+      storyService.removeStoriesFromHighlight(highlightId, storyIds),
+    onSuccess: () => {
+      // Invalidate and refetch highlights
+      queryClient.invalidateQueries({ queryKey: [USER_HIGHLIGHTS_QUERY_KEY, userId] });
+    },
+  });
+
+  // Update highlight mutation
+  const updateHighlightMutation = useMutation({
+    mutationFn: ({ highlightId, data }: { highlightId: string; data: { name?: string; coverImage?: string } }) => 
+      storyService.updateHighlight(highlightId, data),
+    onSuccess: () => {
+      // Invalidate and refetch highlights
+      queryClient.invalidateQueries({ queryKey: [USER_HIGHLIGHTS_QUERY_KEY, userId] });
+    },
+  });
+
   return {
     highlights,
     loading: isLoading,
@@ -135,13 +165,60 @@ export const useHighlights = (userId: string) => {
     createHighlightAsync: createHighlightMutation.mutateAsync,
     deleteHighlight: deleteHighlightMutation.mutate,
     deleteHighlightAsync: deleteHighlightMutation.mutateAsync,
+    addStoriesToHighlight: addStoriesToHighlightMutation.mutate,
+    addStoriesToHighlightAsync: addStoriesToHighlightMutation.mutateAsync,
+    removeStoriesFromHighlight: removeStoriesFromHighlightMutation.mutate,
+    removeStoriesFromHighlightAsync: removeStoriesFromHighlightMutation.mutateAsync,
+    updateHighlight: updateHighlightMutation.mutate,
+    updateHighlightAsync: updateHighlightMutation.mutateAsync,
     isCreatingHighlight: createHighlightMutation.isPending,
     isDeletingHighlight: deleteHighlightMutation.isPending,
+    isAddingStoriesToHighlight: addStoriesToHighlightMutation.isPending,
+    isRemovingStoriesFromHighlight: removeStoriesFromHighlightMutation.isPending,
+    isUpdatingHighlight: updateHighlightMutation.isPending,
+  };
+};
+
+// Hook for story like mutations only (no API calls)
+export const useStoryLikeMutations = (storyId: string) => {
+  const queryClient = useQueryClient();
+
+  // Like story mutation
+  const likeStoryMutation = useMutation({
+    mutationFn: (storyId: string) => storyService.likeStory(storyId),
+    onSuccess: () => {
+      // Invalidate and refetch story likes
+      queryClient.invalidateQueries({ queryKey: [STORY_LIKES_QUERY_KEY, storyId] });
+      // Also invalidate stories feed and my stories to update like counts
+      queryClient.invalidateQueries({ queryKey: [STORIES_FEED_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [MY_STORIES_QUERY_KEY] });
+    },
+  });
+
+  // Unlike story mutation
+  const unlikeStoryMutation = useMutation({
+    mutationFn: (storyId: string) => storyService.unlikeStory(storyId),
+    onSuccess: () => {
+      // Invalidate and refetch story likes
+      queryClient.invalidateQueries({ queryKey: [STORY_LIKES_QUERY_KEY, storyId] });
+      // Also invalidate stories feed and my stories to update like counts
+      queryClient.invalidateQueries({ queryKey: [STORIES_FEED_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [MY_STORIES_QUERY_KEY] });
+    },
+  });
+
+  return {
+    likeStory: likeStoryMutation.mutate,
+    likeStoryAsync: likeStoryMutation.mutateAsync,
+    unlikeStory: unlikeStoryMutation.mutate,
+    unlikeStoryAsync: unlikeStoryMutation.mutateAsync,
+    isLikingStory: likeStoryMutation.isPending,
+    isUnlikingStory: unlikeStoryMutation.isPending,
   };
 };
 
 // Hook for story likes
-export const useStoryLikes = (storyId: string) => {
+export const useStoryLikes = (storyId: string, options?: { enabled?: boolean }) => {
   const queryClient = useQueryClient();
 
   const {
@@ -152,7 +229,7 @@ export const useStoryLikes = (storyId: string) => {
   } = useQuery({
     queryKey: [STORY_LIKES_QUERY_KEY, storyId],
     queryFn: () => storyService.getStoryLikes(storyId),
-    enabled: !!storyId,
+    enabled: options?.enabled !== false && !!storyId,
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
@@ -195,7 +272,7 @@ export const useStoryLikes = (storyId: string) => {
 };
 
 // Hook for story views
-export const useStoryViews = (storyId: string) => {
+export const useStoryViews = (storyId: string, options?: { enabled?: boolean }) => {
   const {
     data: viewsData,
     isLoading,
@@ -204,7 +281,7 @@ export const useStoryViews = (storyId: string) => {
   } = useQuery({
     queryKey: [STORY_VIEWS_QUERY_KEY, storyId],
     queryFn: () => storyService.getStoryViews(storyId),
-    enabled: !!storyId,
+    enabled: options?.enabled !== false && !!storyId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
