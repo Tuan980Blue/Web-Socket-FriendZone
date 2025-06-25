@@ -94,7 +94,7 @@ export default function ProfilePageClient({ userId }: Props) {
                 isFollowingLoading={isFollowingLoading}
                 key={forceUpdate}
             />
-            <StoryHightlights user={localUser} />
+            <StoryHightlights user={localUser} isCurrentUser={isCurrentUser} />
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div className="space-y-4">
                     <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />

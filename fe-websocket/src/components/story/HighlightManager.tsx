@@ -23,7 +23,6 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
   const [selectedHighlight, setSelectedHighlight] = useState<Highlight | null>(null);
   const [selectedStories, setSelectedStories] = useState<string[]>([]);
   const [highlightName, setHighlightName] = useState('');
-  const [coverImage, setCoverImage] = useState('');
 
   const { 
     highlights, 
@@ -45,12 +44,11 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
     try {
       await createHighlight({
         name: highlightName,
-        coverImage: coverImage || selectedStories[0], // Use first story as cover if no cover provided
+        coverImage: '',
         storyIds: selectedStories,
       });
       
       setHighlightName('');
-      setCoverImage('');
       setSelectedStories([]);
       setIsCreateModalOpen(false);
     } catch (error) {
@@ -67,12 +65,11 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
   };
 
   const handleUpdateHighlight = async () => {
-    if (!selectedHighlight || (!highlightName.trim() && !coverImage)) return;
+    if (!selectedHighlight || (!highlightName.trim() )) return;
 
     try {
       const updateData: { name?: string; coverImage?: string } = {};
       if (highlightName.trim()) updateData.name = highlightName;
-      if (coverImage) updateData.coverImage = coverImage;
 
       await updateHighlight({
         highlightId: selectedHighlight.id,
@@ -80,7 +77,6 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
       });
       
       setHighlightName('');
-      setCoverImage('');
       setSelectedHighlight(null);
       setIsEditModalOpen(false);
     } catch (error) {
@@ -116,7 +112,6 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
   const openEditModal = (highlight: Highlight) => {
     setSelectedHighlight(highlight);
     setHighlightName(highlight.name);
-    setCoverImage(highlight.coverImage);
     setIsEditModalOpen(true);
   };
 
@@ -291,19 +286,6 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Cover Image URL (optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={coverImage}
-                    onChange={(e) => setCoverImage(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                    placeholder="Enter cover image URL"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Select Stories ({selectedStories.length} selected)
                   </label>
                   {availableStories.length > 0 ? (
@@ -404,19 +386,6 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Cover Image URL
-                  </label>
-                  <input
-                    type="text"
-                    value={coverImage}
-                    onChange={(e) => setCoverImage(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                    placeholder="Enter cover image URL"
-                  />
-                </div>
-
                 <div className="flex justify-end space-x-2 pt-4">
                   <button
                     onClick={() => setIsEditModalOpen(false)}
@@ -426,7 +395,7 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
                   </button>
                   <button
                     onClick={handleUpdateHighlight}
-                    disabled={(!highlightName.trim() && !coverImage) || isUpdatingHighlight}
+                    disabled={(!highlightName.trim()) || isUpdatingHighlight}
                     className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded-lg disabled:cursor-not-allowed"
                   >
                     {isUpdatingHighlight ? 'Updating...' : 'Update Highlight'}
