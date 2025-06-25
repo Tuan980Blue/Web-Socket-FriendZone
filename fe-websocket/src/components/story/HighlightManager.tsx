@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHighlights } from '@/hooks/useStories';
 import { motion, AnimatePresence } from 'framer-motion';
-import { IconBookmark, IconPlus, IconX, IconTrash, IconEdit, IconMinus } from '@tabler/icons-react';
+import { IconBookmark, IconPlus, IconX, IconTrash, IconEdit } from '@tabler/icons-react';
 import { Highlight, Story } from '@/types/story';
 import { User } from '@/types/user';
 
@@ -30,12 +30,10 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
     createHighlight, 
     deleteHighlight, 
     addStoriesToHighlight,
-    removeStoriesFromHighlight,
     updateHighlight,
     isCreatingHighlight, 
     isDeletingHighlight,
     isAddingStoriesToHighlight,
-    isRemovingStoriesFromHighlight,
     isUpdatingHighlight
   } = useHighlights(userId);
 
@@ -104,17 +102,6 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
       setIsAddStoriesModalOpen(false);
     } catch (error) {
       console.error('Error adding stories to highlight:', error);
-    }
-  };
-
-  const handleRemoveStoriesFromHighlight = async (highlightId: string, storyIds: string[]) => {
-    try {
-      await removeStoriesFromHighlight({
-        highlightId,
-        storyIds,
-      });
-    } catch (error) {
-      console.error('Error removing stories from highlight:', error);
     }
   };
 
@@ -319,32 +306,38 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Select Stories ({selectedStories.length} selected)
                   </label>
-                  <div className="grid grid-cols-3 gap-2 max-h-40 overflow-y-auto">
-                    {stories.map((story) => (
-                      <div
-                        key={story.id}
-                        onClick={() => toggleStorySelection(story.id)}
-                        className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                          selectedStories.includes(story.id)
-                            ? 'border-blue-500'
-                            : 'border-gray-200 dark:border-gray-600'
-                        }`}
-                      >
-                        <img
-                          src={story.mediaUrl}
-                          alt="story"
-                          className="w-full h-20 object-cover"
-                        />
-                        {selectedStories.includes(story.id) && (
-                          <div className="absolute inset-0 bg-blue-500 bg-opacity-30 flex items-center justify-center">
-                            <div className="bg-blue-500 text-white rounded-full p-1">
-                              <IconPlus className="w-3 h-3" />
+                  {availableStories.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-2 max-h-40 overflow-y-auto">
+                      {availableStories.map((story) => (
+                        <div
+                          key={story.id}
+                          onClick={() => toggleStorySelection(story.id)}
+                          className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                            selectedStories.includes(story.id)
+                              ? 'border-blue-500'
+                              : 'border-gray-200 dark:border-gray-600'
+                          }`}
+                        >
+                          <img
+                            src={story.mediaUrl}
+                            alt="story"
+                            className="w-full h-20 object-cover"
+                          />
+                          {selectedStories.includes(story.id) && (
+                            <div className="absolute inset-0 bg-blue-500 bg-opacity-30 flex items-center justify-center">
+                              <div className="bg-blue-500 text-white rounded-full p-1">
+                                <IconPlus className="w-3 h-3" />
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+                      No available stories to add
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex justify-end space-x-2 pt-4">
@@ -464,7 +457,7 @@ const HighlightManager: React.FC<HighlightManagerProps> = ({
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Add Stories to "{selectedHighlight.name}"
+                  Add Stories to &quot;{selectedHighlight.name}&quot;
                 </h3>
                 <button
                   onClick={() => setIsAddStoriesModalOpen(false)}

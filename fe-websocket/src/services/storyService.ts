@@ -10,7 +10,6 @@ import {
   StoryLikesResponse,
   StoryViewsResponse,
   MyStoryView,
-  MyStoryViewsResponse,
 } from '@/types/story';
 import { notifications } from '@mantine/notifications';
 

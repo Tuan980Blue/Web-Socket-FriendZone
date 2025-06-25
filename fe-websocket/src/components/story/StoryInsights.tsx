@@ -53,7 +53,7 @@ const StoryInsights: React.FC<StoryInsightsProps> = ({ storyId, viewCount, likeC
       likesData.likes.forEach((like: StoryLike) => userIds.add(like.user.id));
     }
     return userIds.size;
-  }, [isModalOpen, viewsData, likesData, viewCount, likeCount]);
+  }, [isModalOpen, viewsData, likesData, viewCount]);
 
   // Combine views and likes into a single list, prioritizing likes over views
   const combinedInsights = useMemo((): InsightItem[] => {
