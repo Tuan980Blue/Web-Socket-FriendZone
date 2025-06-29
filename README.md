@@ -7,7 +7,7 @@
 ## 🚀 Tính năng nổi bật
 
 - 🔥 **Giao tiếp thời gian thực** – Tin nhắn, phản hồi, và thông báo được cập nhật ngay lập tức nhờ WebSocket.
-- 👥 **Phòng chat riêng và nhóm** – Giao tiếp 1-1 hoặc theo nhóm cực kỳ mượt mà.
+- 👥 **Phòng chat riêng và nhóm** – Giao tiếp 1-1 hoặc theo nhóm.
 - 📡 **Trạng thái người dùng** – Ai đang online/offline?.
 - 📝 **Chia sẻ trạng thái** – Chia sẻ cảm xúc, hình ảnh, hay bất cứ điều gì bạn muốn.
 - 🔒 **Xác thực người dùng** – Bảo mật bằng JWT, xác thực người dùng bằng OTP gửi về Gmail.
