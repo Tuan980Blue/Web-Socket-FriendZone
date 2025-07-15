@@ -114,7 +114,7 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
     const handleUpdatePost = async () => {
         setIsUpdating(true);
         try {
-            const updated = await postService.updatePost(post.id, editContent);
+            await postService.updatePost(post.id, editContent);
             setShowEditModal(false);
             // Cập nhật UI: có thể gọi onPostUpdated nếu truyền vào, hoặc cập nhật trực tiếp nếu dùng state cha
             // Ở đây cập nhật tạm thời bằng cách reload trang hoặc bạn có thể truyền thêm prop onPostUpdated
