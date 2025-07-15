@@ -2,6 +2,7 @@ import React from 'react';
 import { Avatar } from '@mantine/core';
 import { format } from 'date-fns';
 import { Message as ChatServiceMessage } from '@/services/chatService';
+import LocationMessage from './LocationMessage';
 
 type Message = ChatServiceMessage;
 
@@ -11,6 +12,8 @@ interface ChatMessageProps {
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage }) => {
+    // Kiểm tra format LOCATION
+    const locationMatch = /^LOCATION:([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)$/.exec(message.content);
     return (
         <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-4`}>
             <div className={`flex ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'} items-end max-w-[70%] gap-2`}>
@@ -36,7 +39,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage }) => {
                                 : 'bg-[#FAFAFA] dark:bg-[#262626] text-[#262626] dark:text-[#FAFAFA] rounded-bl-none border border-[#DBDBDB] dark:border-[#262626]'
                         }`}
                     >
-                        <p className="text-sm">{message.content}</p>
+                        {locationMatch ? (
+                            <LocationMessage lat={parseFloat(locationMatch[1])} lng={parseFloat(locationMatch[2])} />
+                        ) : (
+                            <p className="text-sm">{message.content}</p>
+                        )}
                     </div>
                     <span className="text-xs text-[#8E8E8E] mt-1">
                         {format(new Date(message.createdAt), 'HH:mm')}
