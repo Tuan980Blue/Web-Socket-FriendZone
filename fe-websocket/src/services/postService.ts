@@ -76,6 +76,25 @@ export const postService = {
       params: { query, page, limit }
     });
     return response.data;
+  },
+
+  updatePost: async (id: string, content: string): Promise<Post> => {
+    try {
+      const response = await api.put(`${API_URL}/posts/${id}`, { content });
+      notifications.show({
+        title: 'Cập nhật bài viết thành công',
+        message: 'Nội dung bài viết đã được cập nhật!',
+        color: 'green',
+      });
+      return response.data.data;
+    } catch (error) {
+      notifications.show({
+        title: 'Cập nhật bài viết thất bại',
+        message: 'Đã có lỗi xảy ra khi cập nhật bài viết.',
+        color: 'red',
+      });
+      throw error;
+    }
   }
 };
 

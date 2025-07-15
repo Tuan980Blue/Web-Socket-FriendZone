@@ -15,7 +15,8 @@ import {
     Copy,
     UserPlus,
     UserMinus,
-    Clock
+    Clock,
+    EditIcon
 } from 'lucide-react';
 import {Post} from '@/types/post';
 import {formatDistanceToNow} from 'date-fns';
@@ -29,6 +30,7 @@ import CommentList from './CommentList';
 import CommentForm from './CommentForm';
 import {usePostInteractions} from '@/hooks/usePostInteractions';
 import {useFollows} from '@/hooks/useFollows';
+import {postService} from '@/services/postService';
 
 interface PostCardProps {
     post: Post;
@@ -40,6 +42,9 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
     const [isSaved, setIsSaved] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editContent, setEditContent] = useState(post.content);
+    const [isUpdating, setIsUpdating] = useState(false);
     const {user} = useUserData();
     const {deletePost, isDeleting} = usePosts();
     const {handleFollow, handleUnfollow} = useFollows();
@@ -102,6 +107,25 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
         });
     };
 
+    const handleEdit = () => {
+        setEditContent(post.content);
+        setShowEditModal(true);
+    };
+    const handleUpdatePost = async () => {
+        setIsUpdating(true);
+        try {
+            const updated = await postService.updatePost(post.id, editContent);
+            setShowEditModal(false);
+            // Cập nhật UI: có thể gọi onPostUpdated nếu truyền vào, hoặc cập nhật trực tiếp nếu dùng state cha
+            // Ở đây cập nhật tạm thời bằng cách reload trang hoặc bạn có thể truyền thêm prop onPostUpdated
+            window.location.reload();
+        } catch {
+            // error đã được thông báo ở service
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
     return (
         <div
             className="bg-white dark:bg-[#121212] rounded-xl shadow-md overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
@@ -133,6 +157,14 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                     </Menu.Target>
 
                     <Menu.Dropdown>
+                        {isAuthor && (
+                            <Menu.Item
+                                leftSection={<EditIcon size={16}/>} // cần import EditIcon
+                                onClick={handleEdit}
+                            >
+                                Chỉnh sửa bài viết
+                            </Menu.Item>
+                        )}
                         {isAuthor && (
                             <Menu.Item
                                 color="red"
@@ -510,6 +542,30 @@ const PostCard: React.FC<PostCardProps> = ({post, onPostDeleted}) => {
                             </button>
                         </div>
                     </div>
+                </div>
+            </Modal>
+
+            {/* Edit Post Modal */}
+            <Modal
+                opened={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                centered
+                withCloseButton
+                size="sm"
+                radius="md"
+                title="Chỉnh sửa nội dung bài viết"
+            >
+                <textarea
+                    className="w-full border rounded p-2 min-h-[80px]"
+                    value={editContent}
+                    onChange={e => setEditContent(e.target.value)}
+                    disabled={isUpdating}
+                />
+                <div className="flex justify-end mt-4 space-x-2">
+                    <Button variant="default" onClick={() => setShowEditModal(false)} disabled={isUpdating}>Hủy</Button>
+                    <Button onClick={handleUpdatePost} loading={isUpdating} disabled={editContent.trim() === '' || isUpdating}>
+                        Lưu
+                    </Button>
                 </div>
             </Modal>
         </div>
