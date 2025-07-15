@@ -13,7 +13,8 @@ const {
   getPostComments,
   editComment,
   toggleLike,
-  getPostLikes
+  getPostLikes,
+  updatePost // thêm hàm updatePost
 } = require('../services/postService');
 const auth = require('../middleware/auth');
 const authMiddleware = require("../middleware/auth");
@@ -26,6 +27,7 @@ router.get('/me', auth, getMyPosts);
 router.get('/user/:userId', getUserPosts);
 router.get('/:id', getPostById);
 router.delete('/:id', auth, deletePost);
+router.put('/:id', auth, updatePost);
 
 // Comment routes
 router.post('/:postId/comments', auth, addComment);
