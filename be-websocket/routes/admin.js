@@ -70,9 +70,10 @@ router.post('/users/:userId/ban', async (req, res) => {
 router.delete('/users/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        await adminService.deleteUser(userId);
-        res.json({ message: 'User deleted successfully' });
+        const result = await adminService.deleteUserCompletely(userId);
+        res.json(result);
     } catch (error) {
+        console.error('Error deleting user:', error);
         res.status(500).json({ error: error.message });
     }
 });

@@ -225,6 +225,14 @@ const getPosts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const posts = await prisma.post.findMany({
+      where: {
+        // Chỉ hiển thị posts có author tồn tại và không bị ban
+        author: {
+          is: {
+            isBanned: false
+          }
+        }
+      },
       skip,
       take: limit,
       orderBy: {
@@ -242,7 +250,16 @@ const getPosts = async (req, res) => {
       },
     });
 
-    const total = await prisma.post.count();
+    const total = await prisma.post.count({
+      where: {
+        // Chỉ đếm posts có author tồn tại và không bị ban
+        author: {
+          is: {
+            isBanned: false
+          }
+        }
+      }
+    });
 
     res.json({
       posts,
@@ -372,7 +389,7 @@ const getUserPosts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Check if user exists
+    // Check if user exists and is not deleted
     const user = await prisma.user.findUnique({
       where: { id: userId }
     });

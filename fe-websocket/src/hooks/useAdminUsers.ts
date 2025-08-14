@@ -143,7 +143,11 @@ export const useAdminUsers = ({ initialPage = 1, initialLimit = 10 }: UseAdminUs
     },
     deleteUser: async (userId: string) => {
       try {
-        await deleteUserMutation.mutateAsync(userId);
+        const result = await deleteUserMutation.mutateAsync(userId);
+        // Hiển thị message từ backend nếu có
+        if (result?.message) {
+          toast.success(result.message);
+        }
         return true;
       } catch {
         return false;
