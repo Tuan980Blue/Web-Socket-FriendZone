@@ -9,7 +9,6 @@ router.use(adminAuth);
 // Get all users with pagination
 router.get('/users', async (req, res) => {
     try {
-
         const { page = 1, limit = 10 } = req.query;
 
         const parsedPage = parseInt(page);
@@ -19,8 +18,6 @@ router.get('/users', async (req, res) => {
 
         res.json(users);
     } catch (error) {
-        console.error('Error in /users route:', error);
-        console.error('Error stack:', error.stack);
         res.status(500).json({ error: error.message });
     }
 });
@@ -32,9 +29,6 @@ router.get('/users/:userId', async (req, res) => {
         const user = await adminService.getUserById(userId);
         res.json(user);
     } catch (error) {
-        if (error.message === 'User not found') {
-            return res.status(404).json({ error: 'User not found' });
-        }
         res.status(500).json({ error: error.message });
     }
 });
@@ -47,9 +41,6 @@ router.put('/users/:userId', async (req, res) => {
         const updatedUser = await adminService.updateUserInfo(userId, userData);
         res.json(updatedUser);
     } catch (error) {
-        if (error.message === 'User not found') {
-            return res.status(404).json({ error: 'User not found' });
-        }
         res.status(500).json({ error: error.message });
     }
 });
@@ -73,7 +64,17 @@ router.delete('/users/:userId', async (req, res) => {
         const result = await adminService.deleteUserCompletely(userId);
         res.json(result);
     } catch (error) {
-        console.error('Error deleting user:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Delete all posts of a specific user
+router.delete('/users/:userId/posts', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const result = await adminService.deleteAllUserPosts(userId);
+        res.json(result);
+    } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
