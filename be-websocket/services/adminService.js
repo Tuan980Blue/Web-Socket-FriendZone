@@ -39,6 +39,157 @@ class AdminService {
         });
     }
 
+    // Method mới để xóa user hoàn toàn với tất cả dữ liệu liên quan
+    async deleteUserCompletely(userId) {
+        try {
+            console.log(`🔄 Starting complete deletion for user: ${userId}`);
+            
+            // Kiểm tra user có tồn tại không trước khi xóa
+            const userExists = await prisma.user.findUnique({
+                where: { id: userId }
+            });
+            
+            if (!userExists) {
+                throw new Error('User not found');
+            }
+            
+            console.log(`👤 User found: ${userExists.username}`);
+            
+            return await prisma.$transaction(async (tx) => {
+                try {
+                    console.log(`📝 Step 1: Finding posts for user ${userId}`);
+                    // 1. Xóa tất cả posts của user và related data
+                    const posts = await tx.post.findMany({
+                        where: { authorId: userId }
+                    });
+                    
+                    console.log(`📝 Found ${posts.length} posts to delete`);
+                    
+                    for (const post of posts) {
+                        console.log(`🗑️ Deleting related data for post: ${post.id}`);
+                        try {
+                            await tx.comment.deleteMany({
+                                where: { postId: post.id }
+                            });
+                            
+                            await tx.like.deleteMany({
+                                where: { postId: post.id }
+                            });
+                            
+                            await tx.savedPost.deleteMany({
+                                where: { postId: post.id }
+                            });
+                        } catch (postError) {
+                            console.warn(`⚠️ Warning: Could not delete some related data for post ${post.id}:`, postError.message);
+                        }
+                    }
+                    
+                    console.log(`📝 Step 2: Deleting ${posts.length} posts`);
+                    try {
+                        await tx.post.deleteMany({
+                            where: { authorId: userId }
+                        });
+                    } catch (postDeleteError) {
+                        console.error(`❌ Error deleting posts:`, postDeleteError);
+                        throw new Error(`Failed to delete posts: ${postDeleteError.message}`);
+                    }
+                    
+                    console.log(`💬 Step 3: Deleting comments for user ${userId}`);
+                    // 2. Xóa tất cả comments của user
+                    try {
+                        const commentsDeleted = await tx.comment.deleteMany({
+                            where: { authorId: userId }
+                        });
+                        console.log(`💬 Deleted ${commentsDeleted.count} comments`);
+                    } catch (commentError) {
+                        console.error(`❌ Error deleting comments:`, commentError);
+                        throw new Error(`Failed to delete comments: ${commentError.message}`);
+                    }
+                    
+                    console.log(`👍 Step 4: Deleting likes for user ${userId}`);
+                    // 3. Xóa tất cả likes của user
+                    try {
+                        const likesDeleted = await tx.like.deleteMany({
+                            where: { userId: userId }
+                        });
+                        console.log(`👍 Deleted ${likesDeleted.count} likes`);
+                    } catch (likeError) {
+                        console.error(`❌ Error deleting likes:`, likeError);
+                        throw new Error(`Failed to delete likes: ${likeError.message}`);
+                    }
+                    
+                    console.log(`📱 Step 5: Deleting stories for user ${userId}`);
+                    // 4. Xóa tất cả stories của user
+                    try {
+                        const storiesDeleted = await tx.story.deleteMany({
+                            where: { authorId: userId }
+                        });
+                        console.log(`📱 Deleted ${storiesDeleted.count} stories`);
+                    } catch (storyError) {
+                        console.error(`❌ Error deleting stories:`, storyError);
+                        throw new Error(`Failed to delete stories: ${storyError.message}`);
+                    }
+                    
+                    console.log(`🔔 Step 6: Deleting notifications for user ${userId}`);
+                    // 5. Xóa tất cả notifications của user
+                    try {
+                        const notificationsDeleted = await tx.notification.deleteMany({
+                            where: { userId: userId }
+                        });
+                        console.log(`🔔 Deleted ${notificationsDeleted.count} notifications`);
+                    } catch (notificationError) {
+                        console.error(`❌ Error deleting notifications:`, notificationError);
+                        throw new Error(`Failed to delete notifications: ${notificationError.message}`);
+                    }
+                    
+                    console.log(`📝 Step 7: Deleting mentions for user ${userId}`);
+                    // 6. Xóa tất cả mentions của user
+                    try {
+                        const mentionsDeleted = await tx.mention.deleteMany({
+                            where: { userId: userId }
+                        });
+                        console.log(`📝 Deleted ${mentionsDeleted.count} mentions`);
+                    } catch (mentionError) {
+                        console.error(`❌ Error deleting mentions:`, mentionError);
+                        throw new Error(`Failed to delete mentions: ${mentionError.message}`);
+                    }
+                    
+                    console.log(`🏷️ Step 8: Deleting hashtags for user ${userId}`);
+                    // 7. Xóa tất cả hashtags của user
+                    try {
+                        const hashtagsDeleted = await tx.hashtag.deleteMany({
+                            where: { userId: userId }
+                        });
+                        console.log(`🏷️ Deleted ${hashtagsDeleted.count} hashtags`);
+                    } catch (hashtagError) {
+                        console.error(`❌ Error deleting hashtags:`, hashtagError);
+                        throw new Error(`Failed to delete hashtags: ${hashtagError.message}`);
+                    }
+                    
+                    console.log(`👤 Step 9: Deleting user ${userId}`);
+                    // 8. Cuối cùng mới xóa user
+                    try {
+                        await tx.user.delete({
+                            where: { id: userId }
+                        });
+                    } catch (userDeleteError) {
+                        console.error(`❌ Error deleting user:`, userDeleteError);
+                        throw new Error(`Failed to delete user: ${userDeleteError.message}`);
+                    }
+                    
+                    console.log(`✅ Successfully deleted user ${userId} and all associated data`);
+                    return { message: 'User and all associated data (posts, comments, likes, stories, notifications, mentions, hashtags) deleted successfully' };
+                } catch (txError) {
+                    console.error(`❌ Transaction error:`, txError);
+                    throw txError;
+                }
+            });
+        } catch (error) {
+            console.error(`❌ Error deleting user ${userId}:`, error);
+            throw new Error(`Failed to delete user: ${error.message}`);
+        }
+    }
+
     async updateUserInfo(userId, userData) {
         // Extract only the fields that are allowed to be updated
         const allowedFields = [

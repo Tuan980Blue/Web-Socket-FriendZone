@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -60,33 +60,39 @@ export interface SystemStatistics {
   activeUsers: number;
 }
 
+// Thêm interface cho response mới
+export interface DeleteUserResponse {
+  message: string;
+}
+
 class AdminService {
   async getAllUsers(page = 1, limit = 10): Promise<PaginatedUsers> {
-    const response = await api.get(`${API_URL}/admin/users?page=${page}&limit=${limit}`);
+    const response = await api.get(`/admin/users?page=${page}&limit=${limit}`);
     return response.data;
   }
 
   async getUserById(userId: string): Promise<User> {
-    const response = await api.get(`${API_URL}/admin/users/${userId}`);
+    const response = await api.get(`/admin/users/${userId}`);
     return response.data;
   }
 
   async updateUserInfo(userId: string, userData: Partial<User>): Promise<User> {
-    const response = await api.put(`${API_URL}/admin/users/${userId}`, userData);
+    const response = await api.put(`/admin/users/${userId}`, userData);
     return response.data;
   }
 
   async toggleUserBan(userId: string, ban: boolean): Promise<User> {
-    const response = await api.post(`${API_URL}/admin/users/${userId}/ban`, { ban });
+    const response = await api.post(`/admin/users/${userId}/ban`, { ban });
     return response.data;
   }
 
-  async deleteUser(userId: string): Promise<void> {
-    await api.delete(`${API_URL}/admin/users/${userId}`);
+  async deleteUser(userId: string): Promise<DeleteUserResponse> {
+    const response = await api.delete(`/admin/users/${userId}`);
+    return response.data;
   }
 
   async getSystemStatistics(): Promise<SystemStatistics> {
-    const response = await api.get(`${API_URL}/admin/statistics`);
+    const response = await api.get(`/admin/statistics`);
     return response.data;
   }
 }

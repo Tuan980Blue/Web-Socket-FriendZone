@@ -13,7 +13,6 @@ import {
   Alert,
   Divider
 } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
 import { IconAlertCircle, IconTrash, IconUser } from '@tabler/icons-react';
 
 interface UserDeleteModalProps {
@@ -38,20 +37,12 @@ const UserDeleteModal: React.FC<UserDeleteModalProps> = ({
     try {
       const success = await onDelete(user.id);
       if (success) {
-        notifications.show({
-          title: 'Success',
-          message: 'User deleted successfully',
-          color: 'green',
-        });
+        // Không cần hiển thị notification ở đây vì hook đã xử lý
         onClose();
       }
     } catch (error) {
       console.error('Error deleting user:', error);
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to delete user',
-        color: 'red',
-      });
+      // Không cần hiển thị notification ở đây vì hook đã xử lý
     } finally {
       setLoading(false);
     }
