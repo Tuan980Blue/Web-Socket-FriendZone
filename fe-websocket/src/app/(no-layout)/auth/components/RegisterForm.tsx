@@ -295,7 +295,7 @@ export default function RegisterForm() {
                     </SimpleGrid>
 
                     <Button
-                        type="submit"
+                        // type="submit"
                         loading={loading}
                         size="sm"
                         radius="md"
