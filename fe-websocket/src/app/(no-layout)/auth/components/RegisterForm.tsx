@@ -296,6 +296,13 @@ export default function RegisterForm() {
 
                     <Button
                         // type="submit"
+                        onClick={() => {
+                            notifications.show({
+                                title: 'Hệ thống đang bảo trì',
+                                message: 'Vui lòng Login bằng Google (My and Huy)',
+                                color: 'blue',
+                            });
+                        }}
                         loading={loading}
                         size="sm"
                         radius="md"

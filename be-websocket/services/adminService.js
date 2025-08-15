@@ -1,5 +1,19 @@
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+
+// Tạo Prisma client với cấu hình tối ưu
+const prisma = new PrismaClient({
+    log: ['error', 'warn'],
+    datasources: {
+        db: {
+            url: process.env.DATABASE_URL
+        }
+    }
+});
+
+// Xử lý graceful shutdown
+process.on('beforeExit', async () => {
+    await prisma.$disconnect();
+});
 
 class AdminService {
     async getAllUsers(page, limit) {
@@ -279,100 +293,135 @@ class AdminService {
     // Method để xóa tất cả posts của một user cụ thể
     async deleteAllUserPosts(userId) {
         try {
-            // 1. Tìm tất cả posts của user
-            const posts = await prisma.post.findMany({
-                where: { authorId: userId },
-                select: { id: true }
+            console.log(`🔍 Starting deletion for user ID: ${userId}`);
+            
+            // Sử dụng transaction với timeout cao hơn và xóa tuần tự để tránh timeout
+            const result = await prisma.$transaction(async (tx) => {
+                console.log(`🗑️ Deleting user data in transaction for user ID: ${userId}`);
+                
+                let deletedCounts = {
+                    comments: 0,
+                    likes: 0,
+                    savedPosts: 0,
+                    stories: 0,
+                    notifications: 0,
+                    mentions: 0,
+                    hashtags: 0,
+                    posts: 0
+                };
+                
+                // Xóa tuần tự để tránh timeout, nhưng vẫn hiệu quả
+                try {
+                    // 1. Xóa comments của user
+                    console.log(`🗑️ Deleting comments for user ID: ${userId}`);
+                    const commentsDeleted = await tx.comment.deleteMany({ where: { authorId: userId } });
+                    deletedCounts.comments = commentsDeleted.count;
+                    console.log(`✅ Deleted ${deletedCounts.comments} comments`);
+                    
+                    // 2. Xóa likes của user
+                    console.log(`🗑️ Deleting likes for user ID: ${userId}`);
+                    const likesDeleted = await tx.like.deleteMany({ where: { userId: userId } });
+                    deletedCounts.likes = likesDeleted.count;
+                    console.log(`✅ Deleted ${deletedCounts.likes} likes`);
+                    
+                    // 3. Xóa saved posts của user
+                    console.log(`🗑️ Deleting saved posts for user ID: ${userId}`);
+                    const savedPostsDeleted = await tx.savedPost.deleteMany({ where: { userId: userId } });
+                    deletedCounts.savedPosts = savedPostsDeleted.count;
+                    console.log(`✅ Deleted ${deletedCounts.savedPosts} saved posts`);
+                    
+                    // 4. Xóa stories của user
+                    console.log(`🗑️ Deleting stories for user ID: ${userId}`);
+                    const storiesDeleted = await tx.story.deleteMany({ where: { authorId: userId } });
+                    deletedCounts.stories = storiesDeleted.count;
+                    console.log(`✅ Deleted ${deletedCounts.stories} stories`);
+                    
+                    // 5. Xóa notifications của user
+                    console.log(`🗑️ Deleting notifications for user ID: ${userId}`);
+                    const notificationsDeleted = await tx.notification.deleteMany({ where: { userId: userId } });
+                    deletedCounts.notifications = notificationsDeleted.count;
+                    console.log(`✅ Deleted ${deletedCounts.notifications} notifications`);
+                    
+                    // 6. Xóa mentions của user
+                    console.log(`🗑️ Deleting mentions for user ID: ${userId}`);
+                    const mentionsDeleted = await tx.mention.deleteMany({ where: { userId: userId } });
+                    deletedCounts.mentions = mentionsDeleted.count;
+                    console.log(`✅ Deleted ${deletedCounts.mentions} mentions`);
+                    
+                    // 7. Xóa hashtags của user
+                    console.log(`🗑️ Deleting hashtags for user ID: ${userId}`);
+                    const hashtagsDeleted = await tx.hashtag.deleteMany({ where: { userId: userId } });
+                    deletedCounts.hashtags = hashtagsDeleted.count;
+                    console.log(`✅ Deleted ${deletedCounts.hashtags} hashtags`);
+                    
+                    // 8. Xóa posts của user (sẽ tự động xóa comments, likes, savedPosts liên quan)
+                    console.log(`🗑️ Deleting posts for user ID: ${userId}`);
+                    const postsDeleted = await tx.post.deleteMany({ where: { authorId: userId } });
+                    deletedCounts.posts = postsDeleted.count;
+                    console.log(`✅ Deleted ${deletedCounts.posts} posts`);
+                    
+                    // 9. Cuối cùng xóa user
+                    console.log(`🗑️ Deleting user ID: ${userId}`);
+                    const userDeleted = await tx.user.delete({ where: { id: userId } });
+                    console.log(`✅ Deleted user: ${userDeleted.username}`);
+                    
+                    console.log(`✅ Transaction completed for user ID: ${userId}`);
+                    
+                    return {
+                        message: `Successfully deleted user and all associated data`,
+                        deletedUser: userDeleted,
+                        deletedPosts: deletedCounts.posts,
+                        deletedComments: deletedCounts.comments,
+                        deletedLikes: deletedCounts.likes,
+                        deletedSavedPosts: deletedCounts.savedPosts,
+                        deletedStories: deletedCounts.stories,
+                        deletedNotifications: deletedCounts.notifications,
+                        deletedMentions: deletedCounts.mentions,
+                        deletedHashtags: deletedCounts.hashtags,
+                        userId: userId
+                    };
+                    
+                } catch (txError) {
+                    console.error(`❌ Transaction error for user ID ${userId}:`, txError);
+                    throw txError;
+                }
+            }, {
+                timeout: 6000, // Tăng timeout lên 6 giây
+                maxWait: 8000  // Tăng maxWait lên 8 giây
             });
             
-            if (posts.length === 0) {
-                return { 
-                    message: 'No posts found for this user ID',
-                    deletedPosts: 0,
-                    deletedComments: 0,
-                    deletedLikes: 0,
-                    deletedSavedPosts: 0
-                };
-            }
-            
-            let totalCommentsDeleted = 0;
-            let totalLikesDeleted = 0;
-            let totalSavedPostsDeleted = 0;
-            
-            // 2. Xóa tất cả comments của các posts này
-            try {
-                const commentsDeleted = await prisma.comment.deleteMany({
-                    where: { 
-                        postId: { 
-                            in: posts.map(post => post.id) 
-                        } 
-                    }
-                });
-                totalCommentsDeleted = commentsDeleted.count;
-            } catch (commentError) {
-                // Silently handle comment deletion errors
-            }
-            
-            // 3. Xóa tất cả likes của các posts này
-            try {
-                const likesDeleted = await prisma.like.deleteMany({
-                    where: { 
-                        postId: { 
-                            in: posts.map(post => post.id) 
-                        } 
-                    }
-                });
-                totalLikesDeleted = likesDeleted.count;
-            } catch (likeError) {
-                // Silently handle like deletion errors
-            }
-            
-            // 4. Xóa tất cả saved posts của các posts này
-            try {
-                const savedPostsDeleted = await prisma.savedPost.deleteMany({
-                    where: { 
-                        postId: { 
-                            in: posts.map(post => post.id) 
-                        } 
-                    }
-                });
-                totalSavedPostsDeleted = savedPostsDeleted.count;
-            } catch (savedPostError) {
-                // Silently handle saved post deletion errors
-            }
-            
-            // 5. Cuối cùng xóa tất cả posts
-            let postsDeleted = 0;
-            try {
-                const postsDeletedResult = await prisma.post.deleteMany({
-                    where: { authorId: userId }
-                });
-                postsDeleted = postsDeletedResult.count;
-            } catch (postDeleteError) {
-                throw new Error(`Failed to delete posts: ${postDeleteError.message}`);
-            }
-            
-            // 6. Cập nhật postsCount của user về 0 (nếu user tồn tại)
-            try {
-                await prisma.user.update({
-                    where: { id: userId },
-                    data: { postsCount: 0 }
-                });
-            } catch (updateError) {
-                // Silently handle user update errors
-            }
-            
-            return { 
-                message: `Successfully deleted all posts for user ID: ${userId}`,
-                deletedPosts: postsDeleted,
-                deletedComments: totalCommentsDeleted,
-                deletedLikes: totalLikesDeleted,
-                deletedSavedPosts: totalSavedPostsDeleted,
-                userId: userId
-            };
+            console.log(`🎉 User deletion completed for user ID: ${userId}`);
+            return result;
             
         } catch (error) {
-            throw new Error(`Failed to delete all posts for user: ${error.message}`);
+            console.error(`❌ Error deleting user ID ${userId}:`, error);
+            throw new Error(`Failed to delete user completely: ${error.message}`);
+        }
+    }
+
+    // Method để tìm tất cả users có email kết thúc bằng domain cụ thể
+    async findUsersByEmailDomain(emailSuffix) {
+        try {
+            console.log(`🔍 Searching for users with email ending in: ${emailSuffix}`);
+            
+            const users = await prisma.user.findMany({
+                where: {
+                    email: {
+                        endsWith: emailSuffix
+                    }
+                },
+                select: {
+                    id: true,
+                    email: true,
+                    username: true
+                }
+            });
+
+            console.log(`📊 Found ${users.length} users with email domain: ${emailSuffix}`);
+            return users;
+        } catch (error) {
+            console.error(`❌ Error finding users by email domain:`, error);
+            throw new Error(`Failed to find users by email domain: ${error.message}`);
         }
     }
 }
