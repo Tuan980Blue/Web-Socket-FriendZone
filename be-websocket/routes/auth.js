@@ -108,8 +108,8 @@ router.post('/google-login', async (req, res) => {
   }
 });
 
-// Register
-router.post('/register', async (req, res) => {
+// sau nay sua lai /register
+router.post('/register99', async (req, res) => {
   try {
     const {
       username,
