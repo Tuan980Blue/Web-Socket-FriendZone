@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const { cloudinary } = require('../config/cloudinary.config');
 
 // Tạo Prisma client với cấu hình tối ưu
 const prisma = new PrismaClient({
@@ -293,12 +294,8 @@ class AdminService {
     // Method để xóa tất cả posts của một user cụ thể
     async deleteAllUserPosts(userId) {
         try {
-            console.log(`🔍 Starting deletion for user ID: ${userId}`);
-            
             // Sử dụng transaction với timeout cao hơn và xóa tuần tự để tránh timeout
             const result = await prisma.$transaction(async (tx) => {
-                console.log(`🗑️ Deleting user data in transaction for user ID: ${userId}`);
-                
                 let deletedCounts = {
                     comments: 0,
                     likes: 0,
@@ -313,59 +310,39 @@ class AdminService {
                 // Xóa tuần tự để tránh timeout, nhưng vẫn hiệu quả
                 try {
                     // 1. Xóa comments của user
-                    console.log(`🗑️ Deleting comments for user ID: ${userId}`);
                     const commentsDeleted = await tx.comment.deleteMany({ where: { authorId: userId } });
                     deletedCounts.comments = commentsDeleted.count;
-                    console.log(`✅ Deleted ${deletedCounts.comments} comments`);
                     
                     // 2. Xóa likes của user
-                    console.log(`🗑️ Deleting likes for user ID: ${userId}`);
                     const likesDeleted = await tx.like.deleteMany({ where: { userId: userId } });
                     deletedCounts.likes = likesDeleted.count;
-                    console.log(`✅ Deleted ${deletedCounts.likes} likes`);
                     
                     // 3. Xóa saved posts của user
-                    console.log(`🗑️ Deleting saved posts for user ID: ${userId}`);
                     const savedPostsDeleted = await tx.savedPost.deleteMany({ where: { userId: userId } });
                     deletedCounts.savedPosts = savedPostsDeleted.count;
-                    console.log(`✅ Deleted ${deletedCounts.savedPosts} saved posts`);
                     
                     // 4. Xóa stories của user
-                    console.log(`🗑️ Deleting stories for user ID: ${userId}`);
                     const storiesDeleted = await tx.story.deleteMany({ where: { authorId: userId } });
                     deletedCounts.stories = storiesDeleted.count;
-                    console.log(`✅ Deleted ${deletedCounts.stories} stories`);
                     
                     // 5. Xóa notifications của user
-                    console.log(`🗑️ Deleting notifications for user ID: ${userId}`);
                     const notificationsDeleted = await tx.notification.deleteMany({ where: { userId: userId } });
                     deletedCounts.notifications = notificationsDeleted.count;
-                    console.log(`✅ Deleted ${deletedCounts.notifications} notifications`);
                     
                     // 6. Xóa mentions của user
-                    console.log(`🗑️ Deleting mentions for user ID: ${userId}`);
                     const mentionsDeleted = await tx.mention.deleteMany({ where: { userId: userId } });
                     deletedCounts.mentions = mentionsDeleted.count;
-                    console.log(`✅ Deleted ${deletedCounts.mentions} mentions`);
                     
                     // 7. Xóa hashtags của user
-                    console.log(`🗑️ Deleting hashtags for user ID: ${userId}`);
                     const hashtagsDeleted = await tx.hashtag.deleteMany({ where: { userId: userId } });
                     deletedCounts.hashtags = hashtagsDeleted.count;
-                    console.log(`✅ Deleted ${deletedCounts.hashtags} hashtags`);
                     
                     // 8. Xóa posts của user (sẽ tự động xóa comments, likes, savedPosts liên quan)
-                    console.log(`🗑️ Deleting posts for user ID: ${userId}`);
                     const postsDeleted = await tx.post.deleteMany({ where: { authorId: userId } });
                     deletedCounts.posts = postsDeleted.count;
-                    console.log(`✅ Deleted ${deletedCounts.posts} posts`);
                     
                     // 9. Cuối cùng xóa user
-                    console.log(`🗑️ Deleting user ID: ${userId}`);
                     const userDeleted = await tx.user.delete({ where: { id: userId } });
-                    console.log(`✅ Deleted user: ${userDeleted.username}`);
-                    
-                    console.log(`✅ Transaction completed for user ID: ${userId}`);
                     
                     return {
                         message: `Successfully deleted user and all associated data`,
@@ -382,7 +359,6 @@ class AdminService {
                     };
                     
                 } catch (txError) {
-                    console.error(`❌ Transaction error for user ID ${userId}:`, txError);
                     throw txError;
                 }
             }, {
@@ -390,11 +366,9 @@ class AdminService {
                 maxWait: 8000  // Tăng maxWait lên 8 giây
             });
             
-            console.log(`🎉 User deletion completed for user ID: ${userId}`);
             return result;
             
         } catch (error) {
-            console.error(`❌ Error deleting user ID ${userId}:`, error);
             throw new Error(`Failed to delete user completely: ${error.message}`);
         }
     }
@@ -402,8 +376,6 @@ class AdminService {
     // Method để tìm tất cả users có email kết thúc bằng domain cụ thể
     async findUsersByEmailDomain(emailSuffix) {
         try {
-            console.log(`🔍 Searching for users with email ending in: ${emailSuffix}`);
-            
             const users = await prisma.user.findMany({
                 where: {
                     email: {
@@ -417,11 +389,161 @@ class AdminService {
                 }
             });
 
-            console.log(`📊 Found ${users.length} users with email domain: ${emailSuffix}`);
             return users;
         } catch (error) {
-            console.error(`❌ Error finding users by email domain:`, error);
             throw new Error(`Failed to find users by email domain: ${error.message}`);
+        }
+    }
+
+    // Method để xóa ảnh từ Cloudinary theo khoảng thời gian
+    // type: 'upload' (default), 'private', 'authenticated', 'fetch', 'multi', 'video', 'audio'
+    async deleteCloudinaryImagesByDateRange(startDate, endDate, type = 'upload', maxResults = 100) {
+        try {
+            // Check Cloudinary configuration
+            if (!cloudinary) {
+                throw new Error('Cloudinary is not configured');
+            }
+            
+            if (!cloudinary.api) {
+                throw new Error('Cloudinary API is not available');
+            }
+            
+            // Check if cloudinary.api.resources is a function
+            if (typeof cloudinary.api.resources !== 'function') {
+                throw new Error('Cloudinary API resources method is not available');
+            }
+            
+            // Validate date format
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+                throw new Error('Date format must be YYYY-MM-DD');
+            }
+
+            // Convert dates to Date objects for comparison
+            const startDateTime = new Date(startDate + 'T00:00:00.000Z');
+            const endDateTime = new Date(endDate + 'T23:59:59.999Z');
+            
+            // Validate date range
+            if (startDateTime >= endDateTime) {
+                throw new Error('Start date must be before end date');
+            }
+
+            // Get resources created between dates
+            let resources;
+            try {
+                // Note: Cloudinary API expects 'upload' as type, not 'image'
+                const apiParams = {
+                    max_results: parseInt(maxResults),
+                    start_at: startDate,
+                    end_at: endDate
+                };
+                
+                // Only add type if it's not 'image' (use 'upload' instead)
+                if (type !== 'image') {
+                    apiParams.type = type;
+                }
+                
+                resources = await cloudinary.api.resources(apiParams);
+            } catch (apiError) {
+                // Try to get more specific error information
+                let errorMessage = 'Unknown Cloudinary API error';
+                if (apiError.message) {
+                    errorMessage = apiError.message;
+                } else if (apiError.error && apiError.error.message) {
+                    errorMessage = apiError.error.message;
+                } else if (typeof apiError === 'string') {
+                    errorMessage = apiError;
+                }
+                
+                throw new Error(`Cloudinary API error: ${errorMessage}`);
+            }
+
+            if (!resources.resources || resources.resources.length === 0) {
+                return {
+                    message: 'No resources found in the specified date range',
+                    deleted_count: 0,
+                    date_range: { start_date: startDate, end_date: endDate }
+                };
+            }
+
+            // Filter resources by actual creation date to ensure accuracy
+            const filteredResources = resources.resources.filter(resource => {
+                if (!resource.created_at) {
+                    console.warn(`Resource ${resource.public_id} has no created_at field, skipping...`);
+                    return false;
+                }
+                
+                const resourceDate = new Date(resource.created_at);
+                return resourceDate >= startDateTime && resourceDate <= endDateTime;
+            });
+
+            if (filteredResources.length === 0) {
+                return {
+                    message: 'No resources found with actual creation date in the specified range',
+                    date_range: { start_date: startDate, end_date: endDate },
+                    total_found: resources.resources.length,
+                    filtered_count: 0,
+                    deleted_count: 0,
+                    note: 'Some resources were found but their creation dates were outside the specified range'
+                };
+            }
+
+            console.log(`Found ${resources.resources.length} resources from API, ${filteredResources.length} match the date range`);
+
+            // Delete only filtered resources
+            let deletedCount = 0;
+            let failedDeletions = [];
+            let totalBytesFreed = 0;
+
+            const deletePromises = filteredResources.map(async (resource, index) => {
+                try {
+                    const result = await cloudinary.uploader.destroy(resource.public_id);
+                    
+                    if (result.result === 'ok') {
+                        return { 
+                            success: true, 
+                            public_id: resource.public_id,
+                            bytes: resource.bytes || 0,
+                            created_at: resource.created_at
+                        };
+                    } else {
+                        throw new Error(`Failed to delete: ${result.result}`);
+                    }
+                } catch (error) {
+                    return { 
+                        success: false, 
+                        public_id: resource.public_id,
+                        error: error.message,
+                        created_at: resource.created_at
+                    };
+                }
+            });
+
+            const results = await Promise.allSettled(deletePromises);
+            
+            results.forEach((result, index) => {
+                if (result.status === 'fulfilled' && result.value.success) {
+                    deletedCount++;
+                    totalBytesFreed += result.value.bytes;
+                } else if (result.status === 'fulfilled' && !result.value.success) {
+                    failedDeletions.push(result.value);
+                }
+            });
+
+            return {
+                message: `Successfully deleted ${deletedCount} resources in date range`,
+                date_range: { start_date: startDate, end_date: endDate },
+                total_found: resources.resources.length,
+                filtered_count: filteredResources.length,
+                deleted_count: deletedCount,
+                failed_count: failedDeletions.length,
+                failed_deletions: failedDeletions,
+                bytes_freed: totalBytesFreed,
+                note: `Only resources with creation date between ${startDate} and ${endDate} were processed`
+            };
+
+        } catch (error) {
+            throw new Error(`Failed to delete Cloudinary images by date range: ${error.message}`);
         }
     }
 }
